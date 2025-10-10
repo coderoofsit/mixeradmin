@@ -142,6 +142,7 @@ function UserDetail() {
     backgroundVerification?: boolean
     markAsPaid?: boolean
     markPlanAsPaid?: boolean
+    manualVerify?: boolean
   }>({})
 
   // Plan selection modal state

@@ -180,7 +180,7 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
         
         <div className="p-6 overflow-auto max-h-[calc(95vh-120px)]">
           {/* Source Information */}
-          {data && (
+          {/* {data && (
             <div className={`mb-6 p-4 ${sourceInfo.bgColor} border ${sourceInfo.borderColor} rounded-lg`}>
               <div className="flex items-center">
                 {sourceInfo.icon}
@@ -194,10 +194,10 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Loading State */}
-          {!data && (
+          {/* {!data && (
             <div className="text-center py-12">
               <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
               <h4 className="text-xl font-semibold text-gray-900 mb-2">Loading Records...</h4>
@@ -205,7 +205,7 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
                 Fetching person records from SearchBug.
               </p>
             </div>
-          )}
+          )} */}
 
           {/* No Records Found */}
           {data && data.people && data.people.length === 0 && (
