@@ -17,7 +17,7 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   'Basic': {
     id: 'Basic',
     name: 'Basic',
-    price: 99,
+    price: 24.99,
     currency: 'USD',
     type: 'subscription',
     duration: '1 month',
@@ -31,7 +31,7 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   'Upgrade': {
     id: 'Upgrade',
     name: 'Upgrade',
-    price: 99,
+    price: 49.99,
     currency: 'USD',
     type: 'subscription',
     duration: '1 month',
@@ -45,7 +45,7 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   'Quarterly': {
     id: 'Quarterly',
     name: 'Quarterly',
-    price: 299,
+    price: 299.99,
     currency: 'USD',
     type: 'subscription',
     duration: '3 months',

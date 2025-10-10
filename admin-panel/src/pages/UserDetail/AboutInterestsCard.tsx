@@ -43,7 +43,7 @@ export default function AboutInterestsCard({ user }: AboutInterestsCardProps) {
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Things I Like:</label>
             <div className="flex flex-wrap mt-[-2px]">
               {user.thingsILike?.map((item, index) => (
-                <span key={index} className="badge badge-secondary mx-1">{item}</span>
+                <span key={index} className="badge badge-secondary mx-1 mb-1">{item}</span>
               ))}
             </div>
           </div>
@@ -53,7 +53,7 @@ export default function AboutInterestsCard({ user }: AboutInterestsCardProps) {
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Values:</label>
             <div className="flex flex-wrap mt-[-2px]">
               {user?.values?.map((value, index) => (
-                <span key={index} className="badge badge-primary mx-1">{value}</span>
+                <span key={index} className="badge badge-primary mx-1 mb-1">{value}</span>
               ))}
             </div>
           </div>
@@ -63,7 +63,7 @@ export default function AboutInterestsCard({ user }: AboutInterestsCardProps) {
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Interested In:</label>
             <div className="flex flex-wrap mt-[-2px]">
               {mapInterestedInForDisplay(user?.interestedIn).map((interest, index) => (
-                <span key={index} className="badge badge-success mx-1">{interest}</span>
+                <span key={index} className="badge badge-success mx-1 mb-1">{interest}</span>
               ))}
             </div>
           </div>

@@ -87,10 +87,10 @@ export default function LifestylePreferencesCard({ user }: LifestylePreferencesC
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-2">
-          <div className="flex gap-1">
+          {/* <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Dating Type:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.datingType || 'N/A'}</p>
-          </div>
+          </div> */}
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Relationship Type:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.relationshipType || 'N/A'}</p>
@@ -103,12 +103,13 @@ export default function LifestylePreferencesCard({ user }: LifestylePreferencesC
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Family Plans:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.familyPlans || 'N/A'}</p>
           </div>
-        </div>
-        <div className="space-y-2">
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Religion:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.religion || 'N/A'}</p>
           </div>
+        </div>
+        <div className="space-y-2">
+          
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Politics:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.politics || 'N/A'}</p>

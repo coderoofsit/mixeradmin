@@ -168,9 +168,13 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Gender:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{mapGenderForDisplay(user.gender)|| 'N/A'}</p>
           </div>
-          <div className="flex gap-1">
+          {/* <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Pronoun:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.pronoun || 'N/A'}</p>
+          </div> */}
+          <div className="flex gap-1">
+            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.ethnicity || 'N/A'}</p>
           </div>
         </div>
         <div className="space-y-2">
@@ -187,10 +191,10 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Height:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.height || 'N/A'}</p>
           </div>
-          <div className="flex gap-1">
+          {/* <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.ethnicity || 'N/A'}</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

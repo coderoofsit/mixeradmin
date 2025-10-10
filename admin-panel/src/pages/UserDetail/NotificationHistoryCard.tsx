@@ -132,8 +132,8 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
           <option value="">All Types</option>
           <option value="like">Like</option>
           <option value="match">Match</option>
-          <option value="event_approved">Event Approved</option>
-          <option value="event_suspended">Event Suspended</option>
+          {/* <option value="event_approved">Event Approved</option>
+          <option value="event_suspended">Event Suspended</option> */}
           <option value="background_verification">Background Check</option>
           <option value="broadcast">Broadcast</option>
           <option value="system">System</option>
