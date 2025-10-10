@@ -115,7 +115,7 @@ function Feedback() {
         <div className="flex items-center space-x-2">
           <button
             onClick={() => openView(row)}
-            className="btn btn-primary btn-sm"
+            className="btn  btn-sm"
             title="View Details"
           >
             <Eye className="h-3 w-3" />
@@ -123,7 +123,7 @@ function Feedback() {
           
           <button 
             onClick={() => remove(row._id)} 
-            className="btn btn-primary btn-sm text-red-600"
+            className="btn  btn-sm text-red-600"
             disabled={processingItems.has(row._id)}
           >
             {processingItems.has(row._id) ? (
@@ -133,7 +133,7 @@ function Feedback() {
               </>
             ) : (
               <>
-                <Trash2 className="h-3 w-3 mr-1" />Delete
+                <Trash2 className="h-3 w-3 mr-1" />
               </>
             )}
           </button>

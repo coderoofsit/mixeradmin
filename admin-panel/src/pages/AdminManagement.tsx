@@ -341,7 +341,7 @@ const AdminManagement: React.FC = () => {
       {/* Admins Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#5D1152] to-[#7B1FA2] px-6 py-4">
+        <div className="bg-#2C2C2E px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-white/20 rounded-lg">
@@ -360,8 +360,8 @@ const AdminManagement: React.FC = () => {
 
         {/* Table */}
         <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b border-gray-200">
+           <table className="table">
+            <thead className="table-header">
               <tr>
                 <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Administrator
@@ -387,8 +387,8 @@ const AdminManagement: React.FC = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-gradient-to-r from-[#5D1152] to-[#7B1FA2] flex items-center justify-center">
-                          <span className="text-white font-semibold text-sm">
+                        <div className="h-10 w-10 rounded-full bg-#2C2C2E flex items-center justify-center">
+                          <span className="text-black font-semibold text-sm">
                             {admin.name.charAt(0).toUpperCase()}
                           </span>
                         </div>
@@ -405,7 +405,7 @@ const AdminManagement: React.FC = () => {
                     <div className="flex flex-col space-y-2">
                       <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                         admin.role === 'super_admin' 
-                          ? 'bg-[#5D1152] text-white' 
+                          ? 'bg-gray-200 text-black' 
                           : 'bg-gray-100 text-gray-800'
                       }`}>
                         <Shield className="h-3 w-3 mr-1" />
@@ -465,7 +465,7 @@ const AdminManagement: React.FC = () => {
                       {user?.role === 'super_admin' && admin.role !== 'super_admin' && (
                         <button
                           onClick={() => setEditingAdmin(admin)}
-                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#5D1152] transition-colors duration-200"
+                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#2C2C2E] transition-colors duration-200"
                           title="Edit Admin"
                         >
                           <Edit className="h-3 w-3 mr-1" />

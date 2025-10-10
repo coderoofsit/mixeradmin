@@ -204,59 +204,114 @@ function Users() {
 
 
 
-  const handleBulkAction = async (action: 'verify' | 'delete') => {
-    if (selectedUsers.length === 0) {
-      toast.error('Please select users first')
-      return
-    }
+  // const handleBulkAction = async (action: 'verify' | 'delete') => {
+  //   if (selectedUsers.length === 0) {
+  //     toast.error('Please select users first')
+  //     return
+  //   }
 
-    if (action === 'delete' && !window.confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
-      return
-    }
+  //   if (action === 'delete' && !window.confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
+  //     return
+  //   }
 
-    try {
-      // initialize progress
-      abortBulkRef.current = false
-      setBulkInProgress(true)
-      setBulkTotal(selectedUsers.length)
-      setBulkCompleted(0)
-      setBulkFailed(0)
+  //   try {
+  //     // initialize progress
+  //     abortBulkRef.current = false
+  //     setBulkInProgress(true)
+  //     setBulkTotal(selectedUsers.length)
+  //     setBulkCompleted(0)
+  //     setBulkFailed(0)
 
-      for (const userId of selectedUsers) {
-        if (abortBulkRef.current) break
-        try {
-          if (action === 'verify') {
-            await adminApi.verifyUser(userId, { status: 'verified' })
-          } else {
-            await adminApi.deleteUser(userId)
-          }
-          setBulkCompleted(prev => prev + 1)
-        } catch (err) {
-          console.error(`Error ${action} user ${userId}:`, err)
-          setBulkFailed(prev => prev + 1)
-        }
-        // small delay to avoid hammering API
-        await new Promise(res => setTimeout(res, 150))
-      }
+  //     for (const userId of selectedUsers) {
+  //       if (abortBulkRef.current) break
+  //       try {
+  //         if (action === 'verify') {
+  //           await adminApi.verifyUser(userId, { status: 'verified' })
+  //         } else {
+  //           await adminApi.deleteUser(userId)
+  //         }
+  //         setBulkCompleted(prev => prev + 1)
+  //       } catch (err) {
+  //         console.error(`Error ${action} user ${userId}:`, err)
+  //         setBulkFailed(prev => prev + 1)
+  //       }
+  //       // small delay to avoid hammering API
+  //       await new Promise(res => setTimeout(res, 150))
+  //     }
 
-      const finalCompleted = abortBulkRef.current ? bulkCompleted : bulkCompleted
-      const totalDone = (abortBulkRef.current ? bulkCompleted + bulkFailed : bulkCompleted + bulkFailed)
+  //     const finalCompleted = abortBulkRef.current ? bulkCompleted : bulkCompleted
+  //     const totalDone = (abortBulkRef.current ? bulkCompleted + bulkFailed : bulkCompleted + bulkFailed)
+  //     console.log(`Bulk operation completed: ${totalDone} users processed (${finalCompleted} success, ${bulkFailed} failed)`)
 
-      if (!abortBulkRef.current) {
-        toast.success(`${bulkCompleted + bulkFailed} users processed (${bulkCompleted} success, ${bulkFailed} failed)`) 
-        setSelectedUsers([])
-        fetchUsers()
-      } else {
-        toast('Bulk operation cancelled')
-      }
-      setBulkInProgress(false)
-    } catch (error) {
-      console.error(`Error performing bulk ${action}:`, error)
-      toast.error(`Failed to ${action} users`)
-    }
+  //     if (!abortBulkRef.current) {
+  //       toast.success(`${totalDone} users processed (${finalCompleted} success, ${bulkFailed} failed)`) 
+  //       setSelectedUsers([])
+  //       fetchUsers()
+  //     } else {
+  //       toast('Bulk operation cancelled')
+  //     }
+  //     setBulkInProgress(false)
+  //   } catch (error) {
+  //     console.error(`Error performing bulk ${action}:`, error)
+  //     toast.error(`Failed to ${action} users`)
+  //   }
+  // }
+
+
+const handleBulkAction = async (action: 'verify' | 'delete') => {
+  if (selectedUsers.length === 0) {
+    toast.error('Please select users first')
+    return
   }
 
+  if (action === 'delete' && !window.confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
+    return
+  }
 
+  try {
+    abortBulkRef.current = false
+    setBulkInProgress(true)
+    setBulkTotal(selectedUsers.length)
+    setBulkCompleted(0)
+    setBulkFailed(0)
+
+    let completedCount = 0
+    let failedCount = 0
+
+    for (const userId of selectedUsers) {
+      if (abortBulkRef.current) break
+      try {
+        if (action === 'verify') {
+          await adminApi.verifyUser(userId, { status: 'verified' })
+        } else {
+          await adminApi.deleteUser(userId)
+        }
+        completedCount++
+        setBulkCompleted(prev => prev + 1)
+      } catch (err) {
+        console.error(`Error ${action} user ${userId}:`, err)
+        failedCount++
+        setBulkFailed(prev => prev + 1)
+      }
+      await new Promise(res => setTimeout(res, 150))
+    }
+
+    const totalDone = completedCount + failedCount
+
+    if (!abortBulkRef.current) {
+      toast.success(`${totalDone} users processed (${completedCount} success, ${failedCount} failed)`)
+      setSelectedUsers([])
+      fetchUsers()
+    } else {
+      toast('Bulk operation cancelled')
+    }
+  } catch (error) {
+    console.error(`Error performing bulk ${action}:`, error)
+    toast.error(`Failed to ${action} users`)
+  } finally {
+    setBulkInProgress(false)
+  }
+}
 
   
 
@@ -351,11 +406,12 @@ function Users() {
     ),
     location: `${user.location?.city || ''}${user.location?.city && user.location?.state ? ', ' : ''}${user.location?.state || ''}` || '—',
     ageGender: (
-      <div className="text-center">
+      <div>
         <div className="text-sm text-var(--text-primary)">{getAgeFromDOB(user.dateOfBirth) || '—'}</div>
         <div className="text-xs text-var(--text-muted)">{mapGenderForDisplay(user.gender)}</div>
       </div>
     ),
+
     accountStatus: (
       <span className={`badge ${getStatusBadgeClass(user.accountStatus)}`}>
         {user.accountStatus || 'Unknown'}

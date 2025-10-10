@@ -158,7 +158,7 @@ function Subscriptions() {
             <thead>
               <tr className="border-b border-var(--border)">
                 <th className="text-left py-2 px-3 font-medium text-var(--text-secondary)">Plan</th>
-                <th className="text-left py-2 px-3 font-medium text-var(--text-secondary)">Product ID</th>
+                {/* <th className="text-left py-2 px-3 font-medium text-var(--text-secondary)">Product ID</th> */}
                 <th className="text-left py-2 px-3 font-medium text-var(--text-secondary)">Platform</th>
                 <th className="text-left py-2 px-3 font-medium text-var(--text-secondary)">Status</th>
                 <th className="text-left py-2 px-3 font-medium text-var(--text-secondary)">Purchase Date</th>
@@ -173,9 +173,9 @@ function Subscriptions() {
                       {formatPurchaseType(purchase.productId)}
                     </span>
                   </td>
-                  <td className="py-2 px-3 text-var(--text-primary) font-mono text-xs">
+                  {/* <td className="py-2 px-3 text-var(--text-primary) font-mono text-xs">
                     {purchase.productId}
-                  </td>
+                  </td> */}
                   <td className="py-2 px-3">
                     <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPlatformBadgeColor(purchase.platform)}`}>
                       {purchase.platform}
@@ -246,16 +246,17 @@ function Subscriptions() {
       )
     },
     {
-      key: 'totalPurchases',
-      label: 'Total Purchases',
-      render: (_value: any, row: Subscription) => (
-        <div className="text-center">
-          <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-var(--bg-tertiary) text-var(--text-primary)">
-            {row.totalPurchases}
-          </span>
-        </div>
-      )
-    }
+  key: 'totalPurchases',
+  label: 'Total Purchases',
+  render: (_value: any, row: Subscription) => (
+    <div className="flex ">
+      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-var(--bg-tertiary) text-var(--text-primary)">
+        {row.totalPurchases}
+      </span>
+    </div>
+  )
+}
+
   ]
 
   if (loading) {
@@ -281,13 +282,13 @@ function Subscriptions() {
         </div>
         
         <div className="flex items-center space-x-3">
-          <button
+          {/* <button
             onClick={handleExport}
             className="flex items-center px-4 py-2 text-sm font-medium text-var(--text-primary) bg-var(--bg-primary) border border-var(--border) rounded-lg hover:bg-var(--bg-secondary) transition-colors"
           >
             <Download className="h-4 w-4 mr-2" />
             Export
-          </button>
+          </button> */}
           
           <button
             onClick={handleRefresh}

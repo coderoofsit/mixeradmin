@@ -711,11 +711,12 @@ const Events = () => {
 						<p className='text-var(--text-muted)'>Create your first event to get started</p>
 					</div>
 				) : (
-					<div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4'>
+					<div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2'>
 						{events.map((event) => (
 							<div
 								key={event._id}
-								className='glass-card overflow-hidden hover-lift cursor-pointer flex flex-col'
+								onClick={() => openEditModal(event)}
+								className='glass-card overflow-hidden hover-lift cursor-pointer flex flex-col  w-72'
 							>
 								{/* Image Banner */}
 								<div className='relative'>
@@ -768,14 +769,14 @@ const Events = () => {
 									{/* Spacer to push button to bottom */}
 									<div className='flex-grow'></div>
 
-									<div className='flex justify-end mt-auto'>
+									{/* <div className='flex justify-end mt-auto'>
 										<button
 											onClick={() => openEditModal(event)}
 											className='btn btn-primary btn-sm hover-lift'
 										>
 											View Details
 										</button>
-									</div>
+									</div> */}
 								</div>
 							</div>
 						))}

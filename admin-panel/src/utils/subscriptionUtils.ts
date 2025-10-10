@@ -28,7 +28,10 @@ export const formatPurchaseType = (productId: string): string => {
     'Basic': 'Basic Plan',
     'Upgrade': 'Premium Plan',
     'Quarterly': 'Quarterly Plan',
-    'background_check_25': 'Background Check'
+    'background_check_25': 'Background Check',
+    'com.mixerltd.mixerltd.quarterly': 'Quarterly Plan',
+    'com.mixerltd.mixerltd.upgrade':"Upgrade Plan",
+    'com.mixerltd.mixerltd.basic'	:"Basic Plan"
   };
   
   return typeMap[productId] || productId;

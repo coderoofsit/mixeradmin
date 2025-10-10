@@ -111,11 +111,14 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
         <div className="flex flex-col flex-grow sidebar">
           {/* Sidebar Header */}
-          <div className="flex h-16 items-center justify-center px-6 border-b border-white/20">
+          <div className="flex h-16 items-center justify-center px-6 border-b border-white/20 mt-4">
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <Volume2 className="h-5 w-5 text-white" />
-              </div>
+               <img
+                  src="/assets/logos/Mixer Logo/Primary Logo/newLogo.png"
+                  alt="Mixer Logo"
+                  className=" w-auto bg-transparent border-none"
+                />              </div>
               <p className="text-lg font-bold gradient-text">Admin Panel</p>
             </div>
           </div>
@@ -198,7 +201,7 @@ const Layout = ({ children }: LayoutProps) => {
             
             <div className="flex items-center gap-x-4">
               {/* Theme Toggle */}
-              <ThemeToggle />
+              {/* <ThemeToggle /> */}
               
               {/* Real-time Clock */}
               <div className="flex items-center space-x-2 glass px-3 py-2 rounded-xl">
@@ -241,7 +244,7 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="flex h-16 items-center justify-between px-6">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <Volume2 className="h-5 w-5 text-white" />
+                <Volume2 className="h-5 w-5 text-white" />
                 </div>
                 <p className="text-lg font-bold gradient-text">Admin Panel</p>
               </div>

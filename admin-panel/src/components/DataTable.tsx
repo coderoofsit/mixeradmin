@@ -147,7 +147,7 @@ const DataTable: React.FC<DataTableProps> = ({
         </div>
       )}*/}
 
-      {/* Table */}
+      {/* Table */} 
       <div className={tableContainerClass} style={tableStyle}>
         <div className={tableWrapperClass}>
           <table className="table">

@@ -42,7 +42,7 @@ export default function MediaGallery({ user, onOpenMedia }: MediaGalleryProps) {
       ) : (
         <div className="space-y-6">
           {/* Selfie Section */}
-          {user.selfie && (
+          {/* {user.selfie && (
             <div>
               <h4 className="text-sm font-medium text-var(--text-primary) mb-3">Selfie Verification</h4>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -65,7 +65,7 @@ export default function MediaGallery({ user, onOpenMedia }: MediaGalleryProps) {
                 </div>
               </div>
             </div>
-          )}
+          )} */}
 
           {/* Images Section */}
           {user.images && user.images.length > 0 && (

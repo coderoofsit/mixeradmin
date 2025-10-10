@@ -20,49 +20,49 @@ export default function AboutInterestsCard({ user }: AboutInterestsCardProps) {
   if (!hasContent) return null
 
   return (
-    <div className="glass-card p-6">
-      <h3 className="text-lg font-semibold text-var(--text-primary) mb-4 flex items-center">
+    <div className="glass-card p-4">
+      <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
         <Users className="h-5 w-5 mr-2 text-var(--accent)" />
         About & Interests
       </h3>
-      <div className="space-y-4">
+      <div className="space-y-2">
         {user.aboutMe && (
-          <div>
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">About Me</label>
-            <p className="text-var(--text-primary) mt-1">{user.aboutMe}</p>
+            <div className="flex gap-1">
+            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">About Me:</label>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.aboutMe || 'N/A'}</p>
           </div>
         )}
         {user.lookingFor && (
-          <div>
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Looking For</label>
-            <p className="text-var(--text-primary) mt-1">{user.lookingFor}</p>
+          <div className="flex gap-1">
+            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Looking For:</label>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lookingFor}</p>
           </div>
         )}
         {user.thingsILike && user.thingsILike.length > 0 && (
-          <div>
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Things I Like</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {user.thingsILike.map((item, index) => (
+          <div className="flex gap-1">
+            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Things I Like:</label>
+            <div className="flex flex-wrap mt-[-2px]">
+              {user.thingsILike?.map((item, index) => (
                 <span key={index} className="badge badge-secondary">{item}</span>
               ))}
             </div>
           </div>
         )}
         {user.values && user.values.length > 0 && (
-          <div>
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Values</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {user.values.map((value, index) => (
+          <div className="flex gap-1">
+            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Values:</label>
+            <div className="flex flex-wrap mt-[-2px]">
+              {user?.values?.map((value, index) => (
                 <span key={index} className="badge badge-primary">{value}</span>
               ))}
             </div>
           </div>
         )}
         {user.interestedIn && user.interestedIn.length > 0 && (
-          <div>
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Interested In</label>
-            <div className="flex flex-wrap gap-2 mt-2">
-              {mapInterestedInForDisplay(user.interestedIn).map((interest, index) => (
+          <div className="flex gap-1">
+            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Interested In:</label>
+            <div className="flex flex-wrap mt-[-2px]">
+              {mapInterestedInForDisplay(user?.interestedIn).map((interest, index) => (
                 <span key={index} className="badge badge-success">{interest}</span>
               ))}
             </div>
