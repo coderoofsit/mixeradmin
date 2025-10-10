@@ -491,17 +491,17 @@ function UserDetail() {
   return (
     <div className="min-h-screen bg-var(--bg-secondary) animate-fade-in">
       {/* Header */}
-      <div className="glass-card p-4 mb-4 h-full">
-      <div className="flex items-center justify-between">
+      {/* <div className=""> */}
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
             <button onClick={() => navigate('/users')} className="btn btn-ghost hover-lift">
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Users
+            Back
           </button>
-          <div>
+          {/* <div>
               <h1 className="text-3xl font-bold gradient-text">User Details</h1>
               <p className="text-var(--text-muted) mt-1">Manage user account and verification status</p>
-          </div>
+          </div> */}
         </div>
         
         <div className="flex items-center space-x-3">
@@ -514,12 +514,12 @@ function UserDetail() {
           </div>
         </div>
         
-        {!backgroundCheckResults || backgroundCheckResults.length === 0 ? (
+        {/* {!backgroundCheckResults || backgroundCheckResults.length === 0 ? (
           <div className="mt-4 p-3 bg-var(--bg-tertiary) rounded-lg border border-var(--border)">
             <p className="text-sm text-var(--text-muted)">No automated background checks found for this user. Automation runs when the user updates their profile.</p>
         </div>
-        ) : null}
-      </div>
+        ) : null} */}
+      {/* </div> */}
 
       {/* Error display */}
       {lastError && (

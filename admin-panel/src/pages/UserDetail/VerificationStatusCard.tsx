@@ -332,14 +332,14 @@ export default function VerificationStatusCard({
             {actionLoading.manualVerify ? 'Fetching Records...' : 'Manual Verify'}
           </button>
           
-          <button
+          {/* <button
             onClick={onViewBackgroundChecks}
             className="btn btn-primary btn-sm hover-lift"
             disabled={!backgroundCheckResults || backgroundCheckResults.length === 0}
           >
             <FileSearch className="h-4 w-4 mr-2" />
             View Background Checks
-          </button>
+          </button> */}
         </div>
       </div>
     </div>
