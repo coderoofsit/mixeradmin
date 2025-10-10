@@ -112,7 +112,6 @@ const DataTable: React.FC<DataTableProps> = ({
         <div className="p-8">
           <div className="flex items-center justify-center space-x-2">
             <LoadingSpinner size="sm" />
-            <span style={{color: 'var(--text-secondary)'}}>Loading data...</span>
           </div>
         </div>
       </div>

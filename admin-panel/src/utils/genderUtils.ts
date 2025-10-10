@@ -1,11 +1,17 @@
 /**
  * Maps gender values for display in admin panel
  * Database stores Male, Female, Other Gender - display as received
+ * Backward compatibility: "transgender" maps to "Other Gender"
  */
 export const mapGenderForDisplay = (gender: string | null | undefined): string => {
   if (!gender) return 'N/A';
   
-  // Database already stores proper case: Male, Female, Other Gender
+  // Backward compatibility: map old "transgender" to "Other Gender"
+  if (gender.toLowerCase() === 'transgender') {
+    return 'Other Gender';
+  }
+  
+  // Database stores proper case: Male, Female, Other Gender
   return gender;
 };
 
@@ -33,10 +39,16 @@ export const mapFilterToDatabaseGender = (filterValue: string): string | undefin
 /**
  * Maps interestedIn values for display in admin panel
  * Database stores Male, Female, Non-binary - display as received
+ * Backward compatibility: "transgender" maps to "Non-binary"
  */
 export const mapInterestedInForDisplay = (interestedIn: string[] | null | undefined): string[] => {
   if (!interestedIn || !Array.isArray(interestedIn)) return [];
   
-  // Database already stores proper case: Male, Female, Non-binary
-  return interestedIn;
+  // Backward compatibility: map old "transgender" to "Non-binary"
+  return interestedIn.map(item => {
+    if (item.toLowerCase() === 'transgender') {
+      return 'Non-binary';
+    }
+    return item;
+  });
 };
