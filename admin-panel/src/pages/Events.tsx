@@ -647,7 +647,7 @@ const Events = () => {
 
 	return (
 		<div className='space-y-6 animate-fade-in'>
-			<LoadingOverlay isVisible={uploadingImage || isSubmitting} text={uploadingImage ? 'Uploading image...' : isSubmitting ? 'Processing...' : 'Loading...'} />
+			<LoadingOverlay isVisible={uploadingImage || isSubmitting} />
 			{/* Header */}
 			<div className='flex items-center justify-end'>
 				<button

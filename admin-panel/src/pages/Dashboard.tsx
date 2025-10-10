@@ -165,7 +165,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 animate-fade-in" id="dashboard-content">
-      <LoadingOverlay isVisible={isRefreshing} text="Refreshing dashboard..." />
+			<LoadingOverlay isVisible={isRefreshing} />
       {/* Modern Header */}
       <div className="glass-card">
         <div className="text-center">

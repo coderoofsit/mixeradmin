@@ -38,7 +38,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-gray-100">
-      <LoadingOverlay isVisible={loading} text="Signing in..." />
+	      <LoadingOverlay isVisible={loading} />
       
       <div className="flex min-h-screen">
         {/* Left Side - Login Form */}

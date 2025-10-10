@@ -306,7 +306,7 @@ const AdminManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <LoadingOverlay isVisible={isCreatingAdmin} text="Creating admin..." />
+			<LoadingOverlay isVisible={isCreatingAdmin} />
       {/* Header */}
       <div className="flex justify-end items-center">
         {user?.role === 'super_admin' && (

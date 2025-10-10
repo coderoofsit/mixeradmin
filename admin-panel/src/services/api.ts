@@ -211,6 +211,10 @@ export const adminApi = {
   // Subscriptions API
   getSubscriptions: (params?: any) => api.get('/admin/subscriptions', { params }),
   getUserPurchaseHistory: (userId: string, params?: any) => api.get(`/admin/subscriptions/${userId}/history`, { params }),
+
+  // Notifications API
+  getUserNotifications: (userId: string, params?: any) => 
+    api.get(`/notificationhistory/admin/user/${userId}`, { params }),
 }
 
 export default api 

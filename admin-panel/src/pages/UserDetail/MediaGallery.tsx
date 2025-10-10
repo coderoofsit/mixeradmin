@@ -48,10 +48,10 @@ export default function MediaGallery({ user, onOpenMedia }: MediaGalleryProps) {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div 
                   className="relative group cursor-pointer rounded-lg overflow-hidden bg-var(--bg-tertiary) aspect-square"
-                  onClick={() => onOpenMedia('selfie', user.selfie?.url || '', 'Selfie Verification')}
+                  onClick={() => onOpenMedia('selfie', user.selfie!.url, 'Selfie Verification')}
                 >
                   <img
-                    src={user.selfie?.url || ''}
+                    src={user.selfie!.url}
                     alt="Selfie"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />

@@ -14,6 +14,7 @@ import QuizResultsCard from './UserDetail/QuizResultsCard'
 import AboutInterestsCard from './UserDetail/AboutInterestsCard'
 import VerificationStatusCard from './UserDetail/VerificationStatusCard'
 import SubscriptionPlanCard from './UserDetail/SubscriptionPlanCard'
+import NotificationHistoryCard from './UserDetail/NotificationHistoryCard'
 import AccountActionsCard from './UserDetail/AccountActionsCard'
 import MediaGallery from './UserDetail/MediaGallery'
 import MediaModal from './UserDetail/MediaModal'
@@ -507,6 +508,8 @@ function UserDetail() {
             actionLoading={actionLoading}
             onMarkPlanAsPaid={handleMarkPlanAsPaid}
           />
+          
+          <NotificationHistoryCard userId={user._id} />
           
           <AccountActionsCard
             user={user}
