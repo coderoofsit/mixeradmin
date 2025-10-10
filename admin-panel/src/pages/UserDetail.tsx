@@ -21,6 +21,7 @@ import MediaModal from './UserDetail/MediaModal'
 import BackgroundCheckModals from './UserDetail/BackgroundCheckModals'
 import PersonSelectionModal from '../components/PersonSelectionModal'
 import PlanSelectionModal from '../components/PlanSelectionModal'
+import FetchRecordsModal from '../components/FetchRecordsModal'
 
 interface User {
   _id: string
@@ -150,6 +151,15 @@ function UserDetail() {
     isOpen: false
   })
 
+  // Fetch records modal state
+  const [fetchRecordsModal, setFetchRecordsModal] = useState<{
+    isOpen: boolean
+    data: any
+  }>({
+    isOpen: false,
+    data: null
+  })
+
   useEffect(() => {
       fetchUser()
     fetchBackgroundChecks()
@@ -175,8 +185,13 @@ function UserDetail() {
       if (res.data.success) {
         setBackgroundCheckResults(res.data.data.backgroundChecks || [])
       }
-    } catch (err) {
-      console.error('Failed to load background checks:', err)
+    } catch (err: any) {
+      // Only log error if it's not a 404 (endpoint not implemented yet)
+      if (err.response?.status !== 404) {
+        console.error('Failed to load background checks:', err)
+      }
+      // Set empty array for background checks when endpoint is not available
+      setBackgroundCheckResults([])
     }
   }
 
@@ -399,6 +414,55 @@ function UserDetail() {
     }
   }
 
+  // Manual verification handler
+  const handleManualVerify = async () => {
+    if (!user?._id) return
+
+    try {
+      setActionLoading(prev => ({ ...prev, manualVerify: true }))
+      const response = await adminApi.fetchPersonRecords({ userId: user._id })
+      
+      if (response.data.success) {
+        setFetchRecordsModal({
+          isOpen: true,
+          data: response.data.data
+        })
+        toast.success('Person records fetched successfully')
+      } else {
+        toast.error(response.data.message || 'Failed to fetch person records')
+      }
+    } catch (error: any) {
+      console.error('Error fetching person records:', error)
+      const errorMessage = error.response?.data?.message || 'Failed to fetch person records'
+      toast.error(errorMessage)
+    } finally {
+      setActionLoading(prev => ({ ...prev, manualVerify: false }))
+    }
+  }
+
+  // Handle person selection from fetch records
+  const handleSelectPersonFromRecords = async (checkId: string, selectedPersonIndex: number) => {
+    try {
+      setActionLoading(prev => ({ ...prev, manualVerify: true }))
+      const response = await adminApi.selectPersonFromRecords({ checkId, selectedPersonIndex })
+      
+      if (response.data.success) {
+        toast.success('Person selected successfully')
+        setFetchRecordsModal({ isOpen: false, data: null })
+        // Refresh background checks to show updated data
+        await fetchBackgroundChecks()
+      } else {
+        toast.error(response.data.message || 'Failed to select person')
+      }
+    } catch (error: any) {
+      console.error('Error selecting person:', error)
+      const errorMessage = error.response?.data?.message || 'Failed to select person'
+      toast.error(errorMessage)
+    } finally {
+      setActionLoading(prev => ({ ...prev, manualVerify: false }))
+    }
+  }
+
   const closeBackgroundCheckModal = () => {
     setBackgroundCheckModal({ isOpen: false, type: 'search', data: null })
     setBackgroundCheckResults(null)
@@ -501,6 +565,7 @@ function UserDetail() {
             onBackgroundVerification={handleBackgroundVerification}
             onMarkAsPaid={handleMarkAsPaid}
             onViewBackgroundChecks={() => setBackgroundCheckModal({ isOpen: true, type: 'history', data: backgroundCheckResults })}
+            onManualVerify={handleManualVerify}
           />
           
           <SubscriptionPlanCard
@@ -544,6 +609,14 @@ function UserDetail() {
         onClose={() => setPlanSelectionModal({ isOpen: false })}
         onConfirm={handlePlanSelectionConfirm}
         loading={actionLoading.markPlanAsPaid}
+      />
+
+      <FetchRecordsModal
+        isOpen={fetchRecordsModal.isOpen}
+        onClose={() => setFetchRecordsModal({ isOpen: false, data: null })}
+        data={fetchRecordsModal.data}
+        onSelectPerson={handleSelectPersonFromRecords}
+        isSelecting={actionLoading.manualVerify}
       />
      </div>
    )

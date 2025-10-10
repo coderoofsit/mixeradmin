@@ -133,6 +133,13 @@ export const adminApi = {
   getBackgroundCheckHistory: (params?: any) => 
     api.get('/admin/background-check/history', { params }),
 
+  // Manual Background Check Verification API
+  fetchPersonRecords: (data: { userId: string }) => 
+    api.post('/admin/background-check/fetch-records', data),
+  
+  selectPersonFromRecords: (data: { checkId: string; selectedPersonIndex: number }) => 
+    api.post('/admin/background-check/select-person', data),
+
   // New Organizers - Enhanced with all new endpoints
   getOrganizers: (params?: any) => api.get('/admin/organizers', { params }),
   

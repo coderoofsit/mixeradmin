@@ -162,11 +162,12 @@
 //   )
 // }
 
-import { Shield, CheckCircle, CreditCard, Clock, XCircle, FileSearch, AlertCircle } from 'lucide-react'
+import { Shield, CheckCircle, CreditCard, Clock, XCircle, FileSearch, AlertCircle, Search } from 'lucide-react'
 import { formatUTCDateOnly } from '../../utils/dateUtils'
 
 interface VerificationStatusCardProps {
   user: {
+    _id: string
     backgroundVerification: 'unpaid' | 'pending' | 'approved' | 'rejected'
     backgroundCheckPurchased?: boolean
     backgroundCheckPurchaseDate?: string
@@ -176,11 +177,13 @@ interface VerificationStatusCardProps {
   actionLoading: {
     backgroundVerification?: boolean
     markAsPaid?: boolean
+    manualVerify?: boolean
   }
   backgroundCheckResults: any
   onBackgroundVerification: (status: 'unpaid' | 'pending' | 'approved' | 'rejected') => void
   onMarkAsPaid: () => void
   onViewBackgroundChecks: () => void
+  onManualVerify: () => void
 }
 
 export default function VerificationStatusCard({
@@ -189,7 +192,8 @@ export default function VerificationStatusCard({
   backgroundCheckResults,
   onBackgroundVerification,
   onMarkAsPaid,
-  onViewBackgroundChecks
+  onViewBackgroundChecks,
+  onManualVerify
 }: VerificationStatusCardProps) {
   const getVerificationBadgeClass = (status: string) => {
     switch (status) {
@@ -317,8 +321,17 @@ export default function VerificationStatusCard({
           </div>
         )}
 
-        {/* View Background Checks Button */}
-        <div className="flex justify-center pt-2">
+        {/* Manual Verify and View Background Checks Buttons */}
+        <div className="flex flex-col space-y-2 pt-2">
+          <button
+            onClick={onManualVerify}
+            className="btn btn-secondary btn-sm hover-lift"
+            disabled={actionLoading.manualVerify}
+          >
+            <Search className="h-4 w-4 mr-2" />
+            {actionLoading.manualVerify ? 'Fetching Records...' : 'Manual Verify'}
+          </button>
+          
           <button
             onClick={onViewBackgroundChecks}
             className="btn btn-primary btn-sm hover-lift"
