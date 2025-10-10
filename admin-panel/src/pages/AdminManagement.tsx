@@ -3,6 +3,7 @@ import { toast } from 'react-hot-toast';
 import { adminApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Shield, Plus, Edit, Eye, EyeOff, Save, X, Lock } from 'lucide-react';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 interface Admin {
   _id: string;
@@ -47,7 +48,7 @@ const AdminManagement: React.FC = () => {
           <Shield className="h-16 w-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-xl font-semibold text-red-800 mb-2">Access Denied</h2>
           <p className="text-red-600 mb-2">Only Super Administrators can access Admin Management.</p>
-          <p className="text-sm text-gray-500">Your role: {user?.role || 'Unknown'}</p>
+          <p className="text-sm text-var(--text-muted)">Your role: {user?.role || 'Unknown'}</p>
         </div>
       </div>
     );
@@ -298,13 +299,14 @@ const AdminManagement: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-var(--primary)"></div>
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
+      <LoadingOverlay isVisible={isCreatingAdmin} text="Creating admin..." />
       {/* Header */}
       <div className="flex justify-end items-center">
         {user?.role === 'super_admin' && (
@@ -526,10 +528,11 @@ const AdminManagement: React.FC = () => {
                     </div>
                   </div>
                   <button
-                    className="btn btn-sm btn-circle btn-ghost hover:bg-gray-100 transition-colors duration-200"
+                    className="btn btn-sm btn-ghost hover:bg-gray-100 transition-colors duration-200"
                     onClick={() => setShowCreateModal(false)}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4 mr-1" />
+                    Close
                   </button>
                 </div>
                 
@@ -758,20 +761,8 @@ const AdminManagement: React.FC = () => {
                                 !/\S+@\S+\.\S+/.test(newAdmin.email) ||
                                 isCreatingAdmin}
                       >
-                        {isCreatingAdmin ? (
-                          <>
-                            <svg className="animate-spin h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                            Creating...
-                          </>
-                        ) : (
-                          <>
-                            <Plus className="h-4 w-4 mr-2" />
-                            Create Admin
-                          </>
-                        )}
+                        <Plus className="h-4 w-4 mr-2" />
+                        Create Admin
                       </button>
                     </div>
                 </form>
@@ -805,7 +796,7 @@ const AdminManagement: React.FC = () => {
                     </div>
                   </div>
                   <button
-                    className="btn btn-sm btn-circle btn-ghost hover:bg-gray-100 transition-colors duration-200"
+                    className="btn btn-sm btn-ghost hover:bg-gray-100 transition-colors duration-200"
                     onClick={() => setShowPasswordModal(false)}
                   >
                     <X className="h-4 w-4" />
@@ -1103,10 +1094,11 @@ const AdminManagement: React.FC = () => {
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="font-bold text-lg">Manage Admin: {editingAdmin.name}</h3>
                   <button
-                    className="btn btn-sm btn-circle btn-ghost"
+                    className="btn btn-sm btn-ghost"
                     onClick={() => setEditingAdmin(null)}
                   >
-                    <X className="h-4 w-4" />
+                    <X className="h-4 w-4 mr-1" />
+                    Close
                   </button>
                 </div>
             

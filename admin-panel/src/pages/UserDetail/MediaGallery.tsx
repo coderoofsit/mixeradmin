@@ -28,7 +28,7 @@ export default function MediaGallery({ user, onOpenMedia }: MediaGalleryProps) {
     (user.videos && user.videos.length > 0)
 
   return (
-    <div className="glass-card p-6 mt-6">
+    <div className="glass-card p-4">
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-6 flex items-center">
         <Camera className="h-5 w-5 mr-2 text-var(--accent)" />
         Media Gallery
@@ -48,17 +48,17 @@ export default function MediaGallery({ user, onOpenMedia }: MediaGalleryProps) {
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div 
                   className="relative group cursor-pointer rounded-lg overflow-hidden bg-var(--bg-tertiary) aspect-square"
-                  onClick={() => onOpenMedia('selfie', user.selfie?.url || '', 'Selfie Verification')}
+                  onClick={() => onOpenMedia('selfie', user.selfie.url, 'Selfie Verification')}
                 >
                   <img
-                    src={user.selfie?.url || ''}
+                    src={user.selfie.url}
                     alt="Selfie"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                   <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                       <div className="bg-white bg-opacity-90 rounded-full p-2">
-                        <Camera className="h-4 w-4 text-gray-800" />
+                        <Camera className="h-4 w-4 text-var(--text-primary)" />
                       </div>
                     </div>
                   </div>
@@ -91,7 +91,7 @@ export default function MediaGallery({ user, onOpenMedia }: MediaGalleryProps) {
                     <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-200 flex items-center justify-center">
                       <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                         <div className="bg-white bg-opacity-90 rounded-full p-2">
-                          <Camera className="h-4 w-4 text-gray-800" />
+                          <Camera className="h-4 w-4 text-var(--text-primary)" />
                         </div>
                       </div>
                     </div>

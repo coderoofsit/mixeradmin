@@ -20,7 +20,8 @@ import {
   Shield,
   Sparkles,
   HeartHandshake,
-  Clock
+  Clock,
+  CreditCard
 } from 'lucide-react'
 
 interface LayoutProps {
@@ -52,6 +53,7 @@ const Layout = ({ children }: LayoutProps) => {
       '/feedback': 'Feedback Management',
       '/admin': 'Admin Management',
       '/blind-dates': 'Blind Dates',
+      '/subscriptions': 'Subscription Management',
       '/venues': 'Venues'
     }
     return titleMap[pathname] || 'Admin Panel'
@@ -73,6 +75,7 @@ const Layout = ({ children }: LayoutProps) => {
     // { name: 'Organizers', href: '/organizers', icon: Building2 },
     { name: 'Feedback', href: '/feedback', icon: MessageSquare },
     { name: 'Blind Dates', href: '/blind-dates', icon: HeartHandshake },
+    { name: 'Subscriptions', href: '/subscriptions', icon: CreditCard },
     { 
       name: 'Admin Management', 
       href: '/admin-management', 
@@ -218,25 +221,7 @@ const Layout = ({ children }: LayoutProps) => {
                 </div>
               </div>
             
-              {/* User Profile */}
-              <div className="flex items-center gap-x-3 glass px-3 py-2 rounded-xl">
-                <div className="h-8 w-8 bg-gradient-secondary rounded-lg flex items-center justify-center">
-                  <User className="h-4 w-4 text-white" />
-                </div>
-                <div className="text-sm">
-                  <p className="font-semibold text-var(--text-primary)">{user?.name}</p>
-                  <p className="text-xs text-var(--text-muted)">{user?.role}</p>
-                </div>
-              </div>
               
-              {/* Logout Button */}
-              <button
-                onClick={handleLogout}
-                className="p-2 rounded-xl glass hover:scale-105 transition-all duration-300"
-                title="Logout"
-              >
-                <LogOut className="h-5 w-5 text-var(--error)" />
-              </button>
             </div>
           </div>
         </div>

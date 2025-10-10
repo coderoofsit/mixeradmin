@@ -41,12 +41,12 @@ export default function VerificationStatusCard({
   }
 
   return (
-    <div className="glass-card p-6">
+    <div className="glass-card p-4">
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-4 flex items-center">
         <Shield className="h-5 w-5 mr-2 text-var(--primary)" />
         Verification Status
       </h3>
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <CheckCircle className="h-5 w-5 text-var(--text-muted)" />
@@ -67,7 +67,8 @@ export default function VerificationStatusCard({
                   disabled={!user.backgroundCheckPurchased || actionLoading.backgroundVerification}
                   title="Approve background check"
                 >
-                  <CheckCircle className="h-4 w-4" />
+                  <CheckCircle className="h-4 w-4 mr-1" />
+                  Approve
                 </button>
                 <button
                   onClick={() => onBackgroundVerification('rejected')}
@@ -75,7 +76,8 @@ export default function VerificationStatusCard({
                   disabled={!user.backgroundCheckPurchased || actionLoading.backgroundVerification}
                   title="Reject background check"
                 >
-                  <XCircle className="h-4 w-4" />
+                  <XCircle className="h-4 w-4 mr-1" />
+                  Reject
                 </button>
               </>
             )}
@@ -86,7 +88,8 @@ export default function VerificationStatusCard({
                 disabled={actionLoading.backgroundVerification}
                 title="Reset to pending"
               >
-                <Clock className="h-4 w-4" />
+                <Clock className="h-4 w-4 mr-1" />
+                Reset
               </button>
             )}
           </div>
@@ -111,7 +114,7 @@ export default function VerificationStatusCard({
               title="Admin can mark this user's background verification as paid without requiring user payment"
             >
               <CreditCard className="h-4 w-4 mr-2" />
-              {actionLoading.markAsPaid ? 'Processing...' : 'Mark as Paid'}
+              Mark as Paid
             </button>
           )}
         </div>

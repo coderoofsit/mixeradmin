@@ -47,12 +47,12 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
     : null
 
   return (
-    <div className="glass-card p-6">
+    <div className="glass-card p-4">
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-4 flex items-center">
         <Crown className="h-5 w-5 mr-2 text-var(--warning)" />
         Subscription Plan
       </h3>
-      <div className="space-y-4">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Crown className="h-5 w-5 text-var(--text-muted)" />
@@ -121,7 +121,7 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
                 title="Admin can mark this user's subscription plan as paid without requiring user payment"
               >
                 <CreditCard className="h-4 w-4 mr-2" />
-                {actionLoading.markPlanAsPaid ? 'Processing...' : 'Mark Plan as Paid (Admin)'}
+                Mark Plan as Paid (Admin)
               </button>
             </div>
           </div>

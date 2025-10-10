@@ -250,11 +250,11 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
     if (active && payload && payload.length) {
       const data = payload[0].payload;
       return (
-        <div className="glass-card p-4">
+        <div className="glass-card p-4 h-full">
           <p className="font-medium text-var(--text-primary) mb-2">{label}</p>
           <div className="space-y-1">
             <p className="text-sm">
-              <span className="text-blue-600">Basic:</span> {data.basicCount} ({formatCurrency(data.basicRevenue)})
+              <span className="text-var(--primary)">Basic:</span> {data.basicCount} ({formatCurrency(data.basicRevenue)})
             </p>
             <p className="text-sm">
               <span className="text-green-600">Upgrade:</span> {data.upgradeCount} ({formatCurrency(data.upgradeRevenue)})
@@ -444,7 +444,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
       {/* Summary Stats */}
       <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
         <div className="text-center">
-          <p className="text-2xl font-bold text-blue-600">
+          <p className="text-2xl font-bold text-var(--primary)">
             {formatCurrency(chartData.reduce((sum, item) => sum + item.basicRevenue, 0))}
           </p>
           <p className="text-sm text-var(--text-muted)">Basic Revenue</p>

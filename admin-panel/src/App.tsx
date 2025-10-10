@@ -12,6 +12,7 @@ import Feedback from './pages/Feedback'
 // import Venue from './pages/Venue'
 import BlindDates from './pages/BlindDates'
 import AdminManagement from './pages/AdminManagement'
+import Subscriptions from './pages/Subscriptions'
 
 function App() {
   const { user, loading } = useAuth()
@@ -77,6 +78,7 @@ function App() {
           <Route path="/events/:eventId" element={<EventDetail />} /> */}
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/blind-dates" element={<BlindDates />} />
+          <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/admin-management" element={
             user?.role === 'super_admin' ? 
             <AdminManagement /> : 

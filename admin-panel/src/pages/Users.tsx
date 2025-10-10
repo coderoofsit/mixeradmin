@@ -404,7 +404,7 @@ function Users() {
 
       {/* Filters */}
       <div className="glass-card">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-3 lg:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-2 lg:gap-3">
           {/* Search Filter */}
           <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
             <label className="block text-sm font-medium mb-1" style={{color: 'var(--text-primary)'}}>Search:</label>

@@ -425,7 +425,7 @@ function UserDetail() {
   return (
     <div className="min-h-screen bg-var(--bg-secondary) animate-fade-in">
       {/* Header */}
-      <div className="glass-card p-6 mb-6">
+      <div className="glass-card p-4 mb-4 h-full">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
             <button onClick={() => navigate('/users')} className="btn btn-ghost hover-lift">
@@ -477,18 +477,22 @@ function UserDetail() {
       )}
 
       {/* Main Content Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
         {/* Left Column - User Profile */}
-        <div className="xl:col-span-2 space-y-6">
+        <div className="xl:col-span-2 space-y-4">
           <UserProfileHeader user={user} />
           <PersonalInfoCard user={user} />
           <LifestylePreferencesCard user={user} />
           <QuizResultsCard user={user} />
           <AboutInterestsCard user={user} />
-              </div>
+          <MediaGallery
+            user={user}
+            onOpenMedia={openMediaModal}
+          />
+        </div>
               
         {/* Right Sidebar */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           <VerificationStatusCard
             user={user}
             actionLoading={actionLoading}
@@ -514,12 +518,6 @@ function UserDetail() {
           />
                        </div>
                      </div>
-
-      {/* Media Section */}
-      <MediaGallery
-        user={user}
-        onOpenMedia={openMediaModal}
-      />
 
       {/* Modals */}
       <MediaModal

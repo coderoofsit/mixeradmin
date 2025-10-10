@@ -71,14 +71,14 @@ function Feedback() {
       key: 'subject', 
       label: 'Subject',
       render: (value: any, row: any) => (
-        <div className="font-medium text-gray-900">{row.subject}</div>
+        <div className="font-medium text-var(--text-primary)">{row.subject}</div>
       )
     },
     { 
       key: 'message', 
       label: 'Message',
       render: (value: any, row: any) => (
-        <div className="text-sm text-gray-600 max-w-xs truncate">{row.message}</div>
+        <div className="text-sm text-var(--text-secondary) max-w-xs truncate">{row.message}</div>
       )
     },
     { 
@@ -89,11 +89,11 @@ function Feedback() {
           pending: 'bg-yellow-100 text-yellow-800',
           approved: 'bg-green-100 text-green-800',
           rejected: 'bg-red-100 text-red-800',
-          processed: 'bg-blue-100 text-blue-800',
+          processed: 'bg-var(--bg-tertiary) text-var(--text-primary)',
           sent: 'bg-purple-100 text-purple-800'
         }
         return (
-          <span className={`px-2 py-1 rounded-full text-xs font-medium ${(statusColors[row.status as keyof typeof statusColors]) || 'bg-gray-100 text-gray-800'}`}>
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${(statusColors[row.status as keyof typeof statusColors]) || 'bg-var(--bg-tertiary) text-var(--text-primary)'}`}>
             {row.status}
           </span>
         )
@@ -103,7 +103,7 @@ function Feedback() {
       key: 'createdAt', 
       label: 'Created',
       render: (value: any, row: any) => (
-        <div className="text-sm text-gray-500">
+        <div className="text-sm text-var(--text-muted)">
           {new Date(row.createdAt).toLocaleDateString()}
         </div>
       )
@@ -343,7 +343,7 @@ function Feedback() {
             <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
               <label className="text-sm font-medium" style={{color: 'var(--text-primary)'}}>Search:</label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-var(--text-muted)" />
                 <input 
                   value={search} 
                   onChange={e => setSearch(e.target.value)} 
@@ -374,7 +374,7 @@ function Feedback() {
           
           <div className="flex items-center space-x-2">
             {activeFiltersCount > 0 && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-var(--bg-tertiary) text-var(--text-primary)">
                 {activeFiltersCount} filter{activeFiltersCount !== 1 ? 's' : ''} active
               </span>
             )}

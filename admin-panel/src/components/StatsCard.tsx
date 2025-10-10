@@ -46,9 +46,9 @@ const StatsCard: React.FC<StatsCardProps> = ({
       change: 'text-danger-600'
     },
     info: {
-      icon: 'text-blue-600',
-      bg: 'bg-blue-50',
-      change: 'text-blue-600'
+      icon: 'text-var(--primary)',
+      bg: 'bg-var(--bg-tertiary)',
+      change: 'text-var(--primary)'
     }
   }
 
@@ -65,7 +65,7 @@ const StatsCard: React.FC<StatsCardProps> = ({
         
         {loading ? (
           <div className="stats-card-value">
-            <div className="h-8 w-20 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-8 w-20 bg-var(--bg-tertiary) rounded animate-pulse"></div>
           </div>
         ) : (
           <p className="stats-card-value">{value}</p>

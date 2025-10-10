@@ -83,7 +83,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         console.log('Login successful, admin data:', adminData)
         
         // Store JWT token
-        localStorage.setItem('adminToken', adminData.token)
+        if (adminData.token) {
+          localStorage.setItem('adminToken', adminData.token)
+        } else {
+          console.error('No token received from backend')
+          throw new Error('No authentication token received')
+        }
+        
         setUser(adminData)
       } else {
         console.log('Login failed - backend returned success: false')

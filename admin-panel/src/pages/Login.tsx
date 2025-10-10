@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
 import { BarChart3, Eye, EyeOff, Lock, Mail, User, Shield, Sparkles, Users, Calendar, Settings } from 'lucide-react'
 import toast from 'react-hot-toast'
+import LoadingOverlay from '../components/LoadingOverlay'
 
 const Login = () => {
   const { login } = useAuth()
@@ -37,13 +38,7 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-gray-100">
-      {loading && (
-        <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="text-center">
-            <div className="loading-spinner mb-4"></div>
-          </div>
-        </div>
-      )}
+      <LoadingOverlay isVisible={loading} text="Signing in..." />
       
       <div className="flex min-h-screen">
         {/* Left Side - Login Form */}
@@ -61,7 +56,7 @@ const Login = () => {
               <h2 className="mt-6 text-3xl font-bold bg-gradient-to-r from-gray-600 to-gray-700 bg-clip-text text-transparent">
                 Admin
               </h2>
-              <p className="mt-2 text-lg text-gray-600">
+              <p className="mt-2 text-lg text-var(--text-secondary)">
                 Welcome back! Sign in to access the admin dashboard
               </p>
             </div>
@@ -77,7 +72,7 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Mail className="h-5 w-5 text-gray-400" />
+                        <Mail className="h-5 w-5 text-var(--text-muted)" />
                       </div>
                       <input
                         id="email"
@@ -100,7 +95,7 @@ const Login = () => {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Lock className="h-5 w-5 text-gray-400" />
+                        <Lock className="h-5 w-5 text-var(--text-muted)" />
                       </div>
                       <input
                         id="password"
@@ -118,9 +113,9 @@ const Login = () => {
                         onClick={() => setShowPassword(!showPassword)}
                       >
                         {showPassword ? (
-                          <EyeOff className="h-5 w-5 text-gray-400" />
+                          <EyeOff className="h-5 w-5 text-var(--text-muted)" />
                         ) : (
-                          <Eye className="h-5 w-5 text-gray-400" />
+                          <Eye className="h-5 w-5 text-var(--text-muted)" />
                         )}
                       </button>
                     </div>
@@ -135,14 +130,7 @@ const Login = () => {
                     disabled={loading}
                     className="w-full btn btn-primary btn-lg"
                   >
-                    {loading ? (
-                      <div className="flex items-center justify-center">
-                        <div className="loading-spinner h-5 w-5 mr-2"></div>
-                        Signing in...
-                      </div>
-                    ) : (
-                      'Sign in to Dashboard'
-                    )}
+                    Sign in to Dashboard
                   </button>
                 </div>
               </form>
@@ -150,7 +138,7 @@ const Login = () => {
 
             {/* Demo Credentials */}
             <div className="text-center">
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-var(--text-muted)">
                 Enter your admin credentials to access the dashboard
               </p>
             </div>

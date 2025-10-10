@@ -145,7 +145,7 @@ const BlindDates = () => {
 								{rows.map((r) => (
 									<tr key={r._id} className="table-row">
 										<td className="table-cell whitespace-nowrap">{new Date(r.scheduledAt).toLocaleString()}</td>
-										<td className="table-cell max-w-[300px] truncate"><a href={r.link} target="_blank" rel="noreferrer" className="text-gray-600 underline hover:text-gray-800">{r.link}</a></td>
+										<td className="table-cell max-w-[300px] truncate"><a href={r.link} target="_blank" rel="noreferrer" className="text-var(--text-secondary) underline hover:text-var(--text-primary)">{r.link}</a></td>
 										<td className="table-cell">{r.isActive ? 'Yes' : 'No'}</td>
 										<td className="table-cell text-right space-x-2">
 											<button className="btn btn-primary btn-sm" onClick={() => startEdit(r)}>Edit</button>
@@ -155,7 +155,7 @@ const BlindDates = () => {
 								))}
 								{rows.length === 0 && !loading && (
 									<tr>
-										<td colSpan={4} className="py-6 text-center text-gray-500">No records</td>
+										<td colSpan={4} className="py-6 text-center text-var(--text-muted)">No records</td>
 									</tr>
 								)}
 							</tbody>

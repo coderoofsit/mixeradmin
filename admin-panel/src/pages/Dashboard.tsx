@@ -20,6 +20,7 @@ import {
 import toast from 'react-hot-toast'
 import StatsCard from '../components/StatsCard'
 import LoadingSpinner from '../components/LoadingSpinner'
+import LoadingOverlay from '../components/LoadingOverlay'
 import GrowthChartModal from '../components/GrowthChartModal'
 import PurchasePieChart from '../components/PurchasePieChart'
 import RevenueChart from '../components/RevenueChart'
@@ -106,9 +107,9 @@ const Dashboard = () => {
   if (!stats) {
     return (
       <div className="text-center py-12">
-        <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
-        <h3 className="mt-2 text-sm font-medium text-gray-900">No data available</h3>
-        <p className="mt-1 text-sm text-gray-500">Unable to load dashboard statistics.</p>
+        <AlertCircle className="mx-auto h-12 w-12 text-var(--text-muted)" />
+        <h3 className="mt-2 text-sm font-medium text-var(--text-primary)">No data available</h3>
+        <p className="mt-1 text-sm text-var(--text-muted)">Unable to load dashboard statistics.</p>
       </div>
     )
   }
@@ -147,8 +148,8 @@ const Dashboard = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Failed to Load Dashboard</h2>
-          <p className="text-gray-600 mb-4">Unable to load dashboard statistics. Please check your connection and try again.</p>
+          <h2 className="text-xl font-semibold text-var(--text-primary) mb-2">Failed to Load Dashboard</h2>
+          <p className="text-var(--text-secondary) mb-4">Unable to load dashboard statistics. Please check your connection and try again.</p>
           <button 
             onClick={fetchDashboardStats}
             className="btn btn-primary"
@@ -164,6 +165,7 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-8 animate-fade-in" id="dashboard-content">
+      <LoadingOverlay isVisible={isRefreshing} text="Refreshing dashboard..." />
       {/* Modern Header */}
       <div className="glass-card">
         <div className="text-center">
@@ -183,17 +185,8 @@ const Dashboard = () => {
                 : ''
             }`}
           >
-            {isRefreshing ? (
-              <>
-                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                Refreshing...
-              </>
-            ) : (
-              <>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Refresh Dashboard
-              </>
-            )}
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh Dashboard
           </button>
         </div>
       </div>

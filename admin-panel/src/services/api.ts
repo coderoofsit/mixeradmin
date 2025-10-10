@@ -207,6 +207,10 @@ export const adminApi = {
         'Content-Type': 'multipart/form-data',
       },
     }),
+
+  // Subscriptions API
+  getSubscriptions: (params?: any) => api.get('/admin/subscriptions', { params }),
+  getUserPurchaseHistory: (userId: string, params?: any) => api.get(`/admin/subscriptions/${userId}/history`, { params }),
 }
 
 export default api 

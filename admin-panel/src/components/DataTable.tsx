@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Search, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
+import { Search, ChevronLeft, ChevronRight, MoreHorizontal, ChevronDown } from 'lucide-react'
 
 interface Column {
   key: string
@@ -26,6 +26,9 @@ interface DataTableProps {
   emptyMessage?: string
   className?: string
   fullHeight?: boolean
+  expandable?: boolean
+  expandableContent?: (row: any) => React.ReactNode
+  onRowExpand?: (row: any) => void
 }
 
 const DataTable: React.FC<DataTableProps> = ({
@@ -38,15 +41,31 @@ const DataTable: React.FC<DataTableProps> = ({
   onRowClick,
   emptyMessage = 'No data available',
   className = '',
-  fullHeight = false
+  fullHeight = false,
+  expandable = false,
+  expandableContent,
+  onRowExpand
 }) => {
   const [searchTerm, setSearchTerm] = useState('')
   const [sortColumn, setSortColumn] = useState<string | null>(null)
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
 
   const handleSearch = (value: string) => {
     setSearchTerm(value)
     onSearch?.(value)
+  }
+
+  const toggleRowExpansion = (rowId: string, row: any) => {
+    const newExpandedRows = new Set(expandedRows)
+    if (newExpandedRows.has(rowId)) {
+      newExpandedRows.delete(rowId)
+    } else {
+      newExpandedRows.add(rowId)
+      // Call onRowExpand callback when expanding
+      onRowExpand?.(row)
+    }
+    setExpandedRows(newExpandedRows)
   }
 
   const handleSort = (columnKey: string) => {
@@ -166,19 +185,68 @@ const DataTable: React.FC<DataTableProps> = ({
                   </td>
                 </tr>
               ) : (
-                data.map((row, index) => (
-                  <tr 
-                    key={row.id || index} 
-                    className={`table-row ${onRowClick ? 'cursor-pointer' : ''}`}
-                    onClick={() => onRowClick?.(row)}
-                  >
-                    {columns.map((column) => (
-                      <td key={column.key} className="table-cell">
-                        {renderCell(column, row)}
-                      </td>
-                    ))}
-                  </tr>
-                ))
+                data.map((row, index) => {
+                  const rowId = row.id || row._id || index.toString()
+                  const isExpanded = expandedRows.has(rowId)
+                  
+                  if (expandable && expandableContent) {
+                    return (
+                      <React.Fragment key={rowId}>
+                        <tr 
+                          className={`table-row ${onRowClick ? 'cursor-pointer' : ''}`}
+                          onClick={() => onRowClick?.(row)}
+                        >
+                          {columns.map((column, colIndex) => (
+                            <td key={column.key} className="table-cell">
+                              {colIndex === 0 && (
+                                <div className="flex items-center">
+                                  <button
+                                    className="mr-2 p-1 rounded hover:bg-var(--bg-tertiary) transition-colors"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      toggleRowExpansion(rowId, row)
+                                    }}
+                                  >
+                                    {isExpanded ? (
+                                      <ChevronDown className="h-4 w-4 text-var(--text-secondary)" />
+                                    ) : (
+                                      <ChevronRight className="h-4 w-4 text-var(--text-secondary)" />
+                                    )}
+                                  </button>
+                                  {renderCell(column, row)}
+                                </div>
+                              )}
+                              {colIndex > 0 && renderCell(column, row)}
+                            </td>
+                          ))}
+                        </tr>
+                        {isExpanded && (
+                          <tr>
+                            <td colSpan={columns.length} className="table-cell bg-var(--bg-secondary)">
+                              <div className="glass-card p-4 rounded-lg m-2">
+                                {expandableContent(row)}
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </React.Fragment>
+                    )
+                  }
+                  
+                  return (
+                    <tr 
+                      key={rowId} 
+                      className={`table-row ${onRowClick ? 'cursor-pointer' : ''}`}
+                      onClick={() => onRowClick?.(row)}
+                    >
+                      {columns.map((column) => (
+                        <td key={column.key} className="table-cell">
+                          {renderCell(column, row)}
+                        </td>
+                      ))}
+                    </tr>
+                  )
+                })
               )}
             </tbody>
           </table>
@@ -195,7 +263,7 @@ const DataTable: React.FC<DataTableProps> = ({
               )} */}
               {pagination.onLimitChange && (
                 <div className="flex items-center space-x-2">
-                  <label className="text-sm no-wrap text-var(--text-secondary)">Per page:</label>
+                  <label className="text-sm whitespace-nowrap text-var(--text-secondary)">Per page:</label>
                   <select 
                     value={pagination.limit || 20} 
                     onChange={(e) => pagination.onLimitChange?.(Number(e.target.value))}

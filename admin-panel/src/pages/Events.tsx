@@ -16,6 +16,7 @@ import { adminApi } from '../services/api';
 import { Event } from '../types/event';
 import { toast } from 'react-hot-toast';
 import TagChips from '../components/TagChips';
+import LoadingOverlay from '../components/LoadingOverlay';
 
 const Events = () => {
 	const [events, setEvents] = useState<Event[]>([]);
@@ -646,6 +647,7 @@ const Events = () => {
 
 	return (
 		<div className='space-y-6 animate-fade-in'>
+			<LoadingOverlay isVisible={uploadingImage || isSubmitting} text={uploadingImage ? 'Uploading image...' : isSubmitting ? 'Processing...' : 'Loading...'} />
 			{/* Header */}
 			<div className='flex items-center justify-end'>
 				<button
@@ -658,7 +660,7 @@ const Events = () => {
 			</div>
 
 			{/* Filters */}
-			<div className='glass-card mb-6 p-6'>
+			<div className='glass-card mb-4 p-4'>
 				<div className='flex flex-col sm:flex-row gap-4'>
 					<div className='flex-1'>
 						<div className='relative'>
@@ -694,7 +696,7 @@ const Events = () => {
 			</div>
 
 			{/* Events List */}
-			<div className='glass-card p-6'>
+			<div className='glass-card p-4 h-full'>
 				{loading ? (
 					<div className='flex justify-center items-center h-64'>
 						<div className='loading-spinner'></div>
@@ -826,7 +828,7 @@ const Events = () => {
 								handleCreateEvent();
 							}}
 						>
-							<div className='p-5 space-y-5'>
+							<div className='p-4 space-y-4'>
 								{/* Image Section */}
 								<div>
 									<label className='block text-sm font-medium text-var(--text-primary) mb-1'>
@@ -861,9 +863,10 @@ const Events = () => {
 													<button
 														type='button'
 														onClick={removeImage}
-														className='absolute top-2 right-2 btn btn-danger btn-circle'
+														className='absolute top-2 right-2 btn btn-danger btn-sm'
 													>
-														<X className='h-4 w-4' />
+														<X className='h-4 w-4 mr-1' />
+														Remove
 													</button>
 												</div>
 											)}
@@ -890,17 +893,8 @@ const Events = () => {
 														disabled={uploadingImage}
 														className='btn btn-primary hover-lift disabled:opacity-50 flex items-center gap-2'
 													>
-														{uploadingImage ? (
-															<>
-																<div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent'></div>
-																Uploading...
-															</>
-														) : (
-															<>
-																<Upload className='h-4 w-4' />
-																Upload
-															</>
-														)}
+														<Upload className='h-4 w-4' />
+														Upload
 													</button>
 												)}
 											</div>
@@ -917,9 +911,10 @@ const Events = () => {
 													<button
 														type='button'
 														onClick={removeImage}
-														className='absolute top-2 right-2 btn btn-danger btn-circle'
+														className='absolute top-2 right-2 btn btn-danger btn-sm'
 													>
-														<X className='h-4 w-4' />
+														<X className='h-4 w-4 mr-1' />
+														Remove
 													</button>
 												</div>
 											)}
@@ -1055,13 +1050,13 @@ const Events = () => {
 																if (e.key === 'Enter') handleEditTagSave(idx);
 																else if (e.key === 'Escape') setEditingTagIndex(null);
 															}}
-															className='bg-transparent outline-none text-var(--text-primary) text-xs border border-blue-400 rounded px-1'
+															className='bg-transparent outline-none text-var(--text-primary) text-xs border border-var(--primary) rounded px-1'
 														/>
 													) : (
 														<>
 															<span
 																onClick={() => startEditingTag(idx, tag)}
-																className='cursor-text text-blue-900 text-xs'
+																className='cursor-text text-var(--primary) text-xs'
 																role='textbox'
 																tabIndex={0}
 																onKeyDown={(e) =>
@@ -1110,7 +1105,7 @@ const Events = () => {
 							</div>
 
 							{/* Buttons */}
-							<div className='bg-var(--bg-tertiary) px-5 py-3 flex justify-end gap-2 rounded-b-2xl'>
+							<div className='bg-var(--bg-tertiary) px-4 py-3 flex justify-end gap-2 rounded-b-2xl'>
 								<button
 									type='button'
 									onClick={() => setShowCreateModal(false)}
@@ -1123,14 +1118,7 @@ const Events = () => {
 									disabled={isSubmitting}
 									className='btn btn-primary hover-lift disabled:opacity-50 flex items-center gap-2'
 								>
-									{isSubmitting ? (
-										<>
-											<div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent'></div>
-											Creating...
-										</>
-									) : (
-										'Create Event'
-									)}
+									Create Event
 								</button>
 							</div>
 						</form>
@@ -1161,7 +1149,7 @@ const Events = () => {
 								handleUpdateEvent();
 							}}
 						>
-							<div className='p-5 space-y-5'>
+							<div className='p-4 space-y-4'>
 								{/* Image Section */}
 								<div>
 									<label className='block text-sm font-medium text-var(--text-primary) mb-1'>
@@ -1196,9 +1184,10 @@ const Events = () => {
 													<button
 														type='button'
 														onClick={removeImage}
-														className='absolute top-2 right-2 btn btn-danger btn-circle'
+														className='absolute top-2 right-2 btn btn-danger btn-sm'
 													>
-														<X className='h-4 w-4' />
+														<X className='h-4 w-4 mr-1' />
+														Remove
 													</button>
 												</div>
 											)}
@@ -1224,17 +1213,8 @@ const Events = () => {
 														disabled={uploadingImage}
 														className='btn btn-primary hover-lift disabled:opacity-50 flex items-center gap-2'
 													>
-														{uploadingImage ? (
-															<>
-																<div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent'></div>
-																Uploading...
-															</>
-														) : (
-															<>
-																<Upload className='h-4 w-4' />
-																Upload
-															</>
-														)}
+														<Upload className='h-4 w-4' />
+														Upload
 													</button>
 												)}
 											</div>
@@ -1251,9 +1231,10 @@ const Events = () => {
 													<button
 														type='button'
 														onClick={removeImage}
-														className='absolute top-2 right-2 btn btn-danger btn-circle'
+														className='absolute top-2 right-2 btn btn-danger btn-sm'
 													>
-														<X className='h-4 w-4' />
+														<X className='h-4 w-4 mr-1' />
+														Remove
 													</button>
 												</div>
 											)}
@@ -1445,7 +1426,7 @@ const Events = () => {
 							</div>
 
 							{/* Footer Buttons */}
-							<div className='bg-var(--bg-tertiary) px-5 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 rounded-b-2xl'>
+							<div className='bg-var(--bg-tertiary) px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 rounded-b-2xl'>
 								<button
 									type='button'
 									onClick={() => selectedEvent && handleDeleteEvent(selectedEvent._id)}
@@ -1467,14 +1448,7 @@ const Events = () => {
 										disabled={isSubmitting}
 										className='w-full sm:w-auto px-4 py-2 btn-primary text-white rounded-md hover-lift disabled:opacity-50 flex items-center justify-center gap-2 transition'
 									>
-										{isSubmitting ? (
-											<>
-												<div className='animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent'></div>
-												Updating...
-											</>
-										) : (
-											'Update Event'
-										)}
+										Update Event
 									</button>
 								</div>
 							</div>
