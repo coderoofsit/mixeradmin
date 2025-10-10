@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Search, ChevronLeft, ChevronRight, MoreHorizontal, ChevronDown } from 'lucide-react'
+import LoadingSpinner from './LoadingSpinner'
 
 interface Column {
   key: string
@@ -110,7 +111,7 @@ const DataTable: React.FC<DataTableProps> = ({
       <div className={`table-container ${className}`}>
         <div className="p-8">
           <div className="flex items-center justify-center space-x-2">
-            <div className="loading-spinner h-6 w-6"></div>
+            <LoadingSpinner size="sm" />
             <span style={{color: 'var(--text-secondary)'}}>Loading data...</span>
           </div>
         </div>

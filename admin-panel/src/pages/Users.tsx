@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
 import DataTable from '../components/DataTable'
+import { mapGenderForDisplay, getGenderFilterOptions, mapFilterToDatabaseGender } from '../utils/genderUtils'
 import toast from 'react-hot-toast'
 
 interface User {
@@ -86,7 +87,7 @@ function Users() {
         search: debouncedSearchTerm,
         status: filterStatus !== 'all' ? filterStatus : undefined,
         accountStatus: filterAccountStatus !== 'all' ? filterAccountStatus : undefined,
-        gender: filterGender !== 'all' ? filterGender : undefined,
+        gender: filterGender !== 'all' ? mapFilterToDatabaseGender(filterGender) : undefined,
         backgroundVerification: filterVerification !== 'all' ? filterVerification : undefined
       }
       
@@ -352,7 +353,7 @@ function Users() {
     ageGender: (
       <div className="text-center">
         <div className="text-sm text-var(--text-primary)">{getAgeFromDOB(user.dateOfBirth) || '—'}</div>
-        <div className="text-xs text-var(--text-muted)">{user.gender ? String(user.gender).charAt(0).toUpperCase() + String(user.gender).slice(1) : '—'}</div>
+        <div className="text-xs text-var(--text-muted)">{mapGenderForDisplay(user.gender)}</div>
       </div>
     ),
     accountStatus: (
@@ -446,10 +447,9 @@ function Users() {
               onChange={(e) => setFilterGender(e.target.value)}
               className="select w-full px-2 py-1.5 text-sm"
             >
-              <option value="all">All</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
+              {getGenderFilterOptions().map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
             </select>
           </div>
 

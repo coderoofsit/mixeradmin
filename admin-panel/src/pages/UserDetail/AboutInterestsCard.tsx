@@ -1,4 +1,5 @@
 import { Users } from 'lucide-react'
+import { mapInterestedInForDisplay } from '../../utils/genderUtils'
 
 interface AboutInterestsCardProps {
   user: {
@@ -61,7 +62,7 @@ export default function AboutInterestsCard({ user }: AboutInterestsCardProps) {
           <div>
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Interested In</label>
             <div className="flex flex-wrap gap-2 mt-2">
-              {user.interestedIn.map((interest, index) => (
+              {mapInterestedInForDisplay(user.interestedIn).map((interest, index) => (
                 <span key={index} className="badge badge-success">{interest}</span>
               ))}
             </div>

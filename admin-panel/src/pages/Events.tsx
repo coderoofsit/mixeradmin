@@ -17,6 +17,7 @@ import { Event } from '../types/event';
 import { toast } from 'react-hot-toast';
 import TagChips from '../components/TagChips';
 import LoadingOverlay from '../components/LoadingOverlay';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Events = () => {
 	const [events, setEvents] = useState<Event[]>([]);
@@ -699,7 +700,7 @@ const Events = () => {
 			<div className='glass-card p-4 h-full'>
 				{loading ? (
 					<div className='flex justify-center items-center h-64'>
-						<div className='loading-spinner'></div>
+						<LoadingSpinner size="md" />
 					</div>
 				) : events.length === 0 ? (
 					<div className='text-center py-12'>

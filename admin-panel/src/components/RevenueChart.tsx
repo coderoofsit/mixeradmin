@@ -3,6 +3,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { calculateRevenue, formatCurrency, getPricingPlan } from '../config/pricing';
 import { adminApi } from '../services/api';
 import { Calendar, TrendingUp, DollarSign } from 'lucide-react';
+import LoadingSpinner from './LoadingSpinner';
 
 interface RevenueData {
   period: string;
@@ -284,7 +285,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
       <div className={`glass-card ${className}`}>
         <div className="flex items-center justify-center h-64">
           <div className="text-center">
-            <div className="loading-spinner mb-4"></div>
+            <LoadingSpinner size="md" className="mb-4" />
             <p className="text-var(--text-muted)">Loading revenue data...</p>
           </div>
         </div>

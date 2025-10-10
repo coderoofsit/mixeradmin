@@ -1,5 +1,6 @@
 import { User } from 'lucide-react'
 import { formatUTCDateOnly } from '../../utils/dateUtils'
+import { mapGenderForDisplay } from '../../utils/genderUtils'
 
 interface PersonalInfoCardProps {
   user: {
@@ -32,7 +33,7 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
           </div>
           <div>
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Gender</label>
-            <p className="text-var(--text-primary) font-medium">{user.gender || 'N/A'}</p>
+            <p className="text-var(--text-primary) font-medium">{mapGenderForDisplay(user.gender)}</p>
           </div>
           <div>
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Pronoun</label>

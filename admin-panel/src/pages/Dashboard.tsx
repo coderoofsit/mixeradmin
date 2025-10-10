@@ -18,6 +18,7 @@ import {
   FileText
 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { mapGenderForDisplay } from '../utils/genderUtils'
 import StatsCard from '../components/StatsCard'
 import LoadingSpinner from '../components/LoadingSpinner'
 import LoadingOverlay from '../components/LoadingOverlay'
@@ -97,7 +98,7 @@ const Dashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="loading-spinner mb-4"></div>
+          <LoadingSpinner size="md" className="mb-4" />
           {/* <p className="text-gray-600 font-medium">Loading dashboard...</p> */}
         </div>
       </div>
@@ -332,7 +333,7 @@ const Dashboard = () => {
             <div className="space-y-4">
               {stats?.genderDistribution && stats.genderDistribution.length > 0 ? stats.genderDistribution.map((item, index) => (
                 <div key={index} className="flex items-center justify-between">
-                  <span className="capitalize text-var(--text-secondary)">{item.gender}</span>
+                  <span className="capitalize text-var(--text-secondary)">{mapGenderForDisplay(item.gender)}</span>
                   <div className="flex items-center space-x-3">
                     <div className="w-32 bg-var(--bg-tertiary) rounded-full h-4">
                       <div

@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import { useAuth } from './hooks/useAuth'
 import { ThemeProvider } from './contexts/ThemeContext'
+import LoadingSpinner from './components/LoadingSpinner'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Users from './pages/Users'
@@ -22,7 +23,7 @@ function App() {
       <ThemeProvider>
         <div className="min-h-screen flex items-center justify-center bg-var(--bg-secondary)">
           {/* <div className="glass-card p-8"> */}
-            <div className="loading-spinner"></div>
+            <LoadingSpinner size="md" />
             {/* <p className="mt-4 text-var(--text-secondary)">Loading...</p> */}
           {/* </div> */}
         </div>

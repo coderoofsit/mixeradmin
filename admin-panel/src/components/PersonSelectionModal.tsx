@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { XCircle, CheckCircle, Shield, FileSearch, AlertCircle, RefreshCw } from 'lucide-react';
 import { adminApi } from '../services/api';
 import toast from 'react-hot-toast';
+import { mapGenderForDisplay } from '../utils/genderUtils';
 
 interface Person {
   reportToken: string;

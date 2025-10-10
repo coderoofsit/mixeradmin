@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { adminApi } from '../services/api'
 import { Plus, RefreshCw, Edit, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import LoadingSpinner from '../components/LoadingSpinner'
 
 interface VenueItem {
   _id?: string
@@ -146,7 +147,7 @@ function Venue() {
           {loading && (
             <div className="flex items-center justify-center h-full">
               <div className="text-center">
-                <div className="loading-spinner mx-auto mb-4"></div>
+                <LoadingSpinner size="md" className="mx-auto mb-4" />
                 <div className="text-gray-500">Loading venues...</div>
               </div>
             </div>

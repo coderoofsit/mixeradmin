@@ -1,5 +1,6 @@
 import { X, Shield, FileSearch, AlertCircle, RefreshCw, CheckCircle, XCircle } from 'lucide-react'
 import PersonSelectionModal from '../../components/PersonSelectionModal'
+import { mapGenderForDisplay } from '../../utils/genderUtils'
 
 interface BackgroundCheckModalsProps {
   modal: {
@@ -69,7 +70,7 @@ export default function BackgroundCheckModals({
                       </div>
                       <div>
                         <span className="text-var(--text-muted)">Gender:</span>
-                        <span className="text-var(--text-primary) ml-2">{person.gender || 'N/A'}</span>
+                        <span className="text-var(--text-primary) ml-2">{mapGenderForDisplay(person.gender)}</span>
                       </div>
                       <div className="md:col-span-2">
                         <span className="text-var(--text-muted)">Address:</span>
