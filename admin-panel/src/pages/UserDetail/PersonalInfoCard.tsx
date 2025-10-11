@@ -152,7 +152,7 @@ interface PersonalInfoCardProps {
 
 export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
         <User className="h-5 w-5 mr-2 text-var(--primary)" />
         Personal Information

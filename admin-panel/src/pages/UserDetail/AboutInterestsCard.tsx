@@ -24,54 +24,61 @@ export default function AboutInterestsCard({ user }: AboutInterestsCardProps) {
   if (!hasContent) return null
 
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
         <Users className="h-5 w-5 mr-2 text-var(--accent)" />
         About & Interests
       </h3>
-      <div className="space-y-2">
-        {user.profileContent.aboutMe && (
-            <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">About Me:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.profileContent.aboutMe || 'N/A'}</p>
-          </div>
-        )}
-        {user.profileContent.lookingFor && (
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Looking For:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.profileContent.lookingFor}</p>
-          </div>
-        )}
-        {user.profileContent.thingsILike && user.profileContent.thingsILike.length > 0 && (
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Things I Like:</label>
-            <div className="flex flex-wrap mt-[-2px]">
-              {user.profileContent.thingsILike?.map((item, index) => (
-                <span key={index} className="badge badge-secondary mx-1 mb-1">{item}</span>
-              ))}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Left Column - Text Content */}
+        <div className="space-y-4">
+          {user.profileContent.aboutMe && (
+            <div>
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide block mb-2">About Me</label>
+              <p className="text-sm text-var(--text-primary) leading-relaxed">{user.profileContent.aboutMe}</p>
             </div>
-          </div>
-        )}
-        {user.profileContent.values && user.profileContent.values.length > 0 && (
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Values:</label>
-            <div className="flex flex-wrap mt-[-2px]">
-              {user.profileContent.values?.map((value, index) => (
-                <span key={index} className="badge badge-primary mx-1 mb-1">{value}</span>
-              ))}
+          )}
+          {user.profileContent.lookingFor && (
+            <div>
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide block mb-2">Looking For</label>
+              <p className="text-sm text-var(--text-primary) leading-relaxed">{user.profileContent.lookingFor}</p>
             </div>
-          </div>
-        )}
-        {user.personalInfo.interestedIn && user.personalInfo.interestedIn.length > 0 && (
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Interested In:</label>
-            <div className="flex flex-wrap mt-[-2px]">
-              {mapInterestedInForDisplay(user.personalInfo.interestedIn).map((interest, index) => (
-                <span key={index} className="badge badge-success mx-1 mb-1">{interest}</span>
-              ))}
+          )}
+        </div>
+        
+        {/* Right Column - Tags and Interests */}
+        <div className="space-y-4">
+          {user.profileContent.thingsILike && user.profileContent.thingsILike.length > 0 && (
+            <div>
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide block mb-2">Things I Like</label>
+              <div className="flex flex-wrap gap-2">
+                {user.profileContent.thingsILike?.map((item, index) => (
+                  <span key={index} className="badge badge-secondary">{item}</span>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
+          {user.profileContent.values && user.profileContent.values.length > 0 && (
+            <div>
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide block mb-2">Values</label>
+              <div className="flex flex-wrap gap-2">
+                {user.profileContent.values?.map((value, index) => (
+                  <span key={index} className="badge badge-primary">{value}</span>
+                ))}
+              </div>
+            </div>
+          )}
+          {user.personalInfo.interestedIn && user.personalInfo.interestedIn.length > 0 && (
+            <div>
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide block mb-2">Interested In</label>
+              <div className="flex flex-wrap gap-2">
+                {mapInterestedInForDisplay(user.personalInfo.interestedIn).map((interest, index) => (
+                  <span key={index} className="badge badge-success">{interest}</span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )

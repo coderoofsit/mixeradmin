@@ -23,7 +23,7 @@ export default function SocialActivityCard({ socialActivity, moderation }: Socia
 
   if (totalActivity === 0 && moderation.reports.given.total === 0 && moderation.blocks.given.total === 0) {
     return (
-      <div className="glass-card p-4">
+      <div>
         <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
           <Heart className="h-5 w-5 mr-2 text-var(--primary)" />
           Social Activity
@@ -37,7 +37,7 @@ export default function SocialActivityCard({ socialActivity, moderation }: Socia
   }
 
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
         <Heart className="h-5 w-5 mr-2 text-var(--primary)" />
         Social Activity

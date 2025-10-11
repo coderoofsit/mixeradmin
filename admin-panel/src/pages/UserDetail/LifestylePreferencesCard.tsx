@@ -86,7 +86,7 @@ interface LifestylePreferencesCardProps {
 
 export default function LifestylePreferencesCard({ user }: LifestylePreferencesCardProps) {
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
         <Heart className="h-5 w-5 mr-2 text-var(--secondary)" />
         Lifestyle & Preferences
