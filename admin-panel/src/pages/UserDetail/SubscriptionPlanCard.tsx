@@ -55,7 +55,7 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
   )
 
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-4 flex items-center">
         <Crown className="h-5 w-5 mr-2 text-var(--warning)" />
         Subscription Plan

@@ -123,12 +123,12 @@ const DataTable: React.FC<DataTableProps> = ({
     : "table-container"
 
   const tableWrapperClass = fullHeight 
-    ? "flex-1 overflow-y-auto" 
-    : "overflow-x-auto custom-scrollbar"
+    ? "flex-1 overflow-auto relative" 
+    : "overflow-auto custom-scrollbar relative"
 
   const tableStyle = fullHeight 
     ? { height: 'calc(100vh - 200px)', minHeight: '400px', maxHeight: 'calc(100vh - 150px)' }
-    : {}
+    : { height: '500px', minHeight: '400px' }
 
   return (
     <div className={`${fullHeight ? '' : 'space-y-4'} ${className}`}>
@@ -147,11 +147,11 @@ const DataTable: React.FC<DataTableProps> = ({
       )}*/}
 
       {/* Table */} 
-      <div className={tableContainerClass} style={tableStyle}>
-        <div className={tableWrapperClass}>
-          <table className="table">
+      <div className={tableContainerClass}>
+        <div className={tableWrapperClass} style={tableStyle}>
+          <table className="table w-full">
             <thead className="table-header">
-              <tr>
+              <tr className="sticky top-0 z-10 bg-var(--bg-primary) border-b border-var(--border)">
                 {columns.map((column) => (
                   <th
                     key={column.key}

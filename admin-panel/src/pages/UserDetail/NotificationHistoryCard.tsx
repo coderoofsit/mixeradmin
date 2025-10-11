@@ -104,7 +104,7 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
 
   if (loading && notifications.length === 0) {
     return (
-      <div className="glass-card p-6">
+      <div>
         <div className="flex items-center justify-center h-32">
           <LoadingSpinner />
         </div>
@@ -113,7 +113,7 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
   }
 
   return (
-    <div className="glass-card p-6">
+    <div>
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-semibold text-var(--text-primary) flex items-center">
           <Bell className="h-5 w-5 mr-2 text-var(--primary)" />

@@ -218,7 +218,7 @@ export default function VerificationStatusCard({
   }
 
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-4 flex items-center">
         <Shield className="h-5 w-5 mr-2 text-var(--primary)" />
         Verification Status
@@ -242,7 +242,7 @@ export default function VerificationStatusCard({
                 <button
                   onClick={() => onBackgroundVerification('approved')}
                   className="btn btn-success btn-sm"
-                  disabled={user.adminData.purchases.total === 0 || actionLoading.backgroundVerification}
+                  disabled={actionLoading.backgroundVerification}
                   title="Approve background check"
                 >
                   <CheckCircle className="h-4 w-4 mr-1" />
@@ -251,7 +251,7 @@ export default function VerificationStatusCard({
                 <button
                   onClick={() => onBackgroundVerification('rejected')}
                   className="btn btn-danger btn-sm"
-                  disabled={user.adminData.purchases.total === 0 || actionLoading.backgroundVerification}
+                  disabled={actionLoading.backgroundVerification}
                   title="Reject background check"
                 >
                   <XCircle className="h-4 w-4 mr-1" />
@@ -279,8 +279,8 @@ export default function VerificationStatusCard({
             <CreditCard className="h-5 w-5 text-var(--text-muted)" />
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium text-var(--text-primary)">Purchase Status:</p>
-              <span className={`badge ${user.adminData.purchases.total > 0 ? 'badge-success' : 'badge-danger'}`}>
-                {user.adminData.purchases.total > 0 ? 'Purchased' : 'Not Purchased'}
+              <span className={`badge ${user.accountStatus.backgroundVerification !== 'unpaid' ? 'badge-success' : 'badge-danger'}`}>
+                {user.accountStatus.backgroundVerification !== 'unpaid' ? 'Paid' : 'Not Purchased'}
               </span>
             </div>
           </div>
@@ -301,17 +301,23 @@ export default function VerificationStatusCard({
         </div>
 
         {/* Purchase Details */}
-        {user.adminData.purchases.total > 0 && user.adminData.purchases.recent.length > 0 && (
+        {user.accountStatus.backgroundVerification !== 'unpaid' && (
           <div className="bg-var(--bg-tertiary) p-3 rounded-lg">
-            <p className="text-xs text-var(--text-muted)">Purchased: {formatUTCDateOnly(user.adminData.purchases.recent[0].purchaseDate)}</p>
-            {user.adminData.purchases.recent[0]._id.includes('admin_') && (
-              <p className="text-xs text-var(--primary) font-medium mt-1">💳 Paid by Admin</p>
+            {user.adminData.purchases.total > 0 && user.adminData.purchases.recent.length > 0 ? (
+              <>
+                <p className="text-xs text-var(--text-muted)">Purchased: {formatUTCDateOnly(user.adminData.purchases.recent[0].purchaseDate)}</p>
+                {user.adminData.purchases.recent[0]._id.includes('admin_') && (
+                  <p className="text-xs text-var(--primary) font-medium mt-1">💳 Paid by Admin</p>
+                )}
+              </>
+            ) : (
+              <p className="text-xs text-var(--text-muted)">Background check has been paid for</p>
             )}
           </div>
         )}
 
         {/* Warning: Purchase Required */}
-        {user.adminData.purchases.total === 0 && user.accountStatus.backgroundVerification !== 'unpaid' && (
+        {user.accountStatus.backgroundVerification === 'unpaid' && user.adminData.purchases.total === 0 && (
           <div className="glass-card p-3 border-l-4 border-var(--warning)">
             <div className="flex items-center">
               <AlertCircle className="h-4 w-4 text-var(--warning) mr-2" />

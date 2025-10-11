@@ -17,7 +17,7 @@ export default function MediaGallery({ user, onOpenMedia }: MediaGalleryProps) {
   const hasMedia = user.profileContent.images && user.profileContent.images.length > 0
 
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-6 flex items-center">
         <Camera className="h-5 w-5 mr-2 text-var(--accent)" />
         Media Gallery

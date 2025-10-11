@@ -56,7 +56,7 @@ export default function PurchaseHistoryCard({ purchases }: PurchaseHistoryCardPr
 
   if (!purchases || (!purchases.recent || purchases.recent.length === 0)) {
     return (
-      <div className="glass-card p-4">
+      <div>
         <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
           <CreditCard className="h-5 w-5 mr-2 text-var(--primary)" />
           Purchase History
@@ -70,7 +70,7 @@ export default function PurchaseHistoryCard({ purchases }: PurchaseHistoryCardPr
   }
 
   return (
-    <div className="glass-card p-4">
+    <div>
       <h3 className="text-lg font-semibold text-var(--text-primary) mb-3 flex items-center">
         <CreditCard className="h-5 w-5 mr-2 text-var(--primary)" />
         Purchase History
