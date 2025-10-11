@@ -216,7 +216,6 @@
   
   .btn-primary:hover {
     background: var(--primary-dark);
-    transform: scale(0.98); /* Apple-style press effect */
     box-shadow: var(--shadow-md);
   }
   
@@ -235,7 +234,6 @@
   
   .btn-secondary:hover {
     background: var(--bg-quaternary);
-    transform: scale(0.98);
     box-shadow: var(--shadow-md);
   }
   
@@ -253,7 +251,6 @@
   
   .btn-ghost:hover {
     background: var(--bg-tertiary);
-    transform: scale(0.98);
   }
   
   .btn-ghost:focus {
@@ -270,7 +267,6 @@
   
   .btn-danger:hover {
     background: #E60000; /* Darker red */
-    transform: scale(0.98);
     box-shadow: var(--shadow-md);
   }
   
@@ -288,7 +284,6 @@
   
   .btn-success:hover {
     background: #30B04A; /* Darker green */
-    transform: scale(0.98);
     box-shadow: var(--shadow-md);
   }
   
@@ -306,7 +301,6 @@
   
   .btn-warning:hover {
     background: #E6850E; /* Darker orange */
-    transform: scale(0.98);
     box-shadow: var(--shadow-md);
   }
   
@@ -362,7 +356,6 @@
   
   .btn-error:hover {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    transform: scale(1.05);
   }
   
   .btn-error:focus {
@@ -390,7 +383,6 @@
   }
   
   .card-hover:hover {
-    transform: scale(1.02);
     box-shadow: var(--shadow-lg);
   }
   
@@ -418,7 +410,6 @@
   }
   
   .stats-card:hover {
-    transform: translateY(-2px);
     box-shadow: var(--shadow-lg);
   }
   
@@ -675,7 +666,7 @@
   }
   
   .hover-lift:hover {
-    transform: translateY(-0.5rem);
+    /* Transform removed */
   }
   
   .hover-glow {
@@ -742,7 +733,7 @@
   }
   
   .theme-toggle:hover {
-    transform: scale(1.1);
+    /* Transform removed */
   }
   
   /* Apple-style Navigation Items */
@@ -1453,7 +1444,6 @@
   .pagination-button:hover {
     background: var(--bg-secondary);
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    transform: translateY(-1px);
   }
   
   .pagination-button:disabled {
@@ -1487,7 +1477,6 @@
   
   .pagination-button-active:hover {
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    transform: scale(1.05);
   }
   
   .pagination-button-active:focus {

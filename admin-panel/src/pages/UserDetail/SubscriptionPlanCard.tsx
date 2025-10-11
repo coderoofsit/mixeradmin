@@ -3,9 +3,17 @@ import { formatUTCDateOnly, isDateExpired } from '../../utils/dateUtils'
 
 interface SubscriptionPlanCardProps {
   user: {
-    currentPlan?: string | null
-    planExpiry?: string | null
-    planPurchaseDate?: string | null
+    adminData: {
+      purchases: {
+        total: number
+        recent: Array<{
+          planName: string
+          purchaseDate: string
+          expiryDate?: string | null
+          status: string
+        }>
+      }
+    }
   }
   actionLoading: {
     markPlanAsPaid?: boolean
@@ -41,10 +49,10 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
     return purchaseDate.toISOString()
   }
 
-  // Get calculated purchase date
-  const calculatedPurchaseDate = user.currentPlan && user.planExpiry 
-    ? calculatePurchaseDate(user.currentPlan, user.planExpiry)
-    : null
+  // Get the most recent active subscription plan
+  const activePlan = user.adminData.purchases.recent.find(purchase => 
+    purchase.expiryDate && new Date(purchase.expiryDate) > new Date()
+  )
 
   return (
     <div className="glass-card p-4">
@@ -58,42 +66,30 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
             <Crown className="h-5 w-5 text-var(--text-muted)" />
             <div>
               <p className="text-sm font-medium text-var(--text-primary)">Current Plan</p>
-              <span className={`badge ${user.currentPlan ? 'badge-primary' : 'badge-secondary'}`}>
-                {user.currentPlan || 'No Plan'}
+              <span className={`badge ${activePlan ? 'badge-primary' : 'badge-secondary'}`}>
+                {activePlan?.planName || 'No Plan'}
               </span>
             </div>
           </div>
         </div>
 
-        {user.currentPlan && (
+        {activePlan && (
           <div className="bg-var(--bg-tertiary) p-3 rounded-lg">
             <div className="space-y-3">
-              {/* Show calculated purchase date if we have plan and expiry */}
-              {calculatedPurchaseDate && (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-var(--text-muted)">Purchased at:</p>
-                  <p className="text-sm font-medium text-var(--text-primary)">
-                    {formatUTCDateOnly(calculatedPurchaseDate)}
-                  </p>
-                </div>
-              )}
-              {/* Show actual purchase date if available (from database) */}
-              {user.planPurchaseDate && user.planPurchaseDate !== calculatedPurchaseDate && (
-                <div className="flex items-center justify-between">
-                  <p className="text-sm text-var(--text-muted)">Actual Purchase:</p>
-                  <p className="text-sm font-medium text-var(--text-primary)">
-                    {formatUTCDateOnly(user.planPurchaseDate)}
-                  </p>
-                </div>
-              )}
-              {user.planExpiry && (
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-var(--text-muted)">Purchased at:</p>
+                <p className="text-sm font-medium text-var(--text-primary)">
+                  {formatUTCDateOnly(activePlan.purchaseDate)}
+                </p>
+              </div>
+              {activePlan.expiryDate && (
                 <div className="flex items-center justify-between">
                   <p className="text-sm text-var(--text-muted)">Expires at:</p>
                   <div className="flex items-center space-x-2">
                     <p className="text-sm font-medium text-var(--text-primary)">
-                      {formatUTCDateOnly(user.planExpiry)} 
+                      {formatUTCDateOnly(activePlan.expiryDate)} 
                     </p>
-                    {!isDateExpired(user.planExpiry) ? (
+                    {!isDateExpired(activePlan.expiryDate) ? (
                       <span className="text-xs text-var(--success) font-medium">Active</span>
                     ) : (
                       <span className="text-xs text-var(--error) font-medium">Expired</span>
@@ -105,7 +101,7 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
           </div>
         )}
 
-        {!user.currentPlan && (
+        {!activePlan && (
           <div className="glass-card p-3 border-l-4 border-var(--warning)">
             <div className="space-y-3">
               <div className="flex items-center">
@@ -116,33 +112,12 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
               </div>
               <button
                 onClick={onMarkPlanAsPaid}
-                className="btn btn-success btn-sm w-full hover-lift"
+                className="btn btn-success btn-sm w-full"
                 disabled={actionLoading.markPlanAsPaid}
                 title="Admin can mark this user's subscription plan as paid without requiring user payment"
               >
                 <CreditCard className="h-4 w-4 mr-2" />
                 Mark Plan as Paid (Admin)
-              </button>
-            </div>
-          </div>
-        )}
-
-        {user.currentPlan && user.planExpiry && new Date(user.planExpiry) <= new Date() && (
-          <div className="glass-card p-3 border-l-4 border-var(--error)">
-            <div className="space-y-3">
-              <div className="flex items-center">
-                <AlertCircle className="h-4 w-4 text-var(--error) mr-2" />
-                <p className="text-sm text-var(--text-primary)">
-                  Subscription plan has expired.
-                </p>
-              </div>
-              <button
-                onClick={onMarkPlanAsPaid}
-                className="btn btn-success btn-sm w-full hover-lift"
-                title="Admin can renew this user's subscription plan without requiring user payment"
-              >
-                <CreditCard className="h-4 w-4 mr-2" />
-                Renew Plan (Admin)
               </button>
             </div>
           </div>

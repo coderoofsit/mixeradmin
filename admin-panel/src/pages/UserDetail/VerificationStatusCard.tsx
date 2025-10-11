@@ -63,7 +63,7 @@
 //               <>
 //                 <button
 //                   onClick={() => onBackgroundVerification('approved')}
-//                   className="btn btn-success btn-sm hover-lift"
+//                   className="btn btn-success btn-sm"
 //                   disabled={!user.backgroundCheckPurchased || actionLoading.backgroundVerification}
 //                   title="Approve background check"
 //                 >
@@ -72,7 +72,7 @@
 //                 </button>
 //                 <button
 //                   onClick={() => onBackgroundVerification('rejected')}
-//                   className="btn btn-danger btn-sm hover-lift"
+//                   className="btn btn-danger btn-sm"
 //                   disabled={!user.backgroundCheckPurchased || actionLoading.backgroundVerification}
 //                   title="Reject background check"
 //                 >
@@ -84,7 +84,7 @@
 //             {(user.backgroundVerification === 'approved' || user.backgroundVerification === 'rejected') && (
 //               <button
 //                 onClick={() => onBackgroundVerification('pending')}
-//                 className="btn btn-warning btn-sm hover-lift"
+//                 className="btn btn-warning btn-sm"
 //                 disabled={actionLoading.backgroundVerification}
 //                 title="Reset to pending"
 //               >
@@ -109,7 +109,7 @@
 //           {user.backgroundVerification === 'unpaid' && (
 //             <button
 //               onClick={onMarkAsPaid}
-//               className="btn btn-success btn-sm hover-lift"
+//               className="btn btn-success btn-sm"
 //               disabled={user.backgroundCheckPurchased || actionLoading.markAsPaid}
 //               title="Admin can mark this user's background verification as paid without requiring user payment"
 //             >
@@ -150,7 +150,7 @@
 //         <div className="flex justify-center">
 //           <button
 //             onClick={onViewBackgroundChecks}
-//             className="btn btn-primary btn-sm hover-lift"
+//             className="btn btn-primary btn-sm"
 //             disabled={!backgroundCheckResults || backgroundCheckResults.length === 0}
 //           >
 //             <FileSearch className="h-4 w-4 mr-2" />
@@ -167,12 +167,21 @@ import { formatUTCDateOnly } from '../../utils/dateUtils'
 
 interface VerificationStatusCardProps {
   user: {
-    _id: string
-    backgroundVerification: 'unpaid' | 'pending' | 'approved' | 'rejected'
-    backgroundCheckPurchased?: boolean
-    backgroundCheckPurchaseDate?: string
-    backgroundCheckPurchaseId?: string
-    backgroundVerificationNotes?: string
+    id: string
+    accountStatus: {
+      backgroundVerification: 'unpaid' | 'pending' | 'approved' | 'rejected'
+    }
+    adminData: {
+      purchases: {
+        total: number
+        recent: Array<{
+          _id: string
+          planName: string
+          purchaseDate: string
+          status: string
+        }>
+      }
+    }
   }
   actionLoading: {
     backgroundVerification?: boolean
@@ -221,19 +230,19 @@ export default function VerificationStatusCard({
             <CheckCircle className="h-5 w-5 text-var(--text-muted)" />
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium text-var(--text-primary)">Background Check:</p>
-              <span className={`badge ${getVerificationBadgeClass(user.backgroundVerification)}`}>
-                {user.backgroundVerification}
+              <span className={`badge ${getVerificationBadgeClass(user.accountStatus.backgroundVerification)}`}>
+                {user.accountStatus.backgroundVerification}
               </span>
             </div>
           </div>
           {/* Background Check Action Buttons */}
           <div className="flex items-center space-x-2 ml-8">
-            {user.backgroundVerification === 'pending' && (
+            {user.accountStatus.backgroundVerification === 'pending' && (
               <>
                 <button
                   onClick={() => onBackgroundVerification('approved')}
-                  className="btn btn-success btn-sm hover-lift"
-                  disabled={!user.backgroundCheckPurchased || actionLoading.backgroundVerification}
+                  className="btn btn-success btn-sm"
+                  disabled={user.adminData.purchases.total === 0 || actionLoading.backgroundVerification}
                   title="Approve background check"
                 >
                   <CheckCircle className="h-4 w-4 mr-1" />
@@ -241,8 +250,8 @@ export default function VerificationStatusCard({
                 </button>
                 <button
                   onClick={() => onBackgroundVerification('rejected')}
-                  className="btn btn-danger btn-sm hover-lift"
-                  disabled={!user.backgroundCheckPurchased || actionLoading.backgroundVerification}
+                  className="btn btn-danger btn-sm"
+                  disabled={user.adminData.purchases.total === 0 || actionLoading.backgroundVerification}
                   title="Reject background check"
                 >
                   <XCircle className="h-4 w-4 mr-1" />
@@ -250,7 +259,7 @@ export default function VerificationStatusCard({
                 </button>
               </>
             )}
-            {(user.backgroundVerification === 'approved' || user.backgroundVerification === 'rejected') && (
+            {(user.accountStatus.backgroundVerification === 'approved' || user.accountStatus.backgroundVerification === 'rejected') && (
               <button
                 onClick={() => onBackgroundVerification('pending')}
                 className="btn btn-warning btn-sm hover-lift"
@@ -270,18 +279,18 @@ export default function VerificationStatusCard({
             <CreditCard className="h-5 w-5 text-var(--text-muted)" />
             <div className="flex items-center space-x-2">
               <p className="text-sm font-medium text-var(--text-primary)">Purchase Status:</p>
-              <span className={`badge ${user.backgroundCheckPurchased ? 'badge-success' : 'badge-danger'}`}>
-                {user.backgroundCheckPurchased ? 'Purchased' : 'Not Purchased'}
+              <span className={`badge ${user.adminData.purchases.total > 0 ? 'badge-success' : 'badge-danger'}`}>
+                {user.adminData.purchases.total > 0 ? 'Purchased' : 'Not Purchased'}
               </span>
             </div>
           </div>
           {/* Purchase Action Button */}
-          {user.backgroundVerification === 'unpaid' && (
+          {user.accountStatus.backgroundVerification === 'unpaid' && (
             <div className="flex justify-center pt-2">
               <button
                 onClick={onMarkAsPaid}
-                className="btn btn-success btn-sm hover-lift"
-                disabled={user.backgroundCheckPurchased || actionLoading.markAsPaid}
+                className="btn btn-success btn-sm"
+                disabled={user.adminData.purchases.total > 0 || actionLoading.markAsPaid}
                 title="Admin can mark this user's background verification as paid without requiring user payment"
               >
                 <CreditCard className="h-4 w-4 mr-2" />
@@ -292,25 +301,17 @@ export default function VerificationStatusCard({
         </div>
 
         {/* Purchase Details */}
-        {user.backgroundCheckPurchased && user.backgroundCheckPurchaseDate && (
+        {user.adminData.purchases.total > 0 && user.adminData.purchases.recent.length > 0 && (
           <div className="bg-var(--bg-tertiary) p-3 rounded-lg">
-            <p className="text-xs text-var(--text-muted)">Purchased: {formatUTCDateOnly(user.backgroundCheckPurchaseDate)}</p>
-            {user.backgroundCheckPurchaseId && user.backgroundCheckPurchaseId.includes('admin_') && (
+            <p className="text-xs text-var(--text-muted)">Purchased: {formatUTCDateOnly(user.adminData.purchases.recent[0].purchaseDate)}</p>
+            {user.adminData.purchases.recent[0]._id.includes('admin_') && (
               <p className="text-xs text-var(--primary) font-medium mt-1">💳 Paid by Admin</p>
             )}
           </div>
         )}
 
-        {/* Verification Notes */}
-        {user.backgroundVerificationNotes && (
-          <div className="bg-var(--bg-tertiary) p-3 rounded-lg">
-            <p className="text-sm text-var(--text-primary)">{user.backgroundVerificationNotes}</p>
-            <p className="text-xs text-var(--text-muted) mt-1">Verification Notes</p>
-          </div>
-        )}
-
         {/* Warning: Purchase Required */}
-        {!user.backgroundCheckPurchased && user.backgroundVerification !== 'unpaid' && (
+        {user.adminData.purchases.total === 0 && user.accountStatus.backgroundVerification !== 'unpaid' && (
           <div className="glass-card p-3 border-l-4 border-var(--warning)">
             <div className="flex items-center">
               <AlertCircle className="h-4 w-4 text-var(--warning) mr-2" />
@@ -325,7 +326,7 @@ export default function VerificationStatusCard({
         <div className="flex flex-col space-y-2 pt-2">
           <button
             onClick={onManualVerify}
-            className="btn btn-secondary btn-sm hover-lift"
+            className="btn btn-secondary btn-sm"
             disabled={actionLoading.manualVerify}
           >
             <Search className="h-4 w-4 mr-2" />

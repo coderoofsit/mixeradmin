@@ -22,86 +22,189 @@ import BackgroundCheckModals from './UserDetail/BackgroundCheckModals'
 import PersonSelectionModal from '../components/PersonSelectionModal'
 import PlanSelectionModal from '../components/PlanSelectionModal'
 import FetchRecordsModal from '../components/FetchRecordsModal'
+import PurchaseHistoryCard from './UserDetail/PurchaseHistoryCard'
+import SocialActivityCard from './UserDetail/SocialActivityCard'
+import AccountStatusCard from './UserDetail/AccountStatusCard'
+import BackgroundCheckHistoryCard from './UserDetail/BackgroundCheckHistoryCard'
 
-interface User {
-  _id: string
+// New clean API response structure - Updated for new API format
+interface UserData {
+  // Basic identification (top level)
+  id: string
   firebaseUid: string
   email: string
   emailVerified: boolean
-  accountStatus: 'active' | 'suspended' | 'banned'
-  status: 'basic' | 'complete' | 'QuizToken' | 'verified' | 'rejected' | 'suspended' 
-  dateOfBirth?: string
-  name?: string
-  gender?: string
-  pronoun?: string
-  sexuality?: string
-  datingType?: string
-  relationshipType?: string
-  height?: string
-  ethnicity?: string
-  familyPlans?: string
-  work?: string
-  highestQualification?: string
-  jobTitle?: string
-  religion?: string
-  politics?: string
-  drinking?: string
-  smoking?: string
-  lifestyle?: string
-  aboutMe?: string
-  lookingFor?: string
-  thingsILike?: string[]
-  values?: string[]
-  interestedIn?: string[]
-  quizResult?: {
-    title?: string
-    subTitle?: string
+  
+  // Personal information (grouped)
+  personalInfo: {
+    name: string
+    dateOfBirth: string
+    age: number
+    gender: string
+    pronoun?: string
+    sexuality: string
+    interestedIn: string[]
+    height: string
+    ethnicity: string
+    children?: string
+    familyPlans?: string
   }
-  profileCompletion?: number
-  age?: number
-  images?: Array<{
-    url: string
-    isPrimary: boolean
-    uploadedAt: string
-  }>
-  videos?: Array<{
-    url: string
-    thumbnail: string
-    duration: number
-    isPrimary: boolean
-    uploadedAt: string
-  }>
-  selfie?: {
-    url: string
-    uploadedAt: string
+  
+  // Dating preferences (grouped)
+  datingPreferences: {
+    datingType?: string
+    intention?: string
+    relationshipType: string
   }
-  notificationPermission: boolean
-  locationPermission: boolean
+  
+  // Professional information (grouped)
+  professionalInfo?: {
+    work?: string
+    highestQualification?: string
+    jobTitle?: string
+  }
+  
+  // Lifestyle and beliefs (grouped)
+  lifestyle: {
+    religion?: string
+    politics: string
+    drinking: string
+    smoking?: string
+    lifestyle?: string
+  }
+  
+  // Profile content (grouped)
+  profileContent: {
+    aboutMe: string
+    lookingFor?: string
+    thingsILike: string[]
+    values: string[]
+    images: Array<{
+      url: string
+      isPrimary: boolean
+      uploadedAt: string
+    }>
+    quizResult?: any
+  }
+  
+  // Location (top level)
   location: {
     type: string
     coordinates: number[]
-    city?: string
-    state?: string
+    city: string
+    state: string
   }
-  lastActive: string
-  createdAt: string
-  updatedAt: string
-  backgroundVerification: 'unpaid' | 'pending' | 'approved' | 'rejected'
-  backgroundVerificationNotes?: string
-  backgroundVerifiedBy?: string
-  backgroundVerifiedAt?: string
-  backgroundCheckPurchased?: boolean
-  backgroundCheckPurchaseDate?: string
-  backgroundCheckPurchaseId?: string
-  currentPlan?: string | null
-  planExpiry?: string | null
-  planPurchaseDate?: string | null
+  
+  // Permissions (grouped)
+  permissions: {
+    notificationPermission: boolean
+    locationPermission: boolean
+  }
+  
+  // Account status (grouped)
+  accountStatus: {
+    isActive: boolean
+    status: 'basic' | 'complete' | 'QuizToken' | 'verified' | 'rejected' | 'suspended'
+    accountStatus: 'active' | 'suspended' | 'banned'
+    backgroundVerification: 'unpaid' | 'pending' | 'approved' | 'rejected'
+    isVerified: boolean
+    profileCompletion: number
+  }
+  
+  // Timestamps (grouped)
+  timestamps: {
+    lastActive: string
+    createdAt: string
+    updatedAt: string
+  }
+  
+  // Admin-specific data (grouped)
+  adminData: {
+    purchases: {
+      total: number
+      recent: Array<{
+        _id: string
+        userId: string
+        platform: string
+        planName: string
+        productId: string
+        purchaseToken: string
+        status: string
+        purchaseDate: string
+        expiryDate?: string | null
+        rawReceipt: string
+        createdAt: string
+        updatedAt: string
+      }>
+    }
+    backgroundChecks: {
+      total: number
+      history: Array<{
+        _id: string
+        userId: string
+        status: string
+        searchDate: string
+        searchCriteria: {
+          location: {
+            coordinates: number[]
+          }
+          name: string
+          email: string
+          dateOfBirth: string
+        }
+        peopleSearchResults: {
+          people: any[]
+        }
+        backgroundData: {
+          addresses: any[]
+          phones: any[]
+          emails: any[]
+          bankruptcies: any[]
+          liens: any[]
+          professionalLicenses: any[]
+          huntingPermits: any[]
+          pilotLicenses: any[]
+          names: any[]
+          relatives: any[]
+          criminalRecords: any[]
+          evictions: any[]
+          judgments: any[]
+          corporateFilings: any[]
+          uccFilings: any[]
+          trademarks: any[]
+          concealedWeaponPermits: any[]
+          watchListRecords: any[]
+          employmentHistory: any[]
+          businessAssociations: any[]
+        }
+        apiCalls: any[]
+        errorMessage?: string
+        createdAt: string
+        updatedAt: string
+      }>
+    }
+    moderation: {
+      reports: {
+        given: { total: number; recent: any[] }
+        received: { total: number; recent: any[] }
+      }
+      blocks: {
+        given: { total: number; recent: any[] }
+        received: { total: number; recent: any[] }
+      }
+    }
+    socialActivity: {
+      likesGiven: number
+      likesReceived: number
+      totalMatches: number
+    }
+  }
 }
 
 function UserDetail() {
   const { userId } = useParams()
   const navigate = useNavigate()
-  const [user, setUser] = useState<User | null>(null)
+  const [userData, setUserData] = useState<UserData | null>(null)
   const [loading, setLoading] = useState(true)
   
   // Media modal state
@@ -170,9 +273,164 @@ function UserDetail() {
     try {
       setLoading(true)
       const response = await adminApi.getUser(userId!)
-      setUser(response.data.data)
+      console.log('Full API response:', response)
+      console.log('Response data:', response.data)
+      
+      const apiData = response.data.data
+      console.log('API data:', apiData)
+      
+      // Check if user data exists - handle different possible response structures
+      if (!apiData) {
+        console.error('No data found in API response:', response.data)
+        toast.error('No data found in API response')
+        return
+      }
+      
+      // Handle case where user data might be at the root level or nested
+      const userData = apiData.user || apiData
+      if (!userData || (!userData._id && !userData.id)) {
+        console.error('User data not found in API response:', apiData)
+        console.error('Expected user object with _id or id, but got:', userData)
+        toast.error('User data not found in API response')
+        return
+      }
+      
+      // Check if the API response is already in the expected nested structure
+      if (userData.personalInfo && userData.adminData) {
+        // API response is already in the correct nested structure
+        console.log('API response is already in nested structure, processing purchase data')
+        
+        // Ensure purchase data is properly formatted for the component
+        const transformedData: UserData = {
+          ...userData,
+          adminData: {
+            ...userData.adminData,
+            purchases: {
+              total: userData.adminData.purchases?.total || 0,
+              recent: (userData.adminData.purchases?.recent || []).map((purchase: any) => ({
+                _id: purchase._id,
+                userId: purchase.userId,
+                platform: purchase.platform,
+                planName: purchase.planName,
+                productId: purchase.productId,
+                purchaseToken: purchase.purchaseToken,
+                status: purchase.status || 'active', // Default to active if not provided
+                purchaseDate: purchase.purchaseDate || purchase.createdAt, // Use createdAt as fallback
+                expiryDate: purchase.expiryDate || null,
+                rawReceipt: purchase.rawReceipt || purchase.purchaseToken, // Use purchaseToken as fallback
+                createdAt: purchase.createdAt,
+                updatedAt: purchase.updatedAt,
+              }))
+            }
+          }
+        }
+        setUserData(transformedData)
+        return
+      }
+      
+      // Transform flat API response to nested structure expected by components
+      const transformedData: UserData = {
+        id: userData._id || userData.id,
+        firebaseUid: userData.firebaseUid,
+        email: userData.email,
+        emailVerified: userData.emailVerified,
+        
+        personalInfo: {
+          name: userData.name,
+          dateOfBirth: userData.dateOfBirth,
+          age: userData.age,
+          gender: userData.gender,
+          pronoun: userData.pronoun,
+          sexuality: userData.sexuality,
+          interestedIn: userData.interestedIn || [],
+          height: userData.height,
+          ethnicity: userData.ethnicity,
+          children: userData.children,
+          familyPlans: userData.familyPlans,
+        },
+        
+        datingPreferences: {
+          datingType: userData.datingType,
+          intention: userData.intention,
+          relationshipType: userData.relationshipType,
+        },
+        
+        professionalInfo: {
+          work: userData.work,
+          highestQualification: userData.highestQualification,
+          jobTitle: userData.jobTitle,
+        },
+        
+        lifestyle: {
+          religion: userData.religion,
+          politics: userData.politics,
+          drinking: userData.drinking,
+          smoking: userData.smoking,
+          lifestyle: userData.lifestyle,
+        },
+        
+        profileContent: {
+          aboutMe: userData.aboutMe,
+          lookingFor: userData.lookingFor,
+          thingsILike: userData.thingsILike || [],
+          values: userData.values || [],
+          images: userData.images || [],
+          quizResult: userData.quizResult,
+        },
+        
+        location: userData.location || { type: 'Point', coordinates: [], city: '', state: '' },
+        
+        permissions: {
+          notificationPermission: userData.notificationPermission,
+          locationPermission: userData.locationPermission,
+        },
+        
+        accountStatus: {
+          isActive: userData.isActive,
+          status: userData.status,
+          accountStatus: userData.accountStatus,
+          backgroundVerification: userData.backgroundVerification,
+          isVerified: userData.isVerified,
+          profileCompletion: userData.profileCompletion,
+        },
+        
+        timestamps: {
+          lastActive: userData.lastActive,
+          createdAt: userData.createdAt,
+          updatedAt: userData.updatedAt,
+        },
+        
+        adminData: {
+          purchases: {
+            total: apiData.purchases?.total || 0,
+            recent: (apiData.purchases?.recent || []).map((purchase: any) => ({
+              _id: purchase._id,
+              userId: purchase.userId,
+              platform: purchase.platform,
+              planName: purchase.planName,
+              productId: purchase.productId,
+              purchaseToken: purchase.purchaseToken,
+              status: purchase.status || 'active', // Default to active if not provided
+              purchaseDate: purchase.purchaseDate || purchase.createdAt, // Use createdAt as fallback
+              expiryDate: purchase.expiryDate || null,
+              rawReceipt: purchase.rawReceipt || purchase.purchaseToken, // Use purchaseToken as fallback
+              createdAt: purchase.createdAt,
+              updatedAt: purchase.updatedAt,
+            }))
+          },
+          backgroundChecks: apiData.backgroundChecks || { total: 0, history: [] },
+          moderation: apiData.moderation || { 
+            reports: { given: { total: 0, recent: [] }, received: { total: 0, recent: [] } },
+            blocks: { given: { total: 0, recent: [] }, received: { total: 0, recent: [] } }
+          },
+          socialActivity: apiData.socialActivity || { likesGiven: 0, likesReceived: 0, totalMatches: 0 },
+        },
+      }
+      
+      setUserData(transformedData)
     } catch (error) {
       console.error('Error fetching user:', error)
+      console.error('Error details:', error)
       toast.error('Failed to load user details')
     } finally {
       setLoading(false)
@@ -276,7 +534,7 @@ function UserDetail() {
   }
 
   const handleBackgroundVerification = async (status: 'unpaid' | 'pending' | 'approved' | 'rejected') => {
-    if (!['unpaid', 'pending'].includes(status) && !user?.backgroundCheckPurchased) {
+    if (!['unpaid', 'pending'].includes(status) && userData?.adminData?.purchases?.total === 0) {
       toast.error('User has not purchased background check. Cannot proceed with verification.')
       return
     }
@@ -302,8 +560,8 @@ function UserDetail() {
   }
 
   const handleMarkAsPaid = async () => {
-    if (!user) return
-    if (user.backgroundCheckPurchased) {
+    if (!userData) return
+    if (userData.adminData.purchases.total > 0) {
       toast.error('User has already paid for background verification')
       return
     }
@@ -327,8 +585,12 @@ function UserDetail() {
   }
 
   const handleMarkPlanAsPaid = async () => {
-    if (!user) return
-    if (user.currentPlan && user.planExpiry && new Date(user.planExpiry) > new Date()) {
+    if (!userData) return
+    // Check if user has any active subscription plans
+    const hasActivePlan = userData.adminData.purchases.recent.some(purchase => 
+      purchase.expiryDate && new Date(purchase.expiryDate) > new Date()
+    )
+    if (hasActivePlan) {
       toast.error('User already has an active subscription plan')
       return
     }
@@ -417,11 +679,11 @@ function UserDetail() {
 
   // Manual verification handler
   const handleManualVerify = async () => {
-    if (!user?._id) return
+    if (!userData?.id) return
 
     try {
       setActionLoading(prev => ({ ...prev, manualVerify: true }))
-      const response = await adminApi.fetchPersonRecords({ userId: user._id })
+      const response = await adminApi.fetchPersonRecords({ userId: userData.id })
       
       if (response.data.success) {
         setFetchRecordsModal({
@@ -473,7 +735,7 @@ function UserDetail() {
     return <LoadingSpinner />
   }
 
-  if (!user) {
+  if (!userData) {
     return (
       <div className="text-center py-12">
         <AlertCircle className="mx-auto h-12 w-12 text-gray-400" />
@@ -494,7 +756,7 @@ function UserDetail() {
       {/* <div className=""> */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
-            <button onClick={() => navigate('/users')} className="btn btn-ghost hover-lift">
+            <button onClick={() => navigate('/users')} className="btn btn-ghost">
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </button>
@@ -506,7 +768,7 @@ function UserDetail() {
         
         <div className="flex items-center space-x-3">
           {lastError && retryCount < 3 && (
-              <button onClick={handleRetrySearch} disabled={backgroundCheckLoading} className="btn btn-warning btn-sm hover-lift">
+              <button onClick={handleRetrySearch} disabled={backgroundCheckLoading} className="btn btn-warning btn-sm">
               <RefreshCw className="h-4 w-4 mr-2" />
               Retry ({retryCount}/3)
             </button>
@@ -544,23 +806,39 @@ function UserDetail() {
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
-        {/* Left Column - User Profile */}
+        {/* Left Column - User Profile & Activity */}
         <div className="xl:col-span-2 space-y-4">
-          <UserProfileHeader user={user} />
-          <PersonalInfoCard user={user} />
-          <LifestylePreferencesCard user={user} />
-          <QuizResultsCard user={user} />
-          <AboutInterestsCard user={user} />
+          {/* Profile Information */}
+          <UserProfileHeader user={userData} />
+          <PersonalInfoCard user={userData} />
+          <LifestylePreferencesCard user={userData} />
+          <AboutInterestsCard user={userData} />
           <MediaGallery
-            user={user}
+            user={userData}
             onOpenMedia={openMediaModal}
           />
+          
+          {/* Social Activity */}
+          <SocialActivityCard 
+            socialActivity={userData.adminData.socialActivity}
+            moderation={userData.adminData.moderation}
+          />
+          
+          {/* Financial & Background Check Data */}
+          <PurchaseHistoryCard purchases={userData.adminData.purchases} />
+          {/* <BackgroundCheckHistoryCard backgroundChecks={userData.adminData.backgroundChecks} /> */}
         </div>
               
-        {/* Right Sidebar */}
+        {/* Right Sidebar - Account Management */}
         <div className="space-y-4">
+          {/* Account Status & Verification */}
+          <AccountStatusCard 
+            user={userData}
+            accountDetails={userData.accountStatus}
+          />
+          
           <VerificationStatusCard
-            user={user}
+            user={userData}
             actionLoading={actionLoading}
             backgroundCheckResults={backgroundCheckResults}
             onBackgroundVerification={handleBackgroundVerification}
@@ -570,15 +848,15 @@ function UserDetail() {
           />
           
           <SubscriptionPlanCard
-            user={user}
+            user={userData}
             actionLoading={actionLoading}
             onMarkPlanAsPaid={handleMarkPlanAsPaid}
           />
           
-          <NotificationHistoryCard userId={user._id} />
+          <NotificationHistoryCard userId={userData.id} />
           
           <AccountActionsCard
-            user={user}
+            user={userData}
             actionLoading={actionLoading}
             onSuspend={handleSuspendUser}
             onReactivate={handleReactivateUser}

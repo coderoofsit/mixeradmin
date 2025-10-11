@@ -174,7 +174,7 @@ const Layout = ({ children }: LayoutProps) => {
         <div className="flex h-16 items-center gap-x-4 px-6">
           <button
             type="button"
-            className="lg:hidden p-2 rounded-xl glass hover:scale-105 transition-all duration-300"
+            className="lg:hidden p-2 rounded-xl glass transition-all duration-300"
             onClick={() => setSidebarOpen(true)}
           >
             <Menu className="h-5 w-5 text-var(--text-primary)" />
@@ -250,7 +250,7 @@ const Layout = ({ children }: LayoutProps) => {
               </div>
               <button 
                 onClick={() => setSidebarOpen(false)}
-                className="p-2 rounded-xl glass hover:scale-105 transition-all duration-300"
+                className="p-2 rounded-xl glass transition-all duration-300"
               >
                 <X className="h-5 w-5 text-var(--text-primary)" />
               </button>

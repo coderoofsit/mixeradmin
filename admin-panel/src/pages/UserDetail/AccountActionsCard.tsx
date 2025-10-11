@@ -2,7 +2,9 @@ import { Settings, Ban, CheckCircle, Trash2 } from 'lucide-react'
 
 interface AccountActionsCardProps {
   user: {
-    accountStatus: 'active' | 'suspended' | 'banned'
+    accountStatus: {
+      accountStatus: 'active' | 'suspended' | 'banned'
+    }
   }
   actionLoading: {
     suspend?: boolean
@@ -31,11 +33,11 @@ export default function AccountActionsCard({
         Account Actions
       </h3>
       <div className="space-y-3">
-        {user.accountStatus === 'active' ? (
+        {user.accountStatus.accountStatus === 'active' ? (
           <button
             onClick={onSuspend}
             disabled={actionLoading.suspend}
-            className="btn btn-warning w-full hover-lift"
+            className="btn btn-warning w-full"
           >
             <Ban className="h-4 w-4 mr-2" />
             {actionLoading.suspend ? 'Suspending...' : 'Suspend User'}
@@ -44,7 +46,7 @@ export default function AccountActionsCard({
           <button
             onClick={onReactivate}
             disabled={actionLoading.reactivate}
-            className="btn btn-success w-full hover-lift"
+            className="btn btn-success w-full"
           >
             <CheckCircle className="h-4 w-4 mr-2" />
             {actionLoading.reactivate ? 'Reactivating...' : 'Reactivate User'}
@@ -54,7 +56,7 @@ export default function AccountActionsCard({
         <button
           onClick={onBan}
           disabled={actionLoading.ban}
-          className="btn btn-danger w-full hover-lift"
+          className="btn btn-danger w-full"
         >
           <Ban className="h-4 w-4 mr-2" />
           {actionLoading.ban ? 'Banning...' : 'Ban User'}
@@ -63,7 +65,7 @@ export default function AccountActionsCard({
         <button
           onClick={onDelete}
           disabled={actionLoading.delete}
-          className="btn btn-danger w-full hover-lift"
+          className="btn btn-danger w-full"
         >
           <Trash2 className="h-4 w-4 mr-2" />
           {actionLoading.delete ? 'Deleting...' : 'Delete User'}

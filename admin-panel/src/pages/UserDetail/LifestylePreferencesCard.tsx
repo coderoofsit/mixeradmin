@@ -67,14 +67,20 @@ import { Heart } from 'lucide-react'
 
 interface LifestylePreferencesCardProps {
   user: {
-    datingType?: string
-    relationshipType?: string
-    sexuality?: string
-    familyPlans?: string
-    religion?: string
-    politics?: string
-    drinking?: string
-    smoking?: string
+    datingPreferences: {
+      datingType?: string
+      relationshipType: string
+    }
+    personalInfo: {
+      sexuality: string
+      familyPlans?: string
+    }
+    lifestyle: {
+      religion?: string
+      politics: string
+      drinking: string
+      smoking?: string
+    }
   }
 }
 
@@ -87,41 +93,48 @@ export default function LifestylePreferencesCard({ user }: LifestylePreferencesC
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div className="space-y-2">
-          {/* <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Dating Type:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.datingType || 'N/A'}</p>
-          </div> */}
+          {user.datingPreferences.datingType && (
+            <div className="flex gap-1">
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Dating Type:</label>
+              <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.datingPreferences.datingType}</p>
+            </div>
+          )}
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Relationship Type:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.relationshipType || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.datingPreferences.relationshipType || 'N/A'}</p>
           </div>
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Sexuality:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.sexuality || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.sexuality || 'N/A'}</p>
           </div>
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Family Plans:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.familyPlans || 'N/A'}</p>
-          </div>
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Religion:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.religion || 'N/A'}</p>
-          </div>
+          {user.personalInfo.familyPlans && (
+            <div className="flex gap-1">
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Family Plans:</label>
+              <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.familyPlans}</p>
+            </div>
+          )}
+          {user.lifestyle.religion && (
+            <div className="flex gap-1">
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Religion:</label>
+              <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.religion}</p>
+            </div>
+          )}
         </div>
         <div className="space-y-2">
-          
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Politics:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.politics || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.politics || 'N/A'}</p>
           </div>
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Drinking:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.drinking || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.drinking || 'N/A'}</p>
           </div>
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Smoking:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.smoking || 'N/A'}</p>
-          </div>
+          {user.lifestyle.smoking && (
+            <div className="flex gap-1">
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Smoking:</label>
+              <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.smoking}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

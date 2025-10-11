@@ -136,15 +136,17 @@ import { mapGenderForDisplay } from '../../utils/genderUtils'
 
 interface PersonalInfoCardProps {
   user: {
-    dateOfBirth?: string
-    gender?: string
-    pronoun?: string
-    location?: {
-      city?: string
-      state?: string
+    personalInfo: {
+      dateOfBirth: string
+      gender: string
+      pronoun?: string
+      height: string
+      ethnicity: string
     }
-    height?: string
-    ethnicity?: string
+    location: {
+      city: string
+      state: string
+    }
   }
 }
 
@@ -160,41 +162,39 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Date of Birth:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">
-              {user.dateOfBirth ? formatUTCDateOnly(user.dateOfBirth) : 'N/A'}
+              {user.personalInfo.dateOfBirth ? formatUTCDateOnly(user.personalInfo.dateOfBirth) : 'N/A'}
             </p>
           </div>
 
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Gender:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{mapGenderForDisplay(user.gender)|| 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{mapGenderForDisplay(user.personalInfo.gender) || 'N/A'}</p>
           </div>
-          {/* <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Pronoun:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.pronoun || 'N/A'}</p>
-          </div> */}
+          {user.personalInfo.pronoun && (
+            <div className="flex gap-1">
+              <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Pronoun:</label>
+              <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.pronoun}</p>
+            </div>
+          )}
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.ethnicity || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.ethnicity || 'N/A'}</p>
           </div>
         </div>
         <div className="space-y-2">
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Location:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">
-              {user.location?.city && user.location?.state ? 
+              {user.location.city && user.location.state ? 
                 `${user.location.city}, ${user.location.state}` : 
-                user.location?.city || user.location?.state || 'N/A'
+                user.location.city || user.location.state || 'N/A'
               }
             </p>
           </div>
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Height:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.height || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.height || 'N/A'}</p>
           </div>
-          {/* <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.ethnicity || 'N/A'}</p>
-          </div> */}
         </div>
       </div>
     </div>

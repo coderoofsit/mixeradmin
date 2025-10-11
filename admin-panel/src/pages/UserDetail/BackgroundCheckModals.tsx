@@ -79,7 +79,7 @@ export default function BackgroundCheckModals({
                     </div>
                     <button
                       onClick={() => onSelectPerson(modal.data.checkId, index)}
-                      className="btn btn-primary btn-sm mt-3 hover-lift"
+                      className="btn btn-primary btn-sm mt-3"
                       disabled={backgroundCheckLoading}
                     >
                       <CheckCircle className="h-4 w-4 mr-2" />
@@ -230,7 +230,7 @@ export default function BackgroundCheckModals({
                       {check.reportData && (
                         <button
                           onClick={() => onCheckBackground(check.reportData.reportToken, check._id)}
-                          className="btn btn-primary btn-sm mt-2 hover-lift"
+                          className="btn btn-primary btn-sm mt-2"
                           disabled={backgroundCheckLoading}
                         >
                           <FileSearch className="h-4 w-4 mr-2" />

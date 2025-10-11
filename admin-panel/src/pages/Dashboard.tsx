@@ -180,7 +180,7 @@ const Dashboard = () => {
           <button 
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className={`btn btn-primary hover-lift ${
+            className={`btn btn-primary  ${
               isRefreshing 
                 ? 'opacity-50 cursor-not-allowed' 
                 : ''
@@ -195,7 +195,7 @@ const Dashboard = () => {
       {/* Modern Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div 
-          className="stats-card group cursor-pointer hover-lift"
+          className="stats-card group cursor-pointer "
           onClick={() => handleCardClick('totalUsers', 'Total Users', stats.totalUsers?.count || 0)}
         >
           <div className="flex items-center justify-between">
@@ -226,7 +226,7 @@ const Dashboard = () => {
         </div>
         
         <div 
-          className="stats-card group cursor-pointer hover-lift"
+          className="stats-card group cursor-pointer "
           onClick={() => handleCardClick('activeUsers', 'Active Users', stats.activeUsers?.count || 0)}
         >
           <div className="flex items-center justify-between">
@@ -257,7 +257,7 @@ const Dashboard = () => {
         </div>
         
         <div 
-          className="stats-card group cursor-pointer hover-lift"
+          className="stats-card group cursor-pointer "
           onClick={() => handleCardClick('totalEvents', 'Total Events', stats.totalEvents?.count || stats.upcomingEvents?.count || 0)}
         >
           <div className="flex items-center justify-between">
@@ -290,7 +290,7 @@ const Dashboard = () => {
           </div>
         
         <div 
-          className="stats-card group cursor-pointer hover-lift"
+          className="stats-card group cursor-pointer "
           onClick={() => handleCardClick('upcomingEvents', 'Upcoming Events', stats.upcomingEvents?.count || 0)}
         >
           <div className="flex items-center justify-between">

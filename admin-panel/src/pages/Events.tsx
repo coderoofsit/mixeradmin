@@ -653,7 +653,7 @@ const Events = () => {
 			<div className='flex items-center justify-end'>
 				<button
 					onClick={openCreateModal}
-					className='btn btn-primary hover-lift flex items-center gap-2'
+					className='btn btn-primary  flex items-center gap-2'
 				>
 					<Plus className='h-4 w-4' />
 					Create Event
@@ -687,7 +687,7 @@ const Events = () => {
 						</select>
 						<button
 							onClick={fetchEvents}
-							className='btn btn-primary hover-lift flex items-center gap-2'
+							className='btn btn-primary  flex items-center gap-2'
 						>
 							<Filter className='h-4 w-4' />
 							Filter
@@ -716,7 +716,7 @@ const Events = () => {
 							<div
 								key={event._id}
 								onClick={() => openEditModal(event)}
-								className='glass-card overflow-hidden hover-lift cursor-pointer flex flex-col  w-72'
+								className='glass-card overflow-hidden  cursor-pointer flex flex-col  w-72'
 							>
 								{/* Image Banner */}
 								<div className='relative'>
@@ -772,7 +772,7 @@ const Events = () => {
 									{/* <div className='flex justify-end mt-auto'>
 										<button
 											onClick={() => openEditModal(event)}
-											className='btn btn-primary btn-sm hover-lift'
+											className='btn btn-primary btn-sm '
 										>
 											View Details
 										</button>
@@ -893,7 +893,7 @@ const Events = () => {
 														type='button'
 														onClick={handleImageUploadClick}
 														disabled={uploadingImage}
-														className='btn btn-primary hover-lift disabled:opacity-50 flex items-center gap-2'
+														className='btn btn-primary  disabled:opacity-50 flex items-center gap-2'
 													>
 														<Upload className='h-4 w-4' />
 														Upload
@@ -1118,7 +1118,7 @@ const Events = () => {
 								<button
 									type='submit'
 									disabled={isSubmitting}
-									className='btn btn-primary hover-lift disabled:opacity-50 flex items-center gap-2'
+									className='btn btn-primary  disabled:opacity-50 flex items-center gap-2'
 								>
 									Create Event
 								</button>
@@ -1213,7 +1213,7 @@ const Events = () => {
 														type='button'
 														onClick={handleImageUploadClick}
 														disabled={uploadingImage}
-														className='btn btn-primary hover-lift disabled:opacity-50 flex items-center gap-2'
+														className='btn btn-primary  disabled:opacity-50 flex items-center gap-2'
 													>
 														<Upload className='h-4 w-4' />
 														Upload
@@ -1432,7 +1432,7 @@ const Events = () => {
 								<button
 									type='button'
 									onClick={() => selectedEvent && handleDeleteEvent(selectedEvent._id)}
-									className='w-full sm:w-auto btn btn-danger hover-lift'
+									className='w-full sm:w-auto btn btn-danger '
 								>
 									Delete Event
 								</button>
@@ -1448,7 +1448,7 @@ const Events = () => {
 									<button
 										type='submit'
 										disabled={isSubmitting}
-										className='w-full sm:w-auto px-4 py-2 btn-primary text-white rounded-md hover-lift disabled:opacity-50 flex items-center justify-center gap-2 transition'
+										className='w-full sm:w-auto px-4 py-2 btn-primary text-white rounded-md  disabled:opacity-50 flex items-center justify-center gap-2 transition'
 									>
 										Update Event
 									</button>
