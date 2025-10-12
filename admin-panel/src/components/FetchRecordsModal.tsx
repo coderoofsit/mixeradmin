@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { XCircle, CheckCircle, Shield, FileSearch, AlertCircle, User, MapPin, Phone, Mail, Calendar, Users } from 'lucide-react';
+import React, { useState, useMemo } from 'react';
+import { XCircle, CheckCircle, Shield, FileSearch, AlertCircle, User, MapPin, Phone, Mail, Calendar, Users, Search } from 'lucide-react';
 
 interface Person {
   fullName: string;
@@ -99,9 +99,46 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
   isSelecting = false
 }) => {
   const [selectedPersonIndex, setSelectedPersonIndex] = useState<number | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filter people based on search term (name, email, date of birth)
+  const filteredPeople = useMemo(() => {
+    if (!data || !data.people) {
+      return [];
+    }
+
+    if (!searchTerm.trim()) {
+      return data.people;
+    }
+
+    const searchLower = searchTerm.toLowerCase().trim();
+    
+    return data.people.filter(person => {
+      // Search in name
+      const nameMatch = person.fullName.toLowerCase().includes(searchLower) ||
+                       person.firstName.toLowerCase().includes(searchLower) ||
+                       person.lastName.toLowerCase().includes(searchLower);
+      
+      // Search in email
+      const emailMatch = person.email && person.email.toLowerCase().includes(searchLower);
+      
+      // Search in date of birth (format: MM-DD-YYYY or YYYY-MM-DD)
+      const dobMatch = person.dateOfBirth.includes(searchLower);
+      
+      // Search in formatted date of birth (if it's in a different format)
+      const dobFormatted = new Date(person.dateOfBirth).toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '-');
+      const dobFormattedMatch = dobFormatted.includes(searchLower);
+      
+      return nameMatch || emailMatch || dobMatch || dobFormattedMatch;
+    });
+  }, [data?.people, searchTerm]);
 
   const handleSelectPerson = async (personIndex: number) => {
-    if (!data.checkId) return;
+    if (!data || !data.checkId) return;
 
     try {
       if (onSelectPerson) {
@@ -178,7 +215,7 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
           </div>
         </div>
         
-        <div className="p-6 overflow-auto max-h-[calc(95vh-120px)]">
+        <div className="p-6 overflow-auto h-[calc(95vh-120px)] min-h-[600px]">
           {/* Source Information */}
           {/* {data && (
             <div className={`mb-6 p-4 ${sourceInfo.bgColor} border ${sourceInfo.borderColor} rounded-lg`}>
@@ -231,10 +268,55 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
                   </p>
                 </div>
               )}
+
+              {/* Search Bar - only show when requiresSelection is true */}
+              {data.requiresSelection && (
+                <>
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search by name, email, or date of birth..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                    {searchTerm && (
+                      <button
+                        onClick={() => setSearchTerm('')}
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        <XCircle className="h-4 w-4" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Search Results Count */}
+                  {searchTerm && (
+                    <div className="text-center text-sm text-gray-600">
+                      Showing {filteredPeople.length} of {data.people.length} people
+                    </div>
+                  )}
+
+                  {/* No Results Message */}
+                  {searchTerm && filteredPeople.length === 0 && (
+                    <div className="text-center p-8 bg-gray-50 border border-gray-200 rounded-lg">
+                      <Search className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">No people found</h3>
+                      <p className="text-gray-600">
+                        No people match your search for "{searchTerm}". Try a different search term.
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
               
-              {data.people.map((person, index) => (
+              {(data?.requiresSelection ? filteredPeople : data?.people || []).map((person, index) => {
+                // Find the original index in the data.people array for proper selection handling
+                const originalIndex = data?.people?.findIndex(p => p.fullName === person.fullName && p.dateOfBirth === person.dateOfBirth) || -1;
+                return (
                 <div key={index} className={`border-2 rounded-xl p-6 transition-colors bg-white shadow-sm ${
-                  data.requiresSelection 
+                  data?.requiresSelection 
                     ? selectedPersonIndex === index 
                       ? 'border-blue-500 bg-blue-50' 
                       : 'border-gray-200 hover:border-blue-300'
@@ -242,47 +324,50 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
                 }`}>
                   <PersonCard person={person} />
                   
-                  {/* Selection buttons - show for all cases */}
-                  <div className="mt-6 flex justify-center space-x-3">
-                    {data?.requiresSelection ? (
-                      // Multiple people - show selection interface
-                      <>
-                        <button
-                          onClick={() => setSelectedPersonIndex(index)}
-                          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                            selectedPersonIndex === index
-                              ? 'bg-blue-600 text-white'
-                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                          }`}
-                        >
-                          {selectedPersonIndex === index ? 'Selected' : 'Select This Person'}
-                        </button>
-                        
-                        {selectedPersonIndex === index && (
+                  {/* Selection buttons - only show when requiresSelection is true */}
+                  {data?.requiresSelection && (
+                    <div className="mt-6 flex justify-center space-x-3">
+                      {data?.requiresSelection ? (
+                        // Multiple people - show selection interface
+                        <>
                           <button
-                            onClick={() => handleSelectPerson(index)}
-                            disabled={isSelecting}
-                            className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
+                            onClick={() => setSelectedPersonIndex(originalIndex)}
+                            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                              selectedPersonIndex === originalIndex
+                                ? 'bg-blue-600 text-white'
+                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                            }`}
                           >
-                            <CheckCircle className="h-5 w-5" />
-                            {isSelecting ? 'Saving...' : 'Confirm Selection'}
+                            {selectedPersonIndex === originalIndex ? 'Selected' : 'Select This Person'}
                           </button>
-                        )}
-                      </>
-                    ) : (
-                      // Single person - show direct select button
-                      <button
-                        onClick={() => handleSelectPerson(index)}
-                        disabled={isSelecting}
-                        className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
-                      >
-                        <CheckCircle className="h-5 w-5" />
-                        {isSelecting ? 'Saving...' : 'Select This Person'}
-                      </button>
-                    )}
-                  </div>
+                          
+                          {selectedPersonIndex === originalIndex && (
+                            <button
+                              onClick={() => handleSelectPerson(originalIndex)}
+                              disabled={isSelecting}
+                              className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
+                            >
+                              <CheckCircle className="h-5 w-5" />
+                              {isSelecting ? 'Saving...' : 'Confirm Selection'}
+                            </button>
+                          )}
+                        </>
+                      ) : (
+                        // Single person - show direct select button
+                        <button
+                          onClick={() => handleSelectPerson(originalIndex)}
+                          disabled={isSelecting}
+                          className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
+                        >
+                          <CheckCircle className="h-5 w-5" />
+                          {isSelecting ? 'Saving...' : 'Select This Person'}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
