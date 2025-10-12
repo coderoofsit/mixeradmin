@@ -103,63 +103,93 @@ interface UserProfileHeaderProps {
 }
 
 export default function UserProfileHeader({ user }: UserProfileHeaderProps) {
-  const getStatusBadgeClass = (status: string) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'badge-success'
+        return 'text-green-600'
       case 'suspended':
-        return 'badge-warning'
+        return 'text-yellow-600'
       case 'banned':
-        return 'badge-danger'
+        return 'text-red-600'
       default:
-        return 'badge-secondary'
+        return 'text-gray-600'
     }
   }
 
-  return (
-    <div className="glass-card p-6">
-      <div className="flex items-start space-x-4">
-        {/* Profile Image */}
-        <div className="flex-shrink-0">
-          {user.profileContent.images && user.profileContent.images.length > 0 ? (
-            <img
-              src={user.profileContent.images.find(img => img.isPrimary)?.url || user.profileContent.images[0].url}
-              alt="Profile"
-              className="w-20 h-20 rounded-full object-cover border-2 border-var(--border)"
-            />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-var(--bg-tertiary) flex items-center justify-center border-2 border-var(--border)">
-              <User className="h-10 w-10 text-var(--text-muted)" />
-            </div>
-          )}
-        </div>
+  // Generate a random color for the profile placeholder
+  const getRandomColor = () => {
+    const colors = [
+      'bg-blue-500',
+      'bg-green-500', 
+      'bg-purple-500',
+      'bg-pink-500',
+      'bg-indigo-500',
+      'bg-red-500',
+      'bg-yellow-500',
+      'bg-teal-500',
+      'bg-orange-500',
+      'bg-cyan-500'
+    ]
+    // Use user ID to generate consistent color for same user
+    const hash = user.personalInfo.name.split('').reduce((a, b) => {
+      a = ((a << 5) - a) + b.charCodeAt(0)
+      return a & a
+    }, 0)
+    return colors[Math.abs(hash) % colors.length]
+  }
 
-        {/* User Info */}
-        <div className="flex-1">
-          <div className="mb-3">
-            <div className="flex items-center space-x-3 mb-1">
-              <h2 className="text-xl font-bold text-var(--text-primary)">{user.personalInfo.name || 'N/A'}</h2>
-              <span className={`badge ${getStatusBadgeClass(user.accountStatus.accountStatus)}`}>
-                {user.accountStatus.accountStatus}
-              </span>
+  return (
+    <div className="relative">
+      {/* Profile Image - Positioned outside the card */}
+      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-3/4 z-10">
+        {user.profileContent.images && user.profileContent.images.length > 0 ? (
+          <img
+            src={user.profileContent.images.find(img => img.isPrimary)?.url || user.profileContent.images[0].url}
+            alt="Profile"
+            className="w-28 h-28 rounded-full object-cover border-4 border-white shadow-lg"
+          />
+        ) : (
+            <div className={`w-28 h-28 rounded-full ${getRandomColor()} flex items-center justify-center border-4 border-white shadow-lg`}>
+              <User className="h-14 w-14 text-white" />
             </div>
-            <p className="text-sm text-var(--text-muted)">{user.email}</p>
+        )}
+      </div>
+
+      <div className="glass-card pb-0 pt-6">
+        <div className="grid grid-cols-5 gap-4 h-20">
+          {/* Column 1 - Age */}
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-2xl font-bold text-blue-600">{user.personalInfo.age || 'N/A'}</p>
+            <p className="text-xs text-gray-500">Age</p>
           </div>
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-3 md:grid-cols-4 gap-3">
-            <div className="text-left">
-              <p className="text-xl font-bold text-blue-600">{user.personalInfo.age || 'N/A'}</p>
-              <p className="text-xs text-gray-500">Age</p>
-            </div>
-            <div className="text-left">
-              <p className="text-xl font-bold text-green-600">{user.accountStatus.profileCompletion || 0}%</p>
-              <p className="text-xs text-gray-500">Profile Complete</p>
-            </div>
-            <div className="text-left">
-              <p className="text-xl font-bold text-purple-600">{user.profileContent.images?.length || 0}</p>
-              <p className="text-xs text-gray-500">Photos</p>
-            </div>
+          {/* Column 2 - Profile Completion */}
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-2xl font-bold text-green-600">{user.accountStatus.profileCompletion || 0}%</p>
+            <p className="text-xs text-gray-500">Profile Complete</p>
+          </div>
+          
+          {/* Column 3 - Center Column - Name, Email */}
+          <div className="flex flex-col items-center justify-center space-y-1">
+            {/* Name */}
+            <h2 className="text-lg font-bold text-var(--text-primary) text-center">{user.personalInfo.name || 'N/A'}</h2>
+            
+            {/* Email */}
+            <p className="text-sm text-var(--text-muted) text-center">{user.email}</p>
+          </div>
+
+          {/* Column 4 - Photos */}
+          <div className="flex flex-col items-center justify-center">
+            <p className="text-2xl font-bold text-purple-600">{user.profileContent.images?.length || 0}</p>
+            <p className="text-xs text-gray-500">Photos</p>
+          </div>
+
+          {/* Column 5 - Account Status */}
+          <div className="flex flex-col items-center justify-center">
+            <p className={`text-lg font-semibold ${getStatusColor(user.accountStatus.accountStatus)}`}>
+              {user.accountStatus.accountStatus.charAt(0).toUpperCase() + user.accountStatus.accountStatus.slice(1)}
+            </p>
+            <p className="text-xs text-gray-500">Account Status</p>
           </div>
         </div>
       </div>

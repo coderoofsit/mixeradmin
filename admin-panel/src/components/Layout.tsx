@@ -45,6 +45,15 @@ const Layout = ({ children }: LayoutProps) => {
 
   // Function to get page title based on current route
   const getPageTitle = (pathname: string) => {
+    // Handle sub-pages by checking if pathname starts with the main route
+    if (pathname.startsWith('/users/')) return 'Users Management'
+    if (pathname.startsWith('/events/')) return 'Events Management'
+    if (pathname.startsWith('/feedback/')) return 'Feedback Management'
+    if (pathname.startsWith('/admin/')) return 'Admin Management'
+    if (pathname.startsWith('/blind-dates/')) return 'Blind Dates'
+    if (pathname.startsWith('/subscriptions/')) return 'Subscription Management'
+    if (pathname.startsWith('/venues/')) return 'Venues'
+    
     const titleMap: { [key: string]: string } = {
       '/': 'Dashboard',
       '/dashboard': 'Dashboard',
@@ -125,7 +134,9 @@ const Layout = ({ children }: LayoutProps) => {
           
           <nav className="flex-1 space-y-2 px-4 py-6">
             {navigation.map((item) => {
-              const isActive = location.pathname === item.href
+              // Check if current path matches the nav item or is a sub-page
+              const isActive = location.pathname === item.href || 
+                (item.href !== '/' && location.pathname.startsWith(item.href + '/'))
               return (
                 <Link
                   key={item.name}
@@ -188,23 +199,19 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
           
           <div className="flex flex-1 gap-x-4 self-stretch">
-            <div className="flex flex-1"></div>
-            
-            {/* Page Title - Centered */}
-            <div className="flex items-center justify-center flex-1">
+            {/* Page Title - Centered within page content area */}
+            <div className="flex items-center justify-center flex-1 ">
               <h1 className="text-xl font-bold text-var(--text-primary)">
                 {getPageTitle(location.pathname)}
               </h1>
             </div>
-            
-            <div className="flex flex-1"></div>
             
             <div className="flex items-center gap-x-4">
               {/* Theme Toggle */}
               {/* <ThemeToggle /> */}
               
               {/* Real-time Clock */}
-              <div className="flex items-center space-x-2 glass px-3 py-2 rounded-xl">
+              <div className=" absolute right-0 flex items-center space-x-2 glass px-3 py-2 rounded-xl">
                 <Clock className="h-4 w-4 text-var(--text-secondary)" />
                 <div className="text-sm font-medium text-var(--text-primary)">
                   <div>{currentTime.toLocaleTimeString('en-US', { 
@@ -217,9 +224,9 @@ const Layout = ({ children }: LayoutProps) => {
                     {currentTime.toLocaleDateString('en-US', { 
                       weekday: 'short', 
                       year: 'numeric', 
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}
+                      month: '2-digit', 
+                      day: '2-digit' 
+                    }).replace(/\//g, '-')}
                   </div>
                 </div>
               </div>
@@ -244,7 +251,11 @@ const Layout = ({ children }: LayoutProps) => {
             <div className="flex h-16 items-center justify-between px-6">
               <div className="flex items-center space-x-3">
                 <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <Volume2 className="h-5 w-5 text-white" />
+                  <img
+                    src="/assets/logos/Mixer Logo/Primary Logo/newLogo.png"
+                    alt="Mixer Logo"
+                    className="w-auto bg-transparent border-none"
+                  />
                 </div>
                 <p className="text-lg font-bold gradient-text">Admin Panel</p>
               </div>
@@ -258,7 +269,9 @@ const Layout = ({ children }: LayoutProps) => {
             
             <nav className="flex-1 space-y-2 px-4 py-4">
               {navigation.map((item) => {
-                const isActive = location.pathname === item.href
+                // Check if current path matches the nav item or is a sub-page
+                const isActive = location.pathname === item.href || 
+                  (item.href !== '/' && location.pathname.startsWith(item.href + '/'))
                 return (
                   <Link
                     key={item.name}

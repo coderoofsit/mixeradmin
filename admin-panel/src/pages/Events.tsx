@@ -18,6 +18,8 @@ import { toast } from 'react-hot-toast';
 import TagChips from '../components/TagChips';
 import LoadingOverlay from '../components/LoadingOverlay';
 import LoadingSpinner from '../components/LoadingSpinner';
+import CustomDatePicker from '../components/CustomDatePicker';
+import { formatUTCDateOnly } from '../utils/dateUtils';
 
 const Events = () => {
 	const [events, setEvents] = useState<Event[]>([]);
@@ -122,7 +124,7 @@ const Events = () => {
 		}
 	};
 
-	const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (file) {
 			setImageFile(file);
@@ -131,25 +133,21 @@ const Events = () => {
 				setImagePreview(e.target?.result as string);
 			};
 			reader.readAsDataURL(file);
-		}
-	};
-
-	const handleImageUploadClick = async () => {
-		if (imageFile) {
+			
+			// Automatically upload the image when file is selected
 			try {
-				await handleImageUpload(imageFile);
+				await handleImageUpload(file);
 				// Clear any image URL errors on successful upload
 				if (formErrors.imageUrl) {
 					setFormErrors((prev) => ({ ...prev, imageUrl: '' }));
 				}
 			} catch (error) {
-				setFormErrors((prev) => ({
-					...prev,
-					imageUrl: 'Failed to upload image. Please try again.',
-				}));
+				console.error('Error uploading image:', error);
+				// Keep the file selected but show error
 			}
 		}
 	};
+
 
 	const removeImage = () => {
 		setImageFile(null);
@@ -186,7 +184,7 @@ const Events = () => {
 	const getFieldStyle = (fieldName: string) => {
 		const hasError = formErrors[fieldName];
 		return `input w-full ${
-			hasError ? 'border-var(--error) focus:ring-var(--error)' : ''
+			hasError ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
 		}`;
 	};
 
@@ -258,12 +256,6 @@ const Events = () => {
 
 		try {
 			setIsSubmitting(true);
-			if (imageFile && !formData.imageUrl) {
-				await handleImageUpload(imageFile);
-				// Wait a moment for upload to complete
-				await new Promise((resolve) => setTimeout(resolve, 1000));
-			}
-
 			await adminApi.createEvent(formData);
 			toast.success('Event created successfully');
 			setShowCreateModal(false);
@@ -286,12 +278,6 @@ const Events = () => {
 
 		try {
 			setIsSubmitting(true);
-			if (imageFile && !formData.imageUrl) {
-				await handleImageUpload(imageFile);
-				// Wait a moment for upload to complete
-				await new Promise((resolve) => setTimeout(resolve, 1000));
-			}
-
 			await adminApi.updateEvent(selectedEvent._id, formData);
 			toast.success('Event updated successfully');
 			setShowEditModal(false);
@@ -366,13 +352,6 @@ const Events = () => {
 		setShowEditModal(true);
 	};
 
-	const formatDate = (dateString: string) => {
-		return new Date(dateString).toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		});
-	};
 
 	const formatTime = (timeString: string) => {
 		return timeString;
@@ -440,10 +419,10 @@ const Events = () => {
 		if (!formData.imageUrl.trim()) {
 			errors.imageUrl = 'Event image is required';
 		} else if (imageInputType === 'url') {
-			const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i;
+			// More flexible URL validation - just check if it's a valid HTTP/HTTPS URL
+			const urlPattern = /^https?:\/\/.+/i;
 			if (!urlPattern.test(formData.imageUrl)) {
-				errors.imageUrl =
-					'Please enter a valid image URL (jpg, jpeg, png, gif, webp)';
+				errors.imageUrl = 'Please enter a valid HTTP or HTTPS URL';
 			}
 		}
 
@@ -473,12 +452,15 @@ const Events = () => {
 		// Show toast notifications for errors (only once)
 		if (Object.keys(errors).length > 0) {
 			const errorCount = Object.keys(errors).length;
-			const errorFields = Object.keys(errors).join(', ');
-			toast.error(
-				`Please fix ${errorCount} error${
-					errorCount > 1 ? 's' : ''
-				}: ${errorFields}`,
-			);
+			const errorMessages = Object.values(errors);
+			
+			if (errorCount === 1) {
+				// Show single error message directly
+				toast.error(errorMessages[0]);
+			} else {
+				// Show first error message with count
+				toast.error(`${errorMessages[0]} (and ${errorCount - 1} other error${errorCount > 2 ? 's' : ''})`);
+			}
 		}
 
 		return Object.keys(errors).length === 0;
@@ -541,10 +523,10 @@ const Events = () => {
 				if (!value.trim()) {
 					errors.imageUrl = 'Event image is required';
 				} else if (imageInputType === 'url') {
-					const urlPattern = /^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)(\?.*)?$/i;
+					// More flexible URL validation - just check if it's a valid HTTP/HTTPS URL
+					const urlPattern = /^https?:\/\/.+/i;
 					if (!urlPattern.test(value)) {
-						errors.imageUrl =
-							'Please enter a valid image URL (jpg, jpeg, png, gif, webp)';
+						errors.imageUrl = 'Please enter a valid HTTP or HTTPS URL';
 					} else {
 						delete errors.imageUrl;
 					}
@@ -625,7 +607,7 @@ const Events = () => {
 					placeholder={placeholder}
 					maxLength={maxLength}
 					className={`input w-full ${
-						error ? 'border-var(--error) focus:ring-var(--error)' : ''
+						error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
 					}`}
 				/>
 			) : (
@@ -638,7 +620,7 @@ const Events = () => {
 					placeholder={placeholder}
 					maxLength={maxLength}
 					className={`input w-full ${
-						error ? 'border-var(--error) focus:ring-var(--error)' : ''
+						error ? 'border-red-500 focus:ring-red-500 focus:border-red-500' : ''
 					}`}
 				/>
 			)}
@@ -648,7 +630,7 @@ const Events = () => {
 
 	return (
 		<div className='space-y-6 animate-fade-in'>
-			<LoadingOverlay isVisible={uploadingImage || isSubmitting} />
+			<LoadingOverlay isVisible={isSubmitting} />
 			{/* Header */}
 			<div className='flex items-center justify-end'>
 				<button
@@ -711,12 +693,12 @@ const Events = () => {
 						<p className='text-var(--text-muted)'>Create your first event to get started</p>
 					</div>
 				) : (
-					<div className='grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-2'>
+					<div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
 						{events.map((event) => (
 							<div
 								key={event._id}
 								onClick={() => openEditModal(event)}
-								className='glass-card overflow-hidden  cursor-pointer flex flex-col  w-72'
+								className='glass-card overflow-hidden cursor-pointer flex flex-col w-full'
 							>
 								{/* Image Banner */}
 								<div className='relative'>
@@ -740,7 +722,7 @@ const Events = () => {
 										<div className='flex items-center gap-2 text-xs text-var(--text-muted)'>
 											<Calendar className='h-3 w-3' />
 											<span>
-												{formatDate(event.date)} at {formatTime(event.time)}
+												{formatUTCDateOnly(event.date)} at {formatTime(event.time)}
 											</span>
 										</div>
 										<div className='flex items-center gap-2 text-xs text-var(--text-muted)'>
@@ -809,10 +791,18 @@ const Events = () => {
 
 			{/* Create Event Modal */}
 			{showCreateModal && (
-				<div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4'>
-					<div className='glass-card w-full max-w-3xl max-h-[85vh] overflow-y-auto'>
-						{/* Header */}
-						<div className='bg-gradient-primary px-5 py-3 rounded-t-2xl flex justify-between items-center'>
+				<div className="fixed inset-0 z-50 overflow-y-auto">
+					<div 
+						className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+						onClick={() => setShowCreateModal(false)}
+					></div>
+					<div className="flex min-h-full items-center justify-center p-4">
+						<div 
+							className="relative glass-card w-full max-w-3xl max-h-[85vh] flex flex-col p-0"
+							onClick={(e) => e.stopPropagation()}
+						>
+						{/* Header - Fixed */}
+						<div className='bg-gradient-primary px-5 py-3 rounded-t-2xl flex justify-between items-center flex-shrink-0'>
 							<h2 className='text-lg sm:text-xl font-semibold text-white'>
 								Create New Event
 							</h2>
@@ -824,13 +814,15 @@ const Events = () => {
 							</button>
 						</div>
 
+						{/* Form Content - Scrollable */}
 						<form
 							onSubmit={(e) => {
 								e.preventDefault();
 								handleCreateEvent();
 							}}
+							className="flex flex-col flex-1 min-h-0"
 						>
-							<div className='p-4 space-y-4'>
+							<div className='p-4 space-y-4 flex-1 overflow-y-auto'>
 								{/* Image Section */}
 								<div>
 									<label className='block text-sm font-medium text-var(--text-primary) mb-1'>
@@ -855,61 +847,80 @@ const Events = () => {
 
 									{imageInputType === 'upload' ? (
 										<div className='space-y-3'>
-											{hasImage() && (
-												<div className='relative'>
-													<img
-														src={getCurrentImageSource()}
-														alt='Event preview'
-														className='w-full h-40 object-cover rounded-lg border border-var(--border)'
-													/>
-													<button
-														type='button'
-														onClick={removeImage}
-														className='absolute top-2 right-2 btn btn-danger btn-sm'
-													>
-														<X className='h-4 w-4 mr-1' />
-														Remove
-													</button>
-												</div>
-											)}
-
-											<div className='flex flex-wrap gap-3'>
+											<div className='relative'>
 												<input
 													type='file'
 													accept='image/*'
 													onChange={handleImageChange}
 													className='hidden'
 													id='image-upload-create'
+													disabled={uploadingImage}
 												/>
-												<label
-													htmlFor='image-upload-create'
-													className='btn btn-ghost cursor-pointer'
-												>
-													<Upload className='h-4 w-4' />
-													Choose Image
-												</label>
-												{imageFile && (
-													<button
-														type='button'
-														onClick={handleImageUploadClick}
-														disabled={uploadingImage}
-														className='btn btn-primary  disabled:opacity-50 flex items-center gap-2'
+												
+												{hasImage() ? (
+													<>
+														<img
+															src={getCurrentImageSource()}
+															alt='Event preview'
+															className='w-full h-40 object-cover rounded-lg border border-var(--border)'
+														/>
+														{/* Remove button - only show when image exists and not uploading */}
+														{!uploadingImage && (
+															<button
+																type='button'
+																onClick={removeImage}
+																className='absolute top-2 right-2 btn btn-danger btn-sm'
+															>
+																<X className='h-4 w-4 mr-1' />
+																Remove
+															</button>
+														)}
+													</>
+												) : (
+													<label
+														htmlFor='image-upload-create'
+														className={`w-full h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-colors relative overflow-hidden ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
 													>
-														<Upload className='h-4 w-4' />
-														Upload
-													</button>
+														{/* Upload progress bar */}
+														{uploadingImage && (
+															<div className='absolute bottom-0 left-0 h-1 bg-blue-500 animate-pulse' style={{ width: '100%' }}></div>
+														)}
+														
+														<div className='flex flex-col items-center justify-center relative z-10'>
+															<div className='relative'>
+																<Upload className='h-8 w-8 text-gray-400 mb-2' />
+																{uploadingImage && (
+																	<div className='absolute inset-0 flex items-center justify-center'>
+																		<div className='loading loading-spinner loading-sm text-blue-500'></div>
+																	</div>
+																)}
+															</div>
+															<p className='text-sm text-gray-500'>
+																{uploadingImage ? 'Uploading...' : 'Click to upload image'}
+															</p>
+														</div>
+													</label>
 												)}
 											</div>
 										</div>
 									) : (
 										<div className='space-y-2'>
-											{hasImage() && (
-												<div className='relative'>
+											<div className='relative'>
+												{hasImage() ? (
 													<img
 														src={getCurrentImageSource()}
 														alt='Event preview'
 														className='w-full h-40 object-cover rounded-lg border border-var(--border)'
 													/>
+												) : (
+													<div className='w-full h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center'>
+														<Upload className='h-8 w-8 text-gray-400 mb-2' />
+														<p className='text-sm text-gray-500'>No image URL provided</p>
+													</div>
+												)}
+												
+												{/* Remove button - only show when image exists */}
+												{hasImage() && (
 													<button
 														type='button'
 														onClick={removeImage}
@@ -918,8 +929,8 @@ const Events = () => {
 														<X className='h-4 w-4 mr-1' />
 														Remove
 													</button>
-												</div>
-											)}
+												)}
+											</div>
 											<input
 												type='url'
 												required
@@ -953,7 +964,12 @@ const Events = () => {
 											type='text'
 											required
 											value={formData.title}
-											onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+											onChange={(e) => {
+												setFormData({ ...formData, title: e.target.value });
+												if (formErrors.title) {
+													setFormErrors((prev) => ({ ...prev, title: '' }));
+												}
+											}}
 											className={getFieldStyle('title')}
 										/>
 									</div>
@@ -965,9 +981,12 @@ const Events = () => {
 											type='text'
 											required
 											value={formData.organizer}
-											onChange={(e) =>
-												setFormData({ ...formData, organizer: e.target.value })
-											}
+											onChange={(e) => {
+												setFormData({ ...formData, organizer: e.target.value });
+												if (formErrors.organizer) {
+													setFormErrors((prev) => ({ ...prev, organizer: '' }));
+												}
+											}}
 											className={getFieldStyle('organizer')}
 										/>
 									</div>
@@ -981,9 +1000,12 @@ const Events = () => {
 										rows={3}
 										required
 										value={formData.description}
-										onChange={(e) =>
-											setFormData({ ...formData, description: e.target.value })
-										}
+										onChange={(e) => {
+											setFormData({ ...formData, description: e.target.value });
+											if (formErrors.description) {
+												setFormErrors((prev) => ({ ...prev, description: '' }));
+											}
+										}}
 										className={getFieldStyle('description')}
 									/>
 								</div>
@@ -993,12 +1015,18 @@ const Events = () => {
 										<label className='block text-sm font-medium text-var(--text-primary) mb-1'>
 											Date *
 										</label>
-										<input
-											type='date'
-											required
+										<CustomDatePicker
 											value={formData.date}
-											onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+											onChange={(date) => {
+												setFormData({ ...formData, date });
+												if (formErrors.date) {
+													setFormErrors((prev) => ({ ...prev, date: '' }));
+												}
+											}}
+											placeholder="MM-DD-YYYY"
 											className={getFieldStyle('date')}
+											required
+											minDate={new Date().toISOString().split('T')[0]}
 										/>
 									</div>
 									<div>
@@ -1009,7 +1037,12 @@ const Events = () => {
 											type='time'
 											required
 											value={formData.time}
-											onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+											onChange={(e) => {
+												setFormData({ ...formData, time: e.target.value });
+												if (formErrors.time) {
+													setFormErrors((prev) => ({ ...prev, time: '' }));
+												}
+											}}
 											className={getFieldStyle('time')}
 										/>
 									</div>
@@ -1023,9 +1056,12 @@ const Events = () => {
 										type='text'
 										required
 										value={formData.location}
-										onChange={(e) =>
-											setFormData({ ...formData, location: e.target.value })
-										}
+										onChange={(e) => {
+											setFormData({ ...formData, location: e.target.value });
+											if (formErrors.location) {
+												setFormErrors((prev) => ({ ...prev, location: '' }));
+											}
+										}}
 										className={getFieldStyle('location')}
 									/>
 								</div>
@@ -1033,12 +1069,12 @@ const Events = () => {
 									<label className='block text-sm font-medium text-var(--text-primary) mb-1'>
 										Tags
 									</label>
-									<div className='w-full border rounded-lg px-2 py-2 border-var(--border)'>
+									<div className='w-full border border-var(--border) rounded-lg px-2 py-2 bg-white transition-all duration-200 hover:shadow-md' style={{ boxShadow: 'var(--shadow-sm)' }}>
 										<div className='flex flex-wrap items-center gap-2'>
 											{formData.tags.map((tag, idx) => (
 												<span
 													key={idx}
-													className='flex items-center gap-1 px-2 py-0.5 badge badge-secondary text-xs rounded-full'
+													className='flex items-center gap-1 px-2 py-0.5 badge badge-secondary text-xs rounded-full bg-gray-100 text-gray-800'
 												>
 													{editingTagIndex === idx ? (
 														<input
@@ -1052,13 +1088,13 @@ const Events = () => {
 																if (e.key === 'Enter') handleEditTagSave(idx);
 																else if (e.key === 'Escape') setEditingTagIndex(null);
 															}}
-															className='bg-transparent outline-none text-var(--text-primary) text-xs border border-var(--primary) rounded px-1'
+															className='bg-white outline-none text-gray-800 text-xs border border-blue-500 rounded px-1'
 														/>
 													) : (
 														<>
 															<span
 																onClick={() => startEditingTag(idx, tag)}
-																className='cursor-text text-var(--primary) text-xs'
+																className='cursor-text text-gray-800 text-xs'
 																role='textbox'
 																tabIndex={0}
 																onKeyDown={(e) =>
@@ -1070,7 +1106,7 @@ const Events = () => {
 															<button
 																type='button'
 																onClick={() => removeTag(idx)}
-																className='text-var(--text-muted) hover:text-var(--text-primary) text-sm leading-none'
+																className='text-gray-500 hover:text-gray-700 text-sm leading-none'
 																aria-label={`Remove ${tag}`}
 															>
 																×
@@ -1100,14 +1136,19 @@ const Events = () => {
 										type='url'
 										required
 										value={formData.link}
-										onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+										onChange={(e) => {
+											setFormData({ ...formData, link: e.target.value });
+											if (formErrors.link) {
+												setFormErrors((prev) => ({ ...prev, link: '' }));
+											}
+										}}
 										className={getFieldStyle('link')}
 									/>
 								</div>
 							</div>
 
-							{/* Buttons */}
-							<div className='bg-var(--bg-tertiary) px-4 py-3 flex justify-end gap-2 rounded-b-2xl'>
+							{/* Buttons - Fixed at bottom */}
+							<div className='bg-var(--bg-tertiary) px-4 py-3 flex justify-end gap-2 rounded-b-2xl flex-shrink-0'>
 								<button
 									type='button'
 									onClick={() => setShowCreateModal(false)}
@@ -1124,16 +1165,25 @@ const Events = () => {
 								</button>
 							</div>
 						</form>
+						</div>
 					</div>
 				</div>
 			)}
 
 			{/* Edit Event Modal */}
 			{showEditModal && (
-				<div className='fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4'>
-					<div className='glass-card w-full max-w-3xl max-h-[85vh] overflow-y-auto'>
-						{/* Header */}
-						<div className='bg-gradient-primary px-5 py-3 rounded-t-2xl flex justify-between items-center'>
+				<div className="fixed inset-0 z-50 overflow-y-auto">
+					<div 
+						className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+						onClick={() => setShowEditModal(false)}
+					></div>
+					<div className="flex min-h-full items-center justify-center p-4">
+						<div 
+							className="relative glass-card w-full max-w-3xl max-h-[85vh] flex flex-col p-0"
+							onClick={(e) => e.stopPropagation()}
+						>
+						{/* Header - Fixed */}
+						<div className='bg-gradient-primary px-5 py-3 rounded-t-2xl flex justify-between items-center flex-shrink-0'>
 							<h2 className='text-lg sm:text-xl font-semibold text-white'>
 								Edit Event
 							</h2>
@@ -1145,13 +1195,15 @@ const Events = () => {
 							</button>
 						</div>
 
+						{/* Form Content - Scrollable */}
 						<form
 							onSubmit={(e) => {
 								e.preventDefault();
 								handleUpdateEvent();
 							}}
+							className="flex flex-col flex-1 min-h-0"
 						>
-							<div className='p-4 space-y-4'>
+							<div className='p-4 space-y-4 flex-1 overflow-y-auto'>
 								{/* Image Section */}
 								<div>
 									<label className='block text-sm font-medium text-var(--text-primary) mb-1'>
@@ -1176,60 +1228,80 @@ const Events = () => {
 
 									{imageInputType === 'upload' ? (
 										<div className='space-y-3'>
-											{hasImage() && (
-												<div className='relative'>
-													<img
-														src={getCurrentImageSource()}
-														alt='Event preview'
-														className='w-full h-40 object-cover rounded-lg border border-var(--border)'
-													/>
-													<button
-														type='button'
-														onClick={removeImage}
-														className='absolute top-2 right-2 btn btn-danger btn-sm'
-													>
-														<X className='h-4 w-4 mr-1' />
-														Remove
-													</button>
-												</div>
-											)}
-											<div className='flex flex-wrap gap-3'>
+											<div className='relative'>
 												<input
 													type='file'
 													accept='image/*'
 													onChange={handleImageChange}
 													className='hidden'
 													id='image-upload-edit'
+													disabled={uploadingImage}
 												/>
-												<label
-													htmlFor='image-upload-edit'
-													className='btn btn-ghost cursor-pointer'
-												>
-													<Upload className='h-4 w-4' />
-													Choose Image
-												</label>
-												{imageFile && (
-													<button
-														type='button'
-														onClick={handleImageUploadClick}
-														disabled={uploadingImage}
-														className='btn btn-primary  disabled:opacity-50 flex items-center gap-2'
+												
+												{hasImage() ? (
+													<>
+														<img
+															src={getCurrentImageSource()}
+															alt='Event preview'
+															className='w-full h-40 object-cover rounded-lg border border-var(--border)'
+														/>
+														{/* Remove button - only show when image exists and not uploading */}
+														{!uploadingImage && (
+															<button
+																type='button'
+																onClick={removeImage}
+																className='absolute top-2 right-2 btn btn-danger btn-sm'
+															>
+																<X className='h-4 w-4 mr-1' />
+																Remove
+															</button>
+														)}
+													</>
+												) : (
+													<label
+														htmlFor='image-upload-edit'
+														className={`w-full h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-colors relative overflow-hidden ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
 													>
-														<Upload className='h-4 w-4' />
-														Upload
-													</button>
+														{/* Upload progress bar */}
+														{uploadingImage && (
+															<div className='absolute bottom-0 left-0 h-1 bg-blue-500 animate-pulse' style={{ width: '100%' }}></div>
+														)}
+														
+														<div className='flex flex-col items-center justify-center relative z-10'>
+															<div className='relative'>
+																<Upload className='h-8 w-8 text-gray-400 mb-2' />
+																{uploadingImage && (
+																	<div className='absolute inset-0 flex items-center justify-center'>
+																		<div className='loading loading-spinner loading-sm text-blue-500'></div>
+																	</div>
+																)}
+															</div>
+															<p className='text-sm text-gray-500'>
+																{uploadingImage ? 'Uploading...' : 'Click to upload image'}
+															</p>
+														</div>
+													</label>
 												)}
 											</div>
 										</div>
 									) : (
 										<div className='space-y-2'>
-											{hasImage() && (
-												<div className='relative'>
+											<div className='relative'>
+												{hasImage() ? (
 													<img
 														src={getCurrentImageSource()}
 														alt='Event preview'
 														className='w-full h-40 object-cover rounded-lg border border-var(--border)'
 													/>
+												) : (
+													<div className='w-full h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center'>
+														<Upload className='h-8 w-8 text-gray-400 mb-2' />
+														<p className='text-sm text-gray-500'>No image URL provided</p>
+													</div>
+												)}
+												
+												{/* Remove button - only show when image exists */}
+												{hasImage() && (
 													<button
 														type='button'
 														onClick={removeImage}
@@ -1238,8 +1310,8 @@ const Events = () => {
 														<X className='h-4 w-4 mr-1' />
 														Remove
 													</button>
-												</div>
-											)}
+												)}
+											</div>
 											<input
 												type='url'
 												required
@@ -1273,7 +1345,12 @@ const Events = () => {
 											type='text'
 											required
 											value={formData.title}
-											onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+											onChange={(e) => {
+												setFormData({ ...formData, title: e.target.value });
+												if (formErrors.title) {
+													setFormErrors((prev) => ({ ...prev, title: '' }));
+												}
+											}}
 											className={getFieldStyle('title')}
 										/>
 									</div>
@@ -1285,9 +1362,12 @@ const Events = () => {
 											type='text'
 											required
 											value={formData.organizer}
-											onChange={(e) =>
-												setFormData({ ...formData, organizer: e.target.value })
-											}
+											onChange={(e) => {
+												setFormData({ ...formData, organizer: e.target.value });
+												if (formErrors.organizer) {
+													setFormErrors((prev) => ({ ...prev, organizer: '' }));
+												}
+											}}
 											className={getFieldStyle('organizer')}
 										/>
 									</div>
@@ -1301,9 +1381,12 @@ const Events = () => {
 										rows={3}
 										required
 										value={formData.description}
-										onChange={(e) =>
-											setFormData({ ...formData, description: e.target.value })
-										}
+										onChange={(e) => {
+											setFormData({ ...formData, description: e.target.value });
+											if (formErrors.description) {
+												setFormErrors((prev) => ({ ...prev, description: '' }));
+											}
+										}}
 										className={getFieldStyle('description')}
 									/>
 								</div>
@@ -1313,12 +1396,17 @@ const Events = () => {
 										<label className='block text-sm font-medium text-var(--text-primary) mb-1'>
 											Date *
 										</label>
-										<input
-											type='date'
-											required
+										<CustomDatePicker
 											value={formData.date}
-											onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+											onChange={(date) => {
+												setFormData({ ...formData, date });
+												if (formErrors.date) {
+													setFormErrors((prev) => ({ ...prev, date: '' }));
+												}
+											}}
+											placeholder="MM-DD-YYYY"
 											className={getFieldStyle('date')}
+											required
 										/>
 									</div>
 									<div>
@@ -1329,7 +1417,12 @@ const Events = () => {
 											type='time'
 											required
 											value={formData.time}
-											onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+											onChange={(e) => {
+												setFormData({ ...formData, time: e.target.value });
+												if (formErrors.time) {
+													setFormErrors((prev) => ({ ...prev, time: '' }));
+												}
+											}}
 											className={getFieldStyle('time')}
 										/>
 									</div>
@@ -1343,9 +1436,12 @@ const Events = () => {
 										type='text'
 										required
 										value={formData.location}
-										onChange={(e) =>
-											setFormData({ ...formData, location: e.target.value })
-										}
+										onChange={(e) => {
+											setFormData({ ...formData, location: e.target.value });
+											if (formErrors.location) {
+												setFormErrors((prev) => ({ ...prev, location: '' }));
+											}
+										}}
 										className={getFieldStyle('location')}
 									/>
 								</div>
@@ -1355,15 +1451,16 @@ const Events = () => {
 										Tags
 									</label>
 									<div
-										className={`w-full border rounded-lg px-2 py-2 ${
-											formErrors.tags ? 'border-var(--error)' : 'border-var(--border)'
+										className={`w-full border rounded-lg px-2 py-2 bg-white transition-all duration-200 hover:shadow-md ${
+											formErrors.tags ? 'border-red-500' : 'border-var(--border)'
 										}`}
+										style={{ boxShadow: 'var(--shadow-sm)' }}
 									>
 										<div className='flex flex-wrap items-center gap-2'>
 											{formData.tags.map((tag, idx) => (
 												<span
 													key={idx}
-													className='flex items-center gap-1 px-2 py-0.5 badge badge-secondary text-xs rounded-full'
+													className='flex items-center gap-1 px-2 py-0.5 badge badge-secondary text-xs rounded-full bg-gray-100 text-gray-800'
 												>
 													{editingTagIndex === idx ? (
 														<input
@@ -1376,20 +1473,20 @@ const Events = () => {
 																if (e.key === 'Enter') handleEditTagSave(idx);
 																if (e.key === 'Escape') setEditingTagIndex(null);
 															}}
-															className='bg-transparent outline-none text-var(--text-primary) text-xs'
+															className='bg-white outline-none text-gray-800 text-xs border border-blue-500 rounded px-1'
 														/>
 													) : (
 														<>
 															<span
 																onClick={() => startEditingTag(idx, tag)}
-																className='cursor-text'
+																className='cursor-text text-gray-800 text-xs'
 															>
 																{tag}
 															</span>
 															<button
 																type='button'
 																onClick={() => removeTag(idx)}
-																className='text-var(--text-muted) hover:text-var(--text-primary)'
+																className='text-gray-500 hover:text-gray-700 text-sm leading-none'
 															>
 																×
 															</button>
@@ -1408,9 +1505,6 @@ const Events = () => {
 											/>
 										</div>
 									</div>
-									{formErrors.tags && (
-										<p className='text-var(--error) text-xs mt-1'>{formErrors.tags}</p>
-									)}
 								</div>
 
 								<div>
@@ -1421,14 +1515,19 @@ const Events = () => {
 										type='url'
 										required
 										value={formData.link}
-										onChange={(e) => setFormData({ ...formData, link: e.target.value })}
+										onChange={(e) => {
+											setFormData({ ...formData, link: e.target.value });
+											if (formErrors.link) {
+												setFormErrors((prev) => ({ ...prev, link: '' }));
+											}
+										}}
 										className={getFieldStyle('link')}
 									/>
 								</div>
 							</div>
 
-							{/* Footer Buttons */}
-							<div className='bg-var(--bg-tertiary) px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 rounded-b-2xl'>
+							{/* Footer Buttons - Fixed at bottom */}
+							<div className='bg-var(--bg-tertiary) px-4 py-3 flex flex-col sm:flex-row justify-between items-center gap-3 rounded-b-2xl flex-shrink-0'>
 								<button
 									type='button'
 									onClick={() => selectedEvent && handleDeleteEvent(selectedEvent._id)}
@@ -1455,6 +1554,7 @@ const Events = () => {
 								</div>
 							</div>
 						</form>
+						</div>
 					</div>
 				</div>
 			)}

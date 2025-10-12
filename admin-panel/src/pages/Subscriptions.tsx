@@ -302,7 +302,7 @@ function Subscriptions() {
 
       {/* Search and Filters */}
       <div className="glass-card p-6">
-        <div className="flex items-center space-x-4 mb-4">
+        <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-var(--text-secondary)" />
             <input
@@ -325,7 +325,7 @@ function Subscriptions() {
         </div>
 
         {showFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-var(--border)">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
             <div>
               <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
                 Plan Type
@@ -336,10 +336,11 @@ function Subscriptions() {
                 className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
               >
                 <option value="all">All Plans</option>
-                <option value="Basic">Basic</option>
-                <option value="Upgrade">Premium</option>
-                <option value="Quarterly">Quarterly</option>
-                <option value="background_check_25">Background Check</option>
+                <option value="com.mixerltd.mixerltd.basic">Basic</option>
+                <option value="com.mixerltd.mixerltd.upgrade">Premium</option>
+                <option value="com.mixerltd.mixerltd.quarterly">Quarterly</option>
+                <option value="com.mixerltd.mixerltd.background_check">Background Verify</option>
+                {/* <option value="background_verify">Background Verify</option> */}
               </select>
             </div>
             

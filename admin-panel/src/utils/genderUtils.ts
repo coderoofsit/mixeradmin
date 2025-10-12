@@ -20,7 +20,7 @@ export const mapGenderForDisplay = (gender: string | null | undefined): string =
  * Database stores Male, Female, Other Gender - use exact values
  */
 export const getGenderFilterOptions = () => [
-  { value: 'all', label: 'All' },
+  // { value: 'all', label: 'All' },
   { value: 'Male', label: 'Male' },
   { value: 'Female', label: 'Female' },
   { value: 'Other Gender', label: 'Other Gender' }

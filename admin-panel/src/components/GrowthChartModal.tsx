@@ -8,7 +8,7 @@ interface GrowthData {
   value: number
   growth: number
 }
-
+ 
 interface GrowthChartModalProps {
   isOpen: boolean
   onClose: () => void
@@ -65,7 +65,7 @@ const GrowthChartModal = ({ isOpen, onClose, cardType, cardTitle, currentValue }
         for (let i = 6; i >= 0; i--) {
           const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
           data.push({
-            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            date: date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace(/\//g, '-'),
             value: Math.floor(Math.random() * 100) + currentValue * 0.7,
             growth: Math.random() * 30 - 15
           })
@@ -76,7 +76,7 @@ const GrowthChartModal = ({ isOpen, onClose, cardType, cardTitle, currentValue }
         for (let i = 29; i >= 0; i--) {
           const date = new Date(now.getTime() - i * 24 * 60 * 60 * 1000)
           data.push({
-            date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+            date: date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace(/\//g, '-'),
             value: Math.floor(Math.random() * 200) + currentValue * 0.5,
             growth: Math.random() * 40 - 20
           })
@@ -87,7 +87,7 @@ const GrowthChartModal = ({ isOpen, onClose, cardType, cardTitle, currentValue }
         for (let i = 11; i >= 0; i--) {
           const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
           data.push({
-            date: date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }),
+            date: date.toLocaleDateString('en-US', { month: '2-digit', year: 'numeric' }).replace(/\//g, '-'),
             value: Math.floor(Math.random() * 500) + currentValue * 0.3,
             growth: Math.random() * 50 - 25
           })

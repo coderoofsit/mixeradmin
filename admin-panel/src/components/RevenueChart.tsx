@@ -59,9 +59,9 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
   };
 
   const generateFallbackData = () => {
-    const totalBasic = subscriptionDistribution.find(s => s.plan === 'Basic')?.count || 0;
-    const totalUpgrade = subscriptionDistribution.find(s => s.plan === 'Upgrade')?.count || 0;
-    const totalQuarterly = subscriptionDistribution.find(s => s.plan === 'Quarterly')?.count || 0;
+    const totalBasic = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.basic')?.count || 0;
+    const totalUpgrade = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.upgrade')?.count || 0;
+    const totalQuarterly = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.quarterly')?.count || 0;
     const totalBackgroundCheck = backgroundCheckDistribution.reduce((sum, item) => sum + item.count, 0);
 
     const now = new Date();
@@ -180,7 +180,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             console.warn('Invalid day date:', periodStr);
             return periodStr;
           }
-          return dayDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+          return dayDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
           
         case 'week':
           // Handle daily format: YYYY-MM-DD
@@ -189,7 +189,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             console.warn('Invalid week date:', periodStr);
             return periodStr;
           }
-          return weekDate.toLocaleDateString('en-US', { weekday: 'short', day: 'numeric' });
+          return weekDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
           
         case 'year':
           // Handle monthly format: YYYY-MM
@@ -201,7 +201,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
               console.warn('Invalid month date:', periodStr);
               return periodStr;
             }
-            return monthDate.toLocaleDateString('en-US', { month: 'short' });
+            return monthDate.toLocaleDateString('en-US', { month: '2-digit' }).replace(/\//g, '-');
           }
           return periodStr;
           
@@ -213,7 +213,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             console.warn('Invalid month date:', periodStr);
             return periodStr;
           }
-          return monthDate.toLocaleDateString('en-US', { day: 'numeric' });
+          return monthDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }).replace(/\//g, '-');
       }
     } catch (error) {
       console.error('Error formatting period:', error, { periodStr, type });
@@ -223,10 +223,10 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
 
   // Calculate revenue for each period
   const chartData = data.map(item => {
-    const basicPlan = getPricingPlan('Basic');
-    const upgradePlan = getPricingPlan('Upgrade');
-    const quarterlyPlan = getPricingPlan('Quarterly');
-    const backgroundCheckPlan = getPricingPlan('background_check_25');
+    const basicPlan = getPricingPlan('com.mixerltd.mixerltd.basic');
+    const upgradePlan = getPricingPlan('com.mixerltd.mixerltd.upgrade');
+    const quarterlyPlan = getPricingPlan('com.mixerltd.mixerltd.quarterly');
+    const backgroundCheckPlan = getPricingPlan('com.mixerltd.mixerltd.background_check');
 
     const basicRevenue = (basicPlan?.price || 0) * item.basicCount;
     const upgradeRevenue = (upgradePlan?.price || 0) * item.upgradeCount;

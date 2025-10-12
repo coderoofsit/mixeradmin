@@ -113,14 +113,14 @@ export default function LifestylePreferencesCard({ user }: LifestylePreferencesC
               <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.familyPlans}</p>
             </div>
           )}
+        </div>
+        <div className="space-y-2">
           {user.lifestyle.religion && (
             <div className="flex gap-1">
               <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Religion:</label>
               <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.religion}</p>
             </div>
           )}
-        </div>
-        <div className="space-y-2">
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Politics:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.politics || 'N/A'}</p>

@@ -64,13 +64,24 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Crown className="h-5 w-5 text-var(--text-muted)" />
-            <div>
-              <p className="text-sm font-medium text-var(--text-primary)">Current Plan</p>
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium text-var(--text-primary)">Current Plan:</p>
               <span className={`badge ${activePlan ? 'badge-primary' : 'badge-secondary'}`}>
                 {activePlan?.planName || 'No Plan'}
               </span>
             </div>
           </div>
+          {!activePlan && (
+            <button
+              onClick={onMarkPlanAsPaid}
+              className="btn btn-success btn-sm w-28 whitespace-nowrap"
+              disabled={actionLoading.markPlanAsPaid}
+              title="Admin can mark this user's subscription plan as paid without requiring user payment"
+            >
+              <CreditCard className="h-4 w-4 mr-2" />
+              Mark as Paid
+            </button>
+          )}
         </div>
 
         {activePlan && (
@@ -103,22 +114,11 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
 
         {!activePlan && (
           <div className="glass-card p-3 border-l-4 border-var(--warning)">
-            <div className="space-y-3">
-              <div className="flex items-center">
-                <AlertCircle className="h-4 w-4 text-var(--warning) mr-2" />
-                <p className="text-sm text-var(--text-primary)">
-                  User has no active subscription plan.
-                </p>
-              </div>
-              <button
-                onClick={onMarkPlanAsPaid}
-                className="btn btn-success btn-sm w-full"
-                disabled={actionLoading.markPlanAsPaid}
-                title="Admin can mark this user's subscription plan as paid without requiring user payment"
-              >
-                <CreditCard className="h-4 w-4 mr-2" />
-                Mark Plan as Paid (Admin)
-              </button>
+            <div className="flex items-center">
+              <AlertCircle className="h-4 w-4 text-var(--warning) mr-2" />
+              <p className="text-sm text-var(--text-primary)">
+                User has no active subscription plan.
+              </p>
             </div>
           </div>
         )}

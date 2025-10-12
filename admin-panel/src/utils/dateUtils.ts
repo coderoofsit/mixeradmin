@@ -13,8 +13,8 @@ export const formatUTCDate = (
   options: Intl.DateTimeFormatOptions = {
     timeZone: 'UTC',
     year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     hour: '2-digit',
     minute: '2-digit'
   }
@@ -22,7 +22,10 @@ export const formatUTCDate = (
   if (!dateString) return 'N/A'
   
   try {
-    return new Date(dateString).toLocaleDateString('en-US', options)
+    const date = new Date(dateString)
+    const formatted = date.toLocaleDateString('en-US', options)
+    // Convert from MM/DD/YYYY to MM-DD-YYYY format
+    return formatted.replace(/\//g, '-')
   } catch (error) {
     console.error('Error formatting date:', error)
     return 'Invalid Date'
@@ -38,8 +41,8 @@ export const formatUTCDateOnly = (dateString: string | null | undefined): string
   return formatUTCDate(dateString, {
     timeZone: 'UTC',
     year: 'numeric',
-    month: 'short',
-    day: 'numeric'
+    month: '2-digit',
+    day: '2-digit'
   })
 }
 
@@ -52,8 +55,8 @@ export const formatUTCDateTime = (dateString: string | null | undefined): string
   return formatUTCDate(dateString, {
     timeZone: 'UTC',
     year: 'numeric',
-    month: 'short',
-    day: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit'

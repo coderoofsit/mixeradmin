@@ -61,7 +61,111 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   'background_check_25': {
     id: 'background_check_25',
     name: 'Background Check',
-    price: 25,
+    price: 7.99,
+    currency: 'USD',
+    type: 'one-time',
+    features: [
+      'One-time background verification',
+      'Enhanced profile verification',
+      'Increased trust score'
+    ]
+  },
+  'background_check': {
+    id: 'background_check',
+    name: 'Background Check',
+    price: 7.99,
+    currency: 'USD',
+    type: 'one-time',
+    features: [
+      'One-time background verification',
+      'Enhanced profile verification',
+      'Increased trust score'
+    ]
+  },
+  'Background Check': {
+    id: 'Background Check',
+    name: 'Background Check',
+    price: 7.99,
+    currency: 'USD',
+    type: 'one-time',
+    features: [
+      'One-time background verification',
+      'Enhanced profile verification',
+      'Increased trust score'
+    ]
+  },
+  'background_verification': {
+    id: 'background_verification',
+    name: 'Background Check',
+    price: 7.99,
+    currency: 'USD',
+    type: 'one-time',
+    features: [
+      'One-time background verification',
+      'Enhanced profile verification',
+      'Increased trust score'
+    ]
+  },
+  'com.mixerltd.mixerltd.basic': {
+    id: 'com.mixerltd.mixerltd.basic',
+    name: 'Basic',
+    price: 24.99,
+    currency: 'USD',
+    type: 'subscription',
+    duration: '1 month',
+    features: [
+      'Unlimited likes',
+      'See who liked you',
+      'Advanced filters',
+      'Priority support'
+    ]
+  },
+  'com.mixerltd.mixerltd.upgrade': {
+    id: 'com.mixerltd.mixerltd.upgrade',
+    name: 'Upgrade',
+    price: 49.99,
+    currency: 'USD',
+    type: 'subscription',
+    duration: '1 month',
+    features: [
+      'Unlimited likes',
+      'See who liked you',
+      'Advanced filters',
+      'Priority support'
+    ]
+  },
+  'com.mixerltd.mixerltd.quarterly': {
+    id: 'com.mixerltd.mixerltd.quarterly',
+    name: 'Quarterly',
+    price: 299.99,
+    currency: 'USD',
+    type: 'subscription',
+    duration: '3 months',
+    features: [
+      'Unlimited likes',
+      'See who liked you',
+      'Advanced filters',
+      'Priority support',
+      'Rewind last swipe',
+      'Super likes'
+    ]
+  },
+  'com.mixerltd.mixerltd.background_check': {
+    id: 'com.mixerltd.mixerltd.background_check',
+    name: 'Background Check',
+    price: 7.99,
+    currency: 'USD',
+    type: 'one-time',
+    features: [
+      'One-time background verification',
+      'Enhanced profile verification',
+      'Increased trust score'
+    ]
+  },
+  'background_verify': {
+    id: 'background_verify',
+    name: 'Background Check',
+    price: 7.99,
     currency: 'USD',
     type: 'one-time',
     features: [

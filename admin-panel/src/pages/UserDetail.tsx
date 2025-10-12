@@ -733,7 +733,28 @@ function UserDetail() {
   }
 
   if (loading) {
-    return <LoadingSpinner />
+    return (
+      <div className="min-h-screen bg-var(--bg-secondary) animate-fade-in">
+        {/* Header */}
+        <div className="container mx-auto ">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-4">
+              <button onClick={() => navigate('/users')} className="btn btn-ghost">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back
+              </button>
+            </div>
+          </div>
+
+          {/* Unified User Detail Card with Loading Spinner */}
+          <div className="glass-card p-6">
+            <div className="flex items-center justify-center py-12">
+              <LoadingSpinner />
+            </div>
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (!userData) {
@@ -754,8 +775,8 @@ function UserDetail() {
   return (
     <div className="min-h-screen bg-var(--bg-secondary) animate-fade-in">
       {/* Header */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-        <div className="flex items-center justify-between mb-6">
+      <div className="container mx-auto ">
+        <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-4">
             <button onClick={() => navigate('/users')} className="btn btn-ghost">
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -814,8 +835,8 @@ function UserDetail() {
           
           {/* Main Content Grid with Separators */}
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-6">
-            {/* Left Column - User Profile & Activity (8 columns) */}
-            <div className="xl:col-span-8 space-y-6">
+            {/* Left Column - User Profile & Activity (7 columns) */}
+            <div className="xl:col-span-7 space-y-6">
               {/* Account Status Section */}
               <div>
                 <AccountStatusCard 
@@ -826,16 +847,13 @@ function UserDetail() {
               
               {/* Profile Information Section */}
               <div className="border-t border-var(--border-light) pt-6">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <div className="border-r border-var(--border-light) pr-6">
+                  
                     <PersonalInfoCard user={userData} />
-                  </div>
-                  <div className="pl-6">
+                  
+              </div>
+              <div className="">
                     <LifestylePreferencesCard user={userData} />
                   </div>
-                </div>
-              </div>
-              
               {/* Horizontal Separator */}
               <div className="border-t border-var(--border-light) pt-6">
                 <AboutInterestsCard user={userData} />
@@ -865,8 +883,8 @@ function UserDetail() {
               </div> */}
             </div>
                   
-            {/* Right Sidebar - Account Management (4 columns) */}
-            <div className="xl:col-span-4 border-l border-var(--border-light) pl-6 space-y-6">
+            {/* Right Sidebar - Account Management (5 columns) */}
+            <div className="xl:col-span-5 border-l border-var(--border-light) pl-6 flex flex-col space-y-6">
               {/* Verification Status Section */}
               <div>
                 <VerificationStatusCard
@@ -890,7 +908,7 @@ function UserDetail() {
               </div>
               
               {/* Notification History Section */}
-              <div className="border-t border-var(--border-light) pt-6">
+              <div className="border-t border-var(--border-light) pt-6 flex-1 flex flex-col">
                 <NotificationHistoryCard userId={userData.id} />
               </div>
               

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { adminApi } from '../services/api'
 import toast from 'react-hot-toast'
+import CustomDatePicker from '../components/CustomDatePicker'
 
 type BlindDate = {
 	_id: string
@@ -166,15 +167,32 @@ const BlindDates = () => {
 				<div className="card">
 					<h2 className="text-lg font-semibold mb-4" style={{color: 'var(--text-primary)'}}>{editingId ? 'Edit Blind Date' : 'Create Blind Date'}</h2>
 					<div className="space-y-3">
-						<label className="block">
-							<span className="text-sm" style={{color: 'var(--text-secondary)'}}>Scheduled At</span>
-							<input
-								type="datetime-local"
-								className="input"
-								value={form.scheduledAt}
-								onChange={(e) => setForm((f) => ({ ...f, scheduledAt: e.target.value }))}
-							/>
-						</label>
+						<div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+							<label className="block">
+								<span className="text-sm" style={{color: 'var(--text-secondary)'}}>Date</span>
+								<CustomDatePicker
+									value={form.scheduledAt ? form.scheduledAt.split('T')[0] : ''}
+									onChange={(date) => {
+										const time = form.scheduledAt ? form.scheduledAt.split('T')[1] || '12:00' : '12:00';
+										setForm((f) => ({ ...f, scheduledAt: `${date}T${time}` }));
+									}}
+									placeholder="MM-DD-YYYY"
+									className="input"
+								/>
+							</label>
+							<label className="block">
+								<span className="text-sm" style={{color: 'var(--text-secondary)'}}>Time</span>
+								<input
+									type="time"
+									className="input"
+									value={form.scheduledAt ? form.scheduledAt.split('T')[1] || '12:00' : '12:00'}
+									onChange={(e) => {
+										const date = form.scheduledAt ? form.scheduledAt.split('T')[0] : new Date().toISOString().split('T')[0];
+										setForm((f) => ({ ...f, scheduledAt: `${date}T${e.target.value}` }));
+									}}
+								/>
+							</label>
+						</div>
 						<label className="block">
 							<span className="text-sm" style={{color: 'var(--text-secondary)'}}>Link</span>
 							<input

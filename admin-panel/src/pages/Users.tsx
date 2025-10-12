@@ -9,7 +9,10 @@ import {
   UserPlus,
   Trash2,
   Search,
-  RefreshCw
+  RefreshCw,
+  Filter,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
 import DataTable from '../components/DataTable'
@@ -60,6 +63,7 @@ function Users() {
   
   const [filterGender, setFilterGender] = useState<string>('all')
   const [filterVerification, setFilterVerification] = useState<string>('all')
+  const [showFilters, setShowFilters] = useState(false)
   
   // Dynamic pagination limit
   const [limit, setLimit] = useState(20) // Default limit
@@ -459,140 +463,80 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="glass-card">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-2 lg:gap-3">
-          {/* Search Filter */}
-          <div className="sm:col-span-2 lg:col-span-2 xl:col-span-2">
-            <label className="block text-sm font-medium mb-1" style={{color: 'var(--text-primary)'}}>Search:</label>
-            <div className="relative">
-              <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-4 w-4 text-var(--text-muted)" />
-              <input
-                type="text"
-                placeholder="Search by name..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="input w-full pl-8 pr-3 py-1.5 text-sm"
-              />
-            </div>
+      {/* Search and Filters */}
+      <div className="glass-card p-6">
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-var(--text-secondary)" />
+            <input
+              type="text"
+              placeholder="Search by user name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) placeholder-var(--text-muted) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
+            />
           </div>
           
-          {/* Account Status Filter */}
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{color: 'var(--text-primary)'}}>Status:</label>
-            <select
-              value={filterAccountStatus}
-              onChange={(e) => setFilterAccountStatus(e.target.value)}
-              className="select w-full px-2 py-1.5 text-sm"
-            >
-              <option value="all">All</option>
-              <option value="active">Active</option>
-              <option value="suspended">Suspended</option>
-              <option value="banned">Banned</option>
-            </select>
-          </div>
-          
-          {/* Subscription Plan Filter */}
-          
-
-          {/* Gender Filter */}
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{color: 'var(--text-primary)'}}>Gender:</label>
-            <select
-              value={filterGender}
-              onChange={(e) => setFilterGender(e.target.value)}
-              className="select w-full px-2 py-1.5 text-sm"
-            >
-              {getGenderFilterOptions().map(option => (
-                <option key={option.value} value={option.value}>{option.label}</option>
-              ))}
-            </select>
-          </div>
-
-          {/* Verification Filter */}
-          <div>
-            <label className="block text-sm font-medium mb-1" style={{color: 'var(--text-primary)'}}>Verification:</label>
-            <select
-              value={filterVerification}
-              onChange={(e) => setFilterVerification(e.target.value)}
-              className="select w-full px-2 py-1.5 text-sm"
-            >
-              <option value="all">All</option>
-              <option value="unpaid">Unpaid</option>
-              <option value="pending">Pending</option>
-              <option value="approved">Approved</option>
-              <option value="rejected">Rejected</option>
-            </select>
-          </div>
-          
-          {/* Filter Actions */}
-          <div className="sm:col-span-2 lg:col-span-1 xl:col-span-1 flex flex-col sm:flex-row items-start sm:items-end space-y-1 sm:space-y-0 sm:space-x-2">
-            <div className="flex items-center space-x-2">
-              
-              <button
-                onClick={handleClearAllFilters}
-                disabled={activeFiltersCount === 0}
-                className={`btn btn-sm ${
-                  activeFiltersCount > 0
-                    ? 'btn-danger'
-                    : 'btn-ghost opacity-50 cursor-not-allowed'
-                }`}
-              >
-                <svg className="h-3 w-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-                Clear
-              </button>
-            </div>
-          </div>
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center px-4 py-2 text-sm font-medium text-var(--text-primary) bg-var(--bg-primary) border border-var(--border) rounded-lg hover:bg-var(--bg-secondary) transition-colors"
+          >
+            <Filter className="h-4 w-4 mr-2" />
+            Filters
+            {showFilters ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+          </button>
         </div>
-        
-        {/* Bulk Actions */}
-        {selectedUsers.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-var(--border)">
-            <div className="flex items-center space-x-3">
-              <span className="text-sm text-var(--text-muted)">
-                {selectedUsers.length} user(s) selected
-              </span>
-              {!bulkInProgress ? (
-                <>
-                  {/* <button
-                    onClick={() => handleBulkAction('verify')}
-                    className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
-                  >
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    Verify Selected
-                  </button> */}
-                  <button
-                    onClick={() => handleBulkAction('delete')}
-                    className="btn btn-danger"
-                  >
-                    <Trash2 className="h-4 w-4 mr-1" />
-                    Delete Selected
-                  </button>
-                </>
-              ) : (
-                <div className="w-full">
-                  <div className="flex items-center justify-between mb-2">
-                    <div className="text-sm text-var(--text-primary)">Processing {bulkCompleted + bulkFailed} / {bulkTotal}</div>
-                    <div className="text-sm text-var(--text-muted)">Success: {bulkCompleted} • Failed: {bulkFailed}</div>
-                  </div>
-                  <div className="w-full bg-var(--bg-tertiary) rounded h-2 overflow-hidden">
-                    <div
-                      className="h-2 bg-var(--primary)"
-                      style={{ width: `${bulkTotal > 0 ? ((bulkCompleted + bulkFailed) / bulkTotal) * 100 : 0}%` }}
-                    />
-                  </div>
-                  <div className="mt-2">
-                    <button
-                      onClick={() => { abortBulkRef.current = true }}
-                      className="btn btn-warning btn-sm"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </div>
-              )}
+
+        {showFilters && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+            <div>
+              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
+                Account Status
+              </label>
+              <select
+                value={filterAccountStatus}
+                onChange={(e) => setFilterAccountStatus(e.target.value)}
+                className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
+              >
+                <option value="all">All Status</option>
+                <option value="active">Active</option>
+                <option value="suspended">Suspended</option>
+                <option value="banned">Banned</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
+                Verification Status
+              </label>
+              <select
+                value={filterVerification}
+                onChange={(e) => setFilterVerification(e.target.value)}
+                className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
+              >
+                <option value="all">All Verification</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            
+            <div>
+              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
+                Gender
+              </label>
+              <select
+                value={filterGender}
+                onChange={(e) => setFilterGender(e.target.value)}
+                className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
+              >
+                <option value="all">All Genders</option>
+                {getGenderFilterOptions().map(option => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )}
@@ -604,8 +548,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         columns={columns}
         data={tableData}
         loading={loading}
-        searchable={true}
-        onSearch={setSearchTerm}
+        searchable={false}
         onRowClick={(user) => navigate(`/users/${user._id}`)}
         pagination={{
           currentPage,

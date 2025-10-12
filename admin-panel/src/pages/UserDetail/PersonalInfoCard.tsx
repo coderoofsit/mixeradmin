@@ -176,10 +176,6 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
               <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.pronoun}</p>
             </div>
           )}
-          <div className="flex gap-1">
-            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.ethnicity || 'N/A'}</p>
-          </div>
         </div>
         <div className="space-y-2">
           <div className="flex gap-1">
@@ -194,6 +190,10 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Height:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.height || 'N/A'}</p>
+          </div>
+          <div className="flex gap-1">
+            <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.ethnicity || 'N/A'}</p>
           </div>
         </div>
       </div>

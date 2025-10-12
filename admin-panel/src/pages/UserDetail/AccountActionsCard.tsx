@@ -32,44 +32,60 @@ export default function AccountActionsCard({
         <Settings className="h-5 w-5 mr-2 text-var(--accent)" />
         Account Actions
       </h3>
-      <div className="space-y-3">
-        {user.accountStatus.accountStatus === 'active' ? (
-          <button
-            onClick={onSuspend}
-            disabled={actionLoading.suspend}
-            className="btn btn-warning w-full"
-          >
-            <Ban className="h-4 w-4 mr-2" />
-            {actionLoading.suspend ? 'Suspending...' : 'Suspend User'}
-          </button>
-        ) : (
-          <button
-            onClick={onReactivate}
-            disabled={actionLoading.reactivate}
-            className="btn btn-success w-full"
-          >
-            <CheckCircle className="h-4 w-4 mr-2" />
-            {actionLoading.reactivate ? 'Reactivating...' : 'Reactivate User'}
-          </button>
-        )}
-
-        <button
-          onClick={onBan}
-          disabled={actionLoading.ban}
-          className="btn btn-danger w-full"
-        >
-          <Ban className="h-4 w-4 mr-2" />
-          {actionLoading.ban ? 'Banning...' : 'Ban User'}
-        </button>
-
-        <button
-          onClick={onDelete}
-          disabled={actionLoading.delete}
-          className="btn btn-danger w-full"
-        >
-          <Trash2 className="h-4 w-4 mr-2" />
-          {actionLoading.delete ? 'Deleting...' : 'Delete User'}
-        </button>
+      <div className="space-y-4">
+        {/* Account Status Management */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-3">
+            <Settings className="h-5 w-5 text-var(--text-muted)" />
+            <div className="flex items-center space-x-2">
+              <p className="text-sm font-medium text-var(--text-primary)">Account Status:</p>
+              <span className={`badge ${user.accountStatus.accountStatus === 'active' ? 'badge-success' : 'badge-warning'}`}>
+                {user.accountStatus.accountStatus}
+              </span>
+            </div>
+          </div>
+          
+          {/* Account Status Action Buttons */}
+          <div className="flex items-center space-x-2">
+            {user.accountStatus.accountStatus === 'active' ? (
+              <button
+                onClick={onSuspend}
+                disabled={actionLoading.suspend}
+                className="btn btn-warning btn-sm w-24"
+              >
+                <Ban className="h-4 w-4 mr-2" />
+                {actionLoading.suspend ? 'Suspending...' : 'Suspend'}
+              </button>
+            ) : (
+              <button
+                onClick={onReactivate}
+                disabled={actionLoading.reactivate}
+                className="btn btn-success btn-sm w-24"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                {actionLoading.reactivate ? 'Reactivating...' : 'Reactivate'}
+              </button>
+            )}
+            
+            <button
+              onClick={onBan}
+              disabled={actionLoading.ban}
+              className="btn btn-danger btn-sm w-20"
+            >
+              <Ban className="h-4 w-4 mr-2" />
+              {actionLoading.ban ? 'Banning...' : 'Ban'}
+            </button>
+            
+            <button
+              onClick={onDelete}
+              disabled={actionLoading.delete}
+              className="btn btn-danger btn-sm w-20"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              {actionLoading.delete ? 'Deleting...' : 'Delete'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
