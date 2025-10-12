@@ -76,7 +76,7 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
                     <div className="flex-1">
                       <div className="font-medium">{plan.name}</div>
                       <div className="text-sm text-gray-600">{plan.duration}</div>
-                      <div className="text-xs text-gray-500">{plan.description}</div>
+                      {/* <div className="text-xs text-gray-500">{plan.description}</div> */}
                     </div>
                   </label>
                 ))}

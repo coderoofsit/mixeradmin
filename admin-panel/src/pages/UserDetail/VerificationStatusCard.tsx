@@ -176,9 +176,17 @@ interface VerificationStatusCardProps {
         total: number
         recent: Array<{
           _id: string
+          userId: string
+          platform: string
           planName: string
-          purchaseDate: string
+          productId: string
+          purchaseToken: string
           status: string
+          purchaseDate: string
+          expiryDate?: string | null
+          rawReceipt: string
+          createdAt: string
+          updatedAt: string
         }>
       }
     }
@@ -204,6 +212,23 @@ export default function VerificationStatusCard({
   onViewBackgroundChecks,
   onManualVerify
 }: VerificationStatusCardProps) {
+  
+  // Helper function to check if user has already paid for background check
+  const hasPaidBackgroundCheck = () => {
+    const backgroundCheckProductIds = [
+      'background_check_25',
+      'background_check', 
+      'Background Check',
+      'background_verification',
+      'com.mixerltd.mixerltd.background_check',
+      'background_verify'
+    ]
+    
+    return user.adminData.purchases.recent.some(purchase => 
+      backgroundCheckProductIds.includes(purchase.productId) && 
+      purchase.status === 'active'
+    )
+  }
   const getVerificationBadgeClass = (status: string) => {
     switch (status) {
       case 'approved':
@@ -289,7 +314,7 @@ export default function VerificationStatusCard({
             <button
               onClick={onMarkAsPaid}
               className="btn btn-success btn-sm w-28 whitespace-nowrap"
-              disabled={user.adminData.purchases.total > 0 || actionLoading.markAsPaid}
+              disabled={hasPaidBackgroundCheck() || actionLoading.markAsPaid}
               title="Admin can mark this user's background verification as paid without requiring user payment"
             >
               <CreditCard className="h-4 w-4 mr-2" />
