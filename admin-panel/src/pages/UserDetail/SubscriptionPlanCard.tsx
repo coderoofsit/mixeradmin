@@ -112,7 +112,7 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
           </div>
         )}
 
-        {!activePlan && (
+        {/* {!activePlan && (
           <div className="glass-card p-3 border-l-4 border-var(--warning)">
             <div className="flex items-center">
               <AlertCircle className="h-4 w-4 text-var(--warning) mr-2" />
@@ -121,7 +121,7 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
               </p>
             </div>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   )

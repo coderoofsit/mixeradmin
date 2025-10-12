@@ -463,6 +463,8 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         </button>
       </div>
 
+      
+
       {/* Search and Filters */}
       <div className="glass-card p-6">
         <div className="flex items-center space-x-4">
@@ -542,7 +544,52 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         )}
       </div>
      
-     
+     {/* Bulk Actions */}
+     {selectedUsers.length > 0 && (
+        <div className="glass-card p-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <span className="text-sm font-medium text-var(--text-primary)">
+                {selectedUsers.length} user{selectedUsers.length !== 1 ? 's' : ''} selected
+              </span>
+              {bulkInProgress && (
+                <div className="flex items-center space-x-2 text-sm text-var(--text-secondary)">
+                  <LoadingSpinner size="sm" />
+                  <span>Processing... {bulkCompleted}/{bulkTotal}</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex items-center space-x-2">
+              {/* <button
+                onClick={() => handleBulkAction('verify')}
+                disabled={bulkInProgress}
+                className="btn btn-success btn-sm"
+              >
+                <CheckCircle className="h-4 w-4 mr-2" />
+                Verify Selected
+              </button> */}
+              
+              <button
+                onClick={() => handleBulkAction('delete')}
+                disabled={bulkInProgress}
+                className="btn btn-danger btn-sm"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Selected
+              </button>
+              
+              <button
+                onClick={() => setSelectedUsers([])}
+                disabled={bulkInProgress}
+                className="btn btn-secondary btn-sm"
+              >
+                Clear Selection
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Data Table */}
       <DataTable
         columns={columns}

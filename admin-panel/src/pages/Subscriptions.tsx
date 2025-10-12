@@ -124,6 +124,31 @@ function Subscriptions() {
     }
   }
 
+  // Helper function to determine the current active plan
+  const getCurrentActivePlan = (subscription: Subscription) => {
+    const history = historyLoaded[subscription.userId] ? fullPurchaseHistory[subscription.userId] : subscription.purchaseHistory
+    
+    if (!history || history.length === 0) {
+      return null
+    }
+
+    // Find all active plans (not expired)
+    const activePlans = history.filter(purchase => 
+      purchase.expiryDate && new Date(purchase.expiryDate) > new Date()
+    )
+
+    if (activePlans.length === 0) {
+      return null
+    }
+
+    // Sort by expiry date and return the one that expires first (most recent active plan)
+    const sortedActivePlans = activePlans.sort((a, b) => 
+      new Date(a.expiryDate!).getTime() - new Date(b.expiryDate!).getTime()
+    )
+
+    return sortedActivePlans[0]
+  }
+
   const renderPurchaseHistory = (row: Subscription) => {
     const isHistoryLoaded = historyLoaded[row.userId]
     const isLoadingHistory = loadingHistory[row.userId]
@@ -215,17 +240,20 @@ function Subscriptions() {
     {
       key: 'currentPlan',
       label: 'Current Plan',
-      render: (_value: any, row: Subscription) => (
-        <div>
-          {row.currentPlan ? (
-            <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPlanBadgeColor(row.currentPlan)}`}>
-              {formatPurchaseType(row.currentPlan)}
-            </span>
-          ) : (
-            <span className="text-var(--text-muted)">No active plan</span>
-          )}
-        </div>
-      )
+      render: (_value: any, row: Subscription) => {
+        const currentActivePlan = getCurrentActivePlan(row)
+        return (
+          <div>
+            {currentActivePlan ? (
+              <span className={`inline-flex px-2 py-1 text-xs font-medium rounded-full ${getPlanBadgeColor(currentActivePlan.productId)}`}>
+                {formatPurchaseType(currentActivePlan.productId)}
+              </span>
+            ) : (
+              <span className="text-var(--text-muted)">No active plan</span>
+            )}
+          </div>
+        )
+      }
     },
     {
       key: 'planStatus',
@@ -239,11 +267,14 @@ function Subscriptions() {
     {
       key: 'planExpiry',
       label: 'Expiry Date',
-      render: (_value: any, row: Subscription) => (
-        <div className="text-sm">
-          {row.planExpiry ? formatDate(row.planExpiry) : 'N/A'}
-        </div>
-      )
+      render: (_value: any, row: Subscription) => {
+        const currentActivePlan = getCurrentActivePlan(row)
+        return (
+          <div className="text-sm">
+            {currentActivePlan?.expiryDate ? formatDate(currentActivePlan.expiryDate) : 'N/A'}
+          </div>
+        )
+      }
     },
     {
   key: 'totalPurchases',

@@ -327,7 +327,7 @@ export default function VerificationStatusCard({
         )} */}
 
         {/* Manual Verify */}
-        {/* <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Search className="h-5 w-5 text-var(--text-muted)" />
             <p className="text-sm font-medium text-var(--text-primary)">Manual Verification:</p>
@@ -340,7 +340,7 @@ export default function VerificationStatusCard({
             <Search className="h-4 w-4 mr-2" />
             {actionLoading.manualVerify ? 'Fetching...' : 'Verify'}
           </button>
-        </div> */}
+        </div>
       </div>
     </div>
   )
