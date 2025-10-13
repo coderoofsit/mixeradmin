@@ -130,8 +130,9 @@ export default function UserProfileHeader({ user }: UserProfileHeaderProps) {
       'bg-orange-500',
       'bg-cyan-500'
     ]
-    // Use user ID to generate consistent color for same user
-    const hash = user.personalInfo.name.split('').reduce((a, b) => {
+    // Use user name or email to generate consistent color for same user
+    const name = user.personalInfo?.name || user.email || 'default'
+    const hash = name.split('').reduce((a: number, b: string) => {
       a = ((a << 5) - a) + b.charCodeAt(0)
       return a & a
     }, 0)

@@ -866,12 +866,12 @@ function UserDetail() {
                   onOpenMedia={openMediaModal}
                 />
               </div>
-              <div className="border-t border-var(--border-light) pt-6">
+              {/* <div className="border-t border-var(--border-light) pt-6">
               <SocialActivityCard 
                       socialActivity={userData.adminData.socialActivity}
                       moderation={userData.adminData.moderation}
                     />
-              </div>
+              </div> */}
               {/* Social Activity & Purchase History Section */}
               {/* <div className="border-t border-var(--border-light) pt-6">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

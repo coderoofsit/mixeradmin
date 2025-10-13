@@ -133,7 +133,7 @@ const Events = () => {
 				setImagePreview(e.target?.result as string);
 			};
 			reader.readAsDataURL(file);
-			
+
 			// Automatically upload the image when file is selected
 			try {
 				await handleImageUpload(file);
@@ -847,7 +847,7 @@ const Events = () => {
 
 									{imageInputType === 'upload' ? (
 										<div className='space-y-3'>
-											<div className='relative'>
+												<div className='relative'>
 												<input
 													type='file'
 													accept='image/*'
@@ -859,26 +859,26 @@ const Events = () => {
 												
 												{hasImage() ? (
 													<>
-														<img
-															src={getCurrentImageSource()}
-															alt='Event preview'
-															className='w-full h-40 object-cover rounded-lg border border-var(--border)'
-														/>
+													<img
+														src={getCurrentImageSource()}
+														alt='Event preview'
+														className='w-full h-40 object-cover rounded-lg border border-var(--border)'
+													/>
 														{/* Remove button - only show when image exists and not uploading */}
 														{!uploadingImage && (
-															<button
-																type='button'
-																onClick={removeImage}
-																className='absolute top-2 right-2 btn btn-danger btn-sm'
-															>
-																<X className='h-4 w-4 mr-1' />
-																Remove
-															</button>
+													<button
+														type='button'
+														onClick={removeImage}
+														className='absolute top-2 right-2 btn btn-danger btn-sm'
+													>
+														<X className='h-4 w-4 mr-1' />
+														Remove
+													</button>
 														)}
 													</>
 												) : (
-													<label
-														htmlFor='image-upload-create'
+												<label
+													htmlFor='image-upload-create'
 														className={`w-full h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-colors relative overflow-hidden ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
 													>
 														{/* Upload progress bar */}
@@ -899,13 +899,13 @@ const Events = () => {
 																{uploadingImage ? 'Uploading...' : 'Click to upload image'}
 															</p>
 														</div>
-													</label>
+												</label>
 												)}
 											</div>
 										</div>
 									) : (
 										<div className='space-y-2'>
-											<div className='relative'>
+												<div className='relative'>
 												{hasImage() ? (
 													<img
 														src={getCurrentImageSource()}
@@ -929,7 +929,7 @@ const Events = () => {
 														<X className='h-4 w-4 mr-1' />
 														Remove
 													</button>
-												)}
+											)}
 											</div>
 											<input
 												type='url'
@@ -1228,7 +1228,7 @@ const Events = () => {
 
 									{imageInputType === 'upload' ? (
 										<div className='space-y-3'>
-											<div className='relative'>
+												<div className='relative'>
 												<input
 													type='file'
 													accept='image/*'
@@ -1240,26 +1240,26 @@ const Events = () => {
 												
 												{hasImage() ? (
 													<>
-														<img
-															src={getCurrentImageSource()}
-															alt='Event preview'
-															className='w-full h-40 object-cover rounded-lg border border-var(--border)'
-														/>
+													<img
+														src={getCurrentImageSource()}
+														alt='Event preview'
+														className='w-full h-40 object-cover rounded-lg border border-var(--border)'
+													/>
 														{/* Remove button - only show when image exists and not uploading */}
 														{!uploadingImage && (
-															<button
-																type='button'
-																onClick={removeImage}
-																className='absolute top-2 right-2 btn btn-danger btn-sm'
-															>
-																<X className='h-4 w-4 mr-1' />
-																Remove
-															</button>
+													<button
+														type='button'
+														onClick={removeImage}
+														className='absolute top-2 right-2 btn btn-danger btn-sm'
+													>
+														<X className='h-4 w-4 mr-1' />
+														Remove
+													</button>
 														)}
 													</>
 												) : (
-													<label
-														htmlFor='image-upload-edit'
+												<label
+													htmlFor='image-upload-edit'
 														className={`w-full h-40 bg-gray-100 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50 hover:border-gray-400 transition-colors relative overflow-hidden ${uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
 													>
 														{/* Upload progress bar */}
@@ -1280,13 +1280,13 @@ const Events = () => {
 																{uploadingImage ? 'Uploading...' : 'Click to upload image'}
 															</p>
 														</div>
-													</label>
+												</label>
 												)}
 											</div>
 										</div>
 									) : (
 										<div className='space-y-2'>
-											<div className='relative'>
+												<div className='relative'>
 												{hasImage() ? (
 													<img
 														src={getCurrentImageSource()}
@@ -1310,7 +1310,7 @@ const Events = () => {
 														<X className='h-4 w-4 mr-1' />
 														Remove
 													</button>
-												)}
+											)}
 											</div>
 											<input
 												type='url'

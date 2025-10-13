@@ -268,7 +268,7 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
                   </p>
                 </div>
               )}
-
+              
               {/* Search Bar - only show when requiresSelection is true */}
               {data.requiresSelection && (
                 <>
@@ -326,44 +326,44 @@ const FetchRecordsModal: React.FC<FetchRecordsModalProps> = ({
                   
                   {/* Selection buttons - only show when requiresSelection is true */}
                   {data?.requiresSelection && (
-                    <div className="mt-6 flex justify-center space-x-3">
-                      {data?.requiresSelection ? (
-                        // Multiple people - show selection interface
-                        <>
-                          <button
-                            onClick={() => setSelectedPersonIndex(originalIndex)}
-                            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-                              selectedPersonIndex === originalIndex
-                                ? 'bg-blue-600 text-white'
-                                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                            }`}
-                          >
-                            {selectedPersonIndex === originalIndex ? 'Selected' : 'Select This Person'}
-                          </button>
-                          
-                          {selectedPersonIndex === originalIndex && (
-                            <button
-                              onClick={() => handleSelectPerson(originalIndex)}
-                              disabled={isSelecting}
-                              className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
-                            >
-                              <CheckCircle className="h-5 w-5" />
-                              {isSelecting ? 'Saving...' : 'Confirm Selection'}
-                            </button>
-                          )}
-                        </>
-                      ) : (
-                        // Single person - show direct select button
+                  <div className="mt-6 flex justify-center space-x-3">
+                    {data?.requiresSelection ? (
+                      // Multiple people - show selection interface
+                      <>
                         <button
-                          onClick={() => handleSelectPerson(originalIndex)}
-                          disabled={isSelecting}
-                          className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
+                            onClick={() => setSelectedPersonIndex(originalIndex)}
+                          className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+                              selectedPersonIndex === originalIndex
+                              ? 'bg-blue-600 text-white'
+                              : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                          }`}
                         >
-                          <CheckCircle className="h-5 w-5" />
-                          {isSelecting ? 'Saving...' : 'Select This Person'}
+                            {selectedPersonIndex === originalIndex ? 'Selected' : 'Select This Person'}
                         </button>
-                      )}
-                    </div>
+                        
+                          {selectedPersonIndex === originalIndex && (
+                          <button
+                              onClick={() => handleSelectPerson(originalIndex)}
+                            disabled={isSelecting}
+                            className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
+                          >
+                            <CheckCircle className="h-5 w-5" />
+                            {isSelecting ? 'Saving...' : 'Confirm Selection'}
+                          </button>
+                        )}
+                      </>
+                    ) : (
+                      // Single person - show direct select button
+                      <button
+                          onClick={() => handleSelectPerson(originalIndex)}
+                        disabled={isSelecting}
+                        className="px-8 py-2 bg-green-600 hover:bg-green-700 disabled:bg-gray-400 text-white font-semibold rounded-lg flex items-center gap-2 transition-colors"
+                      >
+                        <CheckCircle className="h-5 w-5" />
+                        {isSelecting ? 'Saving...' : 'Select This Person'}
+                      </button>
+                    )}
+                  </div>
                   )}
                 </div>
                 );

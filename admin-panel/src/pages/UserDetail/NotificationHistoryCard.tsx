@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Bell, Filter, ChevronLeft, ChevronRight, Clock, CheckCircle, Circle } from 'lucide-react'
 import { adminApi } from '../../services/api'
 import LoadingSpinner from '../../components/LoadingSpinner'
@@ -65,7 +65,7 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
     read: ''
   })
 
-  const fetchNotifications = async (page = 1) => {
+  const fetchNotifications = useCallback(async (page = 1) => {
     try {
       setLoading(true)
       const params = {
@@ -87,13 +87,13 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
     } finally {
       setLoading(false)
     }
-  }
+  }, [userId, filters.type, filters.read])
 
   useEffect(() => {
     if (userId) {
       fetchNotifications(1)
     }
-  }, [userId, filters])
+  }, [userId, fetchNotifications])
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }))
@@ -117,8 +117,8 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
   }
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between mb-4">
+    <div className="flex flex-col h-96">
+      <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <h3 className="text-lg font-semibold text-var(--text-primary) flex items-center">
           <Bell className="h-5 w-5 mr-2 text-var(--primary)" />
           Notifications
@@ -127,7 +127,7 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
       </div>
 
       {/* Filters */}
-      <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4 flex-shrink-0">
         <select
           value={filters.type}
           onChange={(e) => handleFilterChange('type', e.target.value)}

@@ -341,7 +341,7 @@ const AdminManagement: React.FC = () => {
       {/* Admins Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         {/* Header */}
-        <div className="bg-#2C2C2E px-6 py-4">
+        {/* <div className="bg-#2C2C2E">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <div className="p-2 bg-white/20 rounded-lg">
@@ -356,7 +356,7 @@ const AdminManagement: React.FC = () => {
               Last updated: {new Date().toLocaleDateString()}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Table */}
         <div className="overflow-x-auto">

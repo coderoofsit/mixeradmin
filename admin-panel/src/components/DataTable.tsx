@@ -150,8 +150,8 @@ const DataTable: React.FC<DataTableProps> = ({
       <div className={tableContainerClass}>
         <div className={tableWrapperClass} style={tableStyle}>
           <table className="table w-full">
-            <thead className="table-header">
-              <tr className="sticky top-0 z-10 bg-var(--bg-primary) border-b border-var(--border)">
+            <thead className="table-header sticky top-0 z-10">
+              <tr className="bg-var(--bg-primary) border-b border-var(--border)">
                 {columns.map((column) => (
                   <th
                     key={column.key}

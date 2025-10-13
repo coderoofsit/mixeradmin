@@ -70,9 +70,29 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     }
   }, [value]);
 
-  // Handle manual input
+  // Validate input format (only allow MM-DD-YYYY pattern)
+  const isValidInput = (value: string): boolean => {
+    // Allow empty string
+    if (!value) return true;
+    
+    // Allow partial input while typing (e.g., "01", "01-", "01-1", etc.)
+    const partialPattern = /^(\d{0,2})(-(\d{0,2})(-(\d{0,4})?)?)?$/;
+    if (partialPattern.test(value)) {
+      return true;
+    }
+    
+    return false;
+  };
+
+  // Handle manual input with validation
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value;
+    
+    // Only allow valid input format
+    if (!isValidInput(inputValue)) {
+      return; // Don't update if invalid format
+    }
+    
     setDisplayValue(inputValue);
     
     // Validate and convert if complete date is entered
@@ -89,6 +109,84 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           setSelectedDate(testDate);
           setCurrentMonth(testDate);
         }
+      }
+    }
+  };
+
+  // Handle paste to validate pasted content
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    e.preventDefault();
+    const pastedText = e.clipboardData.getData('text');
+    
+    // Clean the pasted text (remove non-digit, non-hyphen characters)
+    const cleanedText = pastedText.replace(/[^\d-]/g, '');
+    
+    // Validate the cleaned text
+    if (isValidInput(cleanedText)) {
+      setDisplayValue(cleanedText);
+      
+      // If it's a complete date, process it
+      if (cleanedText.length === 10 && cleanedText.includes('-')) {
+        const isoDate = parseDisplayDate(cleanedText);
+        if (isoDate) {
+          const [year, month, day] = isoDate.split('-');
+          const testDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
+          if (testDate.getUTCFullYear() === parseInt(year) && 
+              testDate.getUTCMonth() === parseInt(month) - 1 && 
+              testDate.getUTCDate() === parseInt(day)) {
+            onChange(isoDate);
+            setSelectedDate(testDate);
+            setCurrentMonth(testDate);
+          }
+        }
+      }
+    }
+  };
+
+  // Handle key press to restrict input
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const char = e.key;
+    
+    // Allow backspace, delete, tab, escape, enter
+    if (['Backspace', 'Delete', 'Tab', 'Escape', 'Enter'].includes(char)) {
+      return;
+    }
+    
+    // Allow digits and hyphens
+    if (!/[\d-]/.test(char)) {
+      e.preventDefault();
+      return;
+    }
+    
+    // Prevent multiple hyphens or hyphens at the beginning
+    const currentValue = (e.target as HTMLInputElement).value;
+    if (char === '-') {
+      if (currentValue.includes('-') || currentValue.length === 0) {
+        e.preventDefault();
+        return;
+      }
+    }
+    
+    // Auto-format: add hyphens at appropriate positions
+    if (/^\d$/.test(char)) {
+      const currentLength = currentValue.length;
+      
+      // Auto-add hyphen after 2 digits (MM-)
+      if (currentLength === 2 && !currentValue.includes('-')) {
+        setTimeout(() => {
+          setDisplayValue(currentValue + char + '-');
+        }, 0);
+        e.preventDefault();
+        return;
+      }
+      
+      // Auto-add hyphen after 5 characters (MM-DD-)
+      if (currentLength === 5 && currentValue.charAt(4) !== '-') {
+        setTimeout(() => {
+          setDisplayValue(currentValue + char + '-');
+        }, 0);
+        e.preventDefault();
+        return;
       }
     }
   };
@@ -258,12 +356,15 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           type="text"
           value={displayValue}
           onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+          onPaste={handlePaste}
           onFocus={handleOpenDropdown}
           placeholder={placeholder}
           required={required}
           disabled={disabled}
           className="input w-full pr-10"
           style={{ height: 'auto', minHeight: 'auto' }}
+          maxLength={10}
         />
         <button
           type="button"
