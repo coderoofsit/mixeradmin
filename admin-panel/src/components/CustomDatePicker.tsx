@@ -31,10 +31,10 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Convert ISO date to MM-DD-YYYY format for display (UTC)
+  // Convert ISO date to MM-DD-YYYY format for display
   const formatDateForDisplay = (isoDate: string): string => {
     if (!isoDate) return "";
-    // Parse as UTC to avoid timezone issues
+    // Simple string parsing for display
     const [year, month, day] = isoDate.split('-');
     if (year && month && day) {
       return `${month}-${day}-${year}`;
@@ -42,12 +42,12 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     return "";
   };
 
-  // Convert MM-DD-YYYY to ISO date (UTC)
+  // Convert MM-DD-YYYY to ISO date
   const parseDisplayDate = (displayDate: string): string => {
     if (!displayDate) return "";
     const [month, day, year] = displayDate.split('-');
     if (month && day && year) {
-      // Create ISO date string directly to avoid timezone issues
+      // Create ISO date string directly
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
     }
     return "";
@@ -57,12 +57,12 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   useEffect(() => {
     if (value) {
       setDisplayValue(formatDateForDisplay(value));
-      // Create date in UTC to avoid timezone issues
+      // Create date in local time
       const [year, month, day] = value.split('-');
       if (year && month && day) {
-        const utcDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
-        setSelectedDate(utcDate);
-        setCurrentMonth(utcDate);
+        const localDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        setSelectedDate(localDate);
+        setCurrentMonth(localDate);
       }
     } else {
       setDisplayValue("");
@@ -101,10 +101,10 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
       if (isoDate) {
         // Validate the date by parsing it
         const [year, month, day] = isoDate.split('-');
-        const testDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
-        if (testDate.getUTCFullYear() === parseInt(year) && 
-            testDate.getUTCMonth() === parseInt(month) - 1 && 
-            testDate.getUTCDate() === parseInt(day)) {
+        const testDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+        if (testDate.getFullYear() === parseInt(year) && 
+            testDate.getMonth() === parseInt(month) - 1 && 
+            testDate.getDate() === parseInt(day)) {
           onChange(isoDate);
           setSelectedDate(testDate);
           setCurrentMonth(testDate);
@@ -130,10 +130,10 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         const isoDate = parseDisplayDate(cleanedText);
         if (isoDate) {
           const [year, month, day] = isoDate.split('-');
-          const testDate = new Date(Date.UTC(parseInt(year), parseInt(month) - 1, parseInt(day)));
-          if (testDate.getUTCFullYear() === parseInt(year) && 
-              testDate.getUTCMonth() === parseInt(month) - 1 && 
-              testDate.getUTCDate() === parseInt(day)) {
+          const testDate = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
+          if (testDate.getFullYear() === parseInt(year) && 
+              testDate.getMonth() === parseInt(month) - 1 && 
+              testDate.getDate() === parseInt(day)) {
             onChange(isoDate);
             setSelectedDate(testDate);
             setCurrentMonth(testDate);
@@ -193,10 +193,10 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
 
   // Handle date selection from calendar
   const handleDateSelect = (date: Date) => {
-    // Convert UTC date to ISO string to avoid timezone issues
-    const year = date.getUTCFullYear();
-    const month = String(date.getUTCMonth() + 1).padStart(2, '0');
-    const day = String(date.getUTCDate()).padStart(2, '0');
+    // Convert local date to ISO string
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     const isoDate = `${year}-${month}-${day}`;
     
     setSelectedDate(date);
@@ -209,25 +209,25 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   const isDateDisabled = (date: Date): boolean => {
     if (minDate) {
       const [minYear, minMonth, minDay] = minDate.split('-');
-      const minDateUTC = new Date(Date.UTC(parseInt(minYear), parseInt(minMonth) - 1, parseInt(minDay)));
-      if (date < minDateUTC) return true;
+      const minDateLocal = new Date(parseInt(minYear), parseInt(minMonth) - 1, parseInt(minDay));
+      if (date < minDateLocal) return true;
     }
     if (maxDate) {
       const [maxYear, maxMonth, maxDay] = maxDate.split('-');
-      const maxDateUTC = new Date(Date.UTC(parseInt(maxYear), parseInt(maxMonth) - 1, parseInt(maxDay)));
-      if (date > maxDateUTC) return true;
+      const maxDateLocal = new Date(parseInt(maxYear), parseInt(maxMonth) - 1, parseInt(maxDay));
+      if (date > maxDateLocal) return true;
     }
     return false;
   };
 
   // Generate calendar days
   const generateCalendarDays = () => {
-    const year = currentMonth.getUTCFullYear();
-    const month = currentMonth.getUTCMonth();
+    const year = currentMonth.getFullYear();
+    const month = currentMonth.getMonth();
     
-    const firstDay = new Date(Date.UTC(year, month, 1));
-    const lastDay = new Date(Date.UTC(year, month + 1, 0));
-    const startDate = new Date(Date.UTC(year, month, 1 - firstDay.getUTCDay()));
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    const startDate = new Date(year, month, 1 - firstDay.getDay());
     
     const days = [];
     const currentDate = new Date(startDate);
@@ -235,14 +235,15 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     // Generate 42 days (6 weeks)
     for (let i = 0; i < 42; i++) {
       const date = new Date(currentDate);
-      const isCurrentMonth = date.getUTCMonth() === month;
-      const isToday = date.getUTCFullYear() === new Date().getUTCFullYear() &&
-                     date.getUTCMonth() === new Date().getUTCMonth() &&
-                     date.getUTCDate() === new Date().getUTCDate();
+      const isCurrentMonth = date.getMonth() === month;
+      const today = new Date();
+      const isToday = date.getFullYear() === today.getFullYear() &&
+                     date.getMonth() === today.getMonth() &&
+                     date.getDate() === today.getDate();
       const isSelected = selectedDate && 
-                        date.getUTCFullYear() === selectedDate.getUTCFullYear() &&
-                        date.getUTCMonth() === selectedDate.getUTCMonth() &&
-                        date.getUTCDate() === selectedDate.getUTCDate();
+                        date.getFullYear() === selectedDate.getFullYear() &&
+                        date.getMonth() === selectedDate.getMonth() &&
+                        date.getDate() === selectedDate.getDate();
       const isDisabled = isDateDisabled(date);
       
       days.push({
@@ -253,7 +254,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         isDisabled
       });
       
-      currentDate.setUTCDate(currentDate.getUTCDate() + 1);
+      currentDate.setDate(currentDate.getDate() + 1);
     }
     
     return days;
@@ -264,9 +265,9 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
     setCurrentMonth(prev => {
       const newMonth = new Date(prev);
       if (direction === 'prev') {
-        newMonth.setUTCMonth(newMonth.getUTCMonth() - 1);
+        newMonth.setMonth(newMonth.getMonth() - 1);
       } else {
-        newMonth.setUTCMonth(newMonth.getUTCMonth() + 1);
+        newMonth.setMonth(newMonth.getMonth() + 1);
       }
       return newMonth;
     });
@@ -398,7 +399,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
               <ChevronLeft className="h-4 w-4" />
             </button>
             <h3 className="font-semibold text-var(--text-primary)">
-              {monthNames[currentMonth.getUTCMonth()]} {currentMonth.getUTCFullYear()}
+              {monthNames[currentMonth.getMonth()]} {currentMonth.getFullYear()}
             </h3>
             <button
               type="button"
@@ -446,8 +447,8 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
               type="button"
               onClick={() => {
                 const today = new Date();
-                const utcToday = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
-                handleDateSelect(utcToday);
+                const localToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                handleDateSelect(localToday);
               }}
               className="text-sm text-var(--primary) hover:text-var(--primary-dark) transition-colors"
             >

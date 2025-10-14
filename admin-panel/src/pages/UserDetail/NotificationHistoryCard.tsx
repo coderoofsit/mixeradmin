@@ -208,13 +208,13 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
                     </span>
                   </div>
                   
-                  <span className={`text-xs px-2 py-1 rounded ${
+                  {/* <span className={`text-xs px-2 py-1 rounded ${
                     notification.status === 'sent' ? 'bg-green-100 text-green-800' :
                     notification.status === 'failed' ? 'bg-red-100 text-red-800' :
                     'bg-yellow-100 text-yellow-800'
                   }`}>
                     {notification.status}
-                  </span>
+                  </span> */}
                 </div>
               </div>
             ))}
