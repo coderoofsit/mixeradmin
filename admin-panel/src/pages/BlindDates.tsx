@@ -110,7 +110,7 @@ const BlindDates = () => {
 	return (
 		<div>
 			<div className="flex items-center justify-between mb-6">
-				{/* <div className="flex gap-2">
+				<div className="flex gap-2">
 					<select
 						className="form-select"
 						value={filters.isActive}
@@ -120,10 +120,20 @@ const BlindDates = () => {
 						<option value="true">Active</option>
 						<option value="false">Inactive</option>
 					</select>
-					<input type="date" className="form-input" value={filters.from || ''} onChange={(e) => setFilters((f) => ({ ...f, from: e.target.value }))} />
-					<input type="date" className="form-input" value={filters.to || ''} onChange={(e) => setFilters((f) => ({ ...f, to: e.target.value }))} />
+							{/* <CustomDatePicker
+								value={filters.from || ''}
+								onChange={(date) => setFilters((f) => ({ ...f, from: date }))}
+								placeholder="From Date"
+								className="form-input rounded-lg"
+							/>
+							<CustomDatePicker
+								value={filters.to || ''}
+								onChange={(date) => setFilters((f) => ({ ...f, to: date }))}
+								placeholder="To Date"
+								className="form-input"
+							/> */}
 					<button className="btn btn-primary btn-sm" onClick={load}>Filter</button>
-				</div> */}
+				</div>
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -139,7 +149,7 @@ const BlindDates = () => {
 									<th className="table-header-cell">Date & Time</th>
 									<th className="table-header-cell">Link</th>
 									<th className="table-header-cell">Active</th>
-									<th className="table-header-cell text-right">Actions</th>
+									<th className="table-header-cell" style={{textAlign: 'center'}}>Actions</th>
 								</tr>
 							</thead>
 							<tbody className="table-body">
@@ -148,7 +158,7 @@ const BlindDates = () => {
 										<td className="table-cell whitespace-nowrap">{new Date(r.scheduledAt).toLocaleString()}</td>
 										<td className="table-cell max-w-[300px] truncate"><a href={r.link} target="_blank" rel="noreferrer" className="text-var(--text-secondary) underline hover:text-var(--text-primary)">{r.link}</a></td>
 										<td className="table-cell">{r.isActive ? 'Yes' : 'No'}</td>
-										<td className="table-cell text-right space-x-2">
+										<td className="table-cell space-x-2 items-center justify-center" style={{textAlign: 'center'}}>
 											<button className="btn btn-primary btn-sm" onClick={() => startEdit(r)}>Edit</button>
 											<button className="btn btn-danger btn-sm" onClick={() => onDelete(r._id)}>Delete</button>
 										</td>

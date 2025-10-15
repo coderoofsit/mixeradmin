@@ -451,6 +451,23 @@
     color: white;
   }
   
+  .badge-manually-required {
+    background: #FFD700; /* Golden yellow */
+    color: #8B4513; /* Dark brown text for contrast */
+    animation: pulse-yellow 2s ease-in-out infinite;
+  }
+  
+  @keyframes pulse-yellow {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 0.7;
+      transform: scale(1.05);
+    }
+  }
+  
   /* Apple-style Input Components */
   .input {
     display: block;
@@ -531,7 +548,7 @@
   
   .table-header-cell {
     padding: 1rem 1.5rem;
-    text-align: left;
+    text-align: center;
     font-size: 0.75rem;
     font-weight: 500; /* Apple uses Medium weight */
     color: var(--text-muted);
@@ -1209,12 +1226,12 @@
   
   .form-input:focus {
     outline: none;
-    box-shadow: 0 0 0 2px var(--primary);
+    /* box-shadow: 0 0 0 2px var(--primary); */
     border-color: transparent;
   }
   
   .form-input:hover {
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); */
   }
   
   .form-select {

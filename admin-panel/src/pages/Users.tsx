@@ -369,7 +369,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
       case 'rejected':
         return 'badge-danger'
       case 'pending':
-        return 'badge-warning'
+        return 'badge-manually-required'
       case 'unpaid':
         return 'badge-secondary'
       default:
@@ -423,7 +423,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
     ),
     verification: (
       <span className={`badge ${getVerificationBadgeClass(user.backgroundVerification)}`}>
-        {user.backgroundVerification || 'Unknown'}
+        {user.backgroundVerification === 'pending' ? 'Manually Required' : (user.backgroundVerification || 'Unknown')}
       </span>
     )
     ,createdAt: user.createdAt
@@ -517,7 +517,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
                 className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
               >
                 <option value="all">All Verification</option>
-                <option value="pending">Pending</option>
+                <option value="pending">Manually Required</option>
                 <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
               </select>
