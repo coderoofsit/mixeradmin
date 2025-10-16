@@ -436,10 +436,28 @@ const Dashboard = () => {
           
           {/* Background Check Purchases */}
           <PurchasePieChart
-            data={stats?.backgroundCheckDistribution || []}
+            data={(() => {
+              const totalUsers = stats?.totalUsers?.count || 0;
+              const purchasedUsers = stats?.totalBackgroundCheckPurchases || 0;
+              const nonPurchasedUsers = totalUsers - purchasedUsers;
+              
+              return [
+                {
+                  plan: 'Purchased',
+                  count: purchasedUsers,
+                  percentage: totalUsers > 0 ? Math.round((purchasedUsers / totalUsers) * 100) : 0
+                },
+                {
+                  plan: 'Not Purchased',
+                  count: nonPurchasedUsers,
+                  percentage: totalUsers > 0 ? Math.round((nonPurchasedUsers / totalUsers) * 100) : 0
+                }
+              ];
+            })()}
             title="Background Check Purchases"
-            totalPurchases={stats?.totalBackgroundCheckPurchases || 0}
-            colors={['#F59E0B', '#FBBF24', '#FCD34D']}
+            totalPurchases={stats?.totalUsers?.count || 0}
+            colors={['#F59E0B', '#E5E7EB']}
+            totalLabel="Total Users"
           />
         </div>
 

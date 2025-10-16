@@ -12,13 +12,15 @@ interface PurchasePieChartProps {
   title: string;
   totalPurchases: number;
   colors?: string[];
+  totalLabel?: string;
 }
 
 const PurchasePieChart: React.FC<PurchasePieChartProps> = ({
   data,
   title,
   totalPurchases,
-  colors = ['#5D1152', '#7B1FA2', '#9C27B0', '#E1BEE7', '#F3E5F5']
+  colors = ['#5D1152', '#7B1FA2', '#9C27B0', '#E1BEE7', '#F3E5F5'],
+  totalLabel = 'Total Purchases'
 }) => {
   // Custom tooltip
   const CustomTooltip = ({ active, payload }: any) => {
@@ -52,7 +54,7 @@ const PurchasePieChart: React.FC<PurchasePieChartProps> = ({
       <div className="flex items-center justify-center mb-4">
         <div className="text-center">
           <p className="text-3xl font-bold text-var(--primary)">{totalPurchases}</p>
-          <p className="text-sm text-var(--text-muted)">Total Purchases</p>
+          <p className="text-sm text-var(--text-muted)">{totalLabel}</p>
         </div>
       </div>
       
