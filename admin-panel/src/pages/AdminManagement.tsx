@@ -58,6 +58,7 @@ const AdminManagement: React.FC = () => {
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [config, setConfig] = useState<SuperAdminConfig | null>(null);
   const [loading, setLoading] = useState(true);
+  const [currentTime, setCurrentTime] = useState(new Date());
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -113,6 +114,15 @@ const AdminManagement: React.FC = () => {
 
   useEffect(() => {
     fetchData();
+  }, []);
+
+  // Update current time every second for live clock
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(interval);
   }, []);
 
   const fetchData = async () => {
@@ -476,13 +486,22 @@ const AdminManagement: React.FC = () => {
                       </span>
                       <span className="text-xs">
                         {admin.lastLogin 
-                          ? new Date(admin.lastLogin).toLocaleDateString('en-US', {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            }).replace(/\//g, '-')
+                          ? (admin._id === user?._id && admin.role === 'super_admin'
+                              ? currentTime.toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                  second: '2-digit'
+                                }).replace(/\//g, '-')
+                              : new Date(admin.lastLogin).toLocaleDateString('en-US', {
+                                  year: 'numeric',
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                }).replace(/\//g, '-'))
                           : 'No activity'
                         }
                       </span>
@@ -1186,7 +1205,11 @@ const AdminManagement: React.FC = () => {
                       <span className="label-text font-semibold">Last Login</span>
                     </label>
                     <div className="text-sm text-gray-600">
-                      {editingAdmin.lastLogin ? new Date(editingAdmin.lastLogin).toLocaleDateString() : 'Never'}
+                      {editingAdmin.lastLogin 
+                        ? (editingAdmin._id === user?._id && editingAdmin.role === 'super_admin'
+                            ? currentTime.toLocaleString()
+                            : new Date(editingAdmin.lastLogin).toLocaleDateString())
+                        : 'Never'}
                     </div>
                   </div>
                 </div>

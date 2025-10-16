@@ -161,11 +161,35 @@ const BlindDates = () => {
 
 	const startEdit = (item: BlindDate) => {
 		setEditingId(item._id)
+		
+		// Convert UTC time to local time for the datetime-local input
+		const date = new Date(item.scheduledAt)
+		const year = date.getFullYear()
+		const month = String(date.getMonth() + 1).padStart(2, '0')
+		const day = String(date.getDate()).padStart(2, '0')
+		const hours = String(date.getHours()).padStart(2, '0')
+		const minutes = String(date.getMinutes()).padStart(2, '0')
+		const localDateTime = `${year}-${month}-${day}T${hours}:${minutes}`
+		
 		setForm({
-			scheduledAt: new Date(item.scheduledAt).toISOString().slice(0, 16),
+			scheduledAt: localDateTime,
 			link: item.link,
 			isActive: item.isActive
 		})
+	}
+
+	const formatScheduledDate = (dateString: string) => {
+		const date = new Date(dateString)
+		const month = String(date.getMonth() + 1).padStart(2, '0')
+		const day = String(date.getDate()).padStart(2, '0')
+		const year = date.getFullYear()
+		
+		let hours = date.getHours()
+		const minutes = String(date.getMinutes()).padStart(2, '0')
+		const ampm = hours >= 12 ? 'PM' : 'AM'
+		hours = hours % 12 || 12
+		
+		return `${month}-${day}-${year} at ${hours}:${minutes} ${ampm}`
 	}
 
 	const rows = useMemo(() => items, [items])
@@ -218,7 +242,7 @@ const BlindDates = () => {
 							<tbody className="table-body">
 								{rows.map((r) => (
 									<tr key={r._id} className="table-row">
-										<td className="table-cell whitespace-nowrap">{new Date(r.scheduledAt).toLocaleString()}</td>
+										<td className="table-cell whitespace-nowrap">{formatScheduledDate(r.scheduledAt)}</td>
 										<td className="table-cell max-w-[300px] truncate"><a href={r.link} target="_blank" rel="noreferrer" className="text-var(--text-secondary) underline hover:text-var(--text-primary)">{r.link}</a></td>
 										<td className="table-cell">{r.isActive ? 'Yes' : 'No'}</td>
 										<td className="table-cell space-x-2 items-center justify-center" style={{textAlign: 'center'}}>

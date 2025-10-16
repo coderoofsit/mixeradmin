@@ -3,7 +3,7 @@
  */
 
 /**
- * Formats a date string to display in UTC timezone to preserve original server time
+ * Formats a date string to display in local timezone
  * @param dateString - ISO date string from API
  * @param options - Intl.DateTimeFormatOptions for customization
  * @returns Formatted date string
@@ -11,7 +11,6 @@
 export const formatUTCDate = (
   dateString: string | null | undefined,
   options: Intl.DateTimeFormatOptions = {
-    timeZone: 'UTC',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',
@@ -39,7 +38,6 @@ export const formatUTCDate = (
  */
 export const formatUTCDateOnly = (dateString: string | null | undefined): string => {
   return formatUTCDate(dateString, {
-    timeZone: 'UTC',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit'
@@ -53,7 +51,6 @@ export const formatUTCDateOnly = (dateString: string | null | undefined): string
  */
 export const formatUTCDateTime = (dateString: string | null | undefined): string => {
   return formatUTCDate(dateString, {
-    timeZone: 'UTC',
     year: 'numeric',
     month: '2-digit',
     day: '2-digit',

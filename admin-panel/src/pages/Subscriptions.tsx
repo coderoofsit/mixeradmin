@@ -4,11 +4,8 @@ import { formatDate, formatPurchaseType, getStatusBadgeColor, getPlatformBadgeCo
 import { 
   CreditCard, 
   Search, 
-  Filter,
   Download,
-  RefreshCw,
-  ChevronDown,
-  ChevronUp
+  RefreshCw
 } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
 import DataTable from '../components/DataTable'
@@ -38,17 +35,13 @@ interface Subscription {
 function Subscriptions() {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [loading, setLoading] = useState(true)
+  const [searchLoading, setSearchLoading] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [limit, setLimit] = useState(20)
-  
-  // Filters
-  const [showFilters, setShowFilters] = useState(false)
-  const [filterPlanType, setFilterPlanType] = useState('all')
-  const [filterStatus, setFilterStatus] = useState('all')
-  const [filterPlatform, setFilterPlatform] = useState('all')
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   
   // Purchase history state
   const [fullPurchaseHistory, setFullPurchaseHistory] = useState<{ [userId: string]: PurchaseHistory[] }>({})
@@ -66,19 +59,24 @@ function Subscriptions() {
   }, [searchTerm])
 
   useEffect(() => {
-    fetchSubscriptions()
-  }, [currentPage, debouncedSearchTerm, filterPlanType, filterStatus, filterPlatform, limit])
+    fetchSubscriptions(!isInitialLoad)
+    if (isInitialLoad) {
+      setIsInitialLoad(false)
+    }
+  }, [currentPage, debouncedSearchTerm, limit])
 
-  const fetchSubscriptions = async () => {
+  const fetchSubscriptions = async (isSearch = false) => {
     try {
-      setLoading(true)
+      if (isSearch) {
+        setSearchLoading(true)
+      } else {
+        setLoading(true)
+      }
+      
       const params = {
         page: currentPage,
         limit,
-        search: debouncedSearchTerm,
-        ...(filterPlanType !== 'all' && { planType: filterPlanType }),
-        ...(filterStatus !== 'all' && { status: filterStatus }),
-        ...(filterPlatform !== 'all' && { platform: filterPlatform })
+        search: debouncedSearchTerm
       }
       
       console.log('🔍 Fetching subscriptions with params:', params)
@@ -92,7 +90,11 @@ function Subscriptions() {
       console.error('Error fetching subscriptions:', error)
       toast.error('Failed to fetch subscriptions')
     } finally {
-      setLoading(false)
+      if (isSearch) {
+        setSearchLoading(false)
+      } else {
+        setLoading(false)
+      }
     }
   }
 
@@ -323,7 +325,7 @@ function Subscriptions() {
           
           <button
             onClick={handleRefresh}
-            className="flex items-center px-4 py-2 text-sm font-medium text-var(--text-primary) bg-var(--bg-primary) border border-var(--border) rounded-lg hover:bg-var(--bg-secondary) transition-colors"
+            className="btn btn-primary"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
@@ -331,7 +333,7 @@ function Subscriptions() {
         </div>
       </div>
 
-      {/* Search and Filters */}
+      {/* Search */}
       <div className="glass-card p-6">
         <div className="flex items-center space-x-4">
           <div className="flex-1 relative">
@@ -343,70 +345,13 @@ function Subscriptions() {
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full pl-10 pr-4 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) placeholder-var(--text-muted) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
             />
+            {searchLoading && (
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-var(--primary)"></div>
+              </div>
+            )}
           </div>
-          
-          <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center px-4 py-2 text-sm font-medium text-var(--text-primary) bg-var(--bg-primary) border border-var(--border) rounded-lg hover:bg-var(--bg-secondary) transition-colors"
-          >
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-            {showFilters ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
-          </button>
         </div>
-
-        {showFilters && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
-            <div>
-              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
-                Plan Type
-              </label>
-              <select
-                value={filterPlanType}
-                onChange={(e) => setFilterPlanType(e.target.value)}
-                className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
-              >
-                <option value="all">All Plans</option>
-                <option value="com.mixerltd.mixerltd.basic">Basic</option>
-                <option value="com.mixerltd.mixerltd.upgrade">Premium</option>
-                <option value="com.mixerltd.mixerltd.quarterly">Quarterly</option>
-                <option value="com.mixerltd.mixerltd.background_check">Background Verify</option>
-                {/* <option value="background_verify">Background Verify</option> */}
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
-                Status
-              </label>
-              <select
-                value={filterStatus}
-                onChange={(e) => setFilterStatus(e.target.value)}
-                className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
-              >
-                <option value="all">All Status</option>
-                <option value="active">Active</option>
-                <option value="expired">Expired</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-            
-            <div>
-              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
-                Platform
-              </label>
-              <select
-                value={filterPlatform}
-                onChange={(e) => setFilterPlatform(e.target.value)}
-                className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
-              >
-                <option value="all">All Platforms</option>
-                <option value="apple">Apple</option>
-                <option value="google">Google</option>
-              </select>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Data Table */}

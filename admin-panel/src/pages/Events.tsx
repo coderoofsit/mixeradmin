@@ -415,7 +415,21 @@ const Events = () => {
 
 
 	const formatTime = (timeString: string) => {
-		return timeString;
+		if (!timeString) return '';
+		
+		// Parse the time string (format: HH:MM)
+		const [hours, minutes] = timeString.split(':');
+		const hour24 = parseInt(hours, 10);
+		const minute = parseInt(minutes, 10);
+		
+		// Convert to 12-hour format
+		const hour12 = hour24 === 0 ? 12 : hour24 > 12 ? hour24 - 12 : hour24;
+		const ampm = hour24 >= 12 ? 'PM' : 'AM';
+		
+		// Format with leading zero for minutes
+		const formattedMinutes = minute.toString().padStart(2, '0');
+		
+		return `${hour12}:${formattedMinutes} ${ampm}`;
 	};
 
 	// Validation functions
