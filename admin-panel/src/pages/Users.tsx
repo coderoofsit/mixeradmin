@@ -588,7 +588,14 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
     }
     
     // For other cases, use the verificationMethodDisplay
-    return methodDisplay || 'Unknown'
+    let displayText = methodDisplay || 'Unknown'
+    
+    // Replace "Approved Manually" with just "Approved"
+    if (displayText === 'Approved Manually') {
+      displayText = 'Approved'
+    }
+    
+    return displayText
   }
 
   const tableData = users.map(user => ({
