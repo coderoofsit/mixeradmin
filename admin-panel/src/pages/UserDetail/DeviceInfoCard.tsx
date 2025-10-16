@@ -50,7 +50,7 @@ export default function DeviceInfoCard({ fcmTokens, location, lastActive }: Devi
   }
 
   const formatCoordinates = (coordinates: number[]) => {
-    if (!coordinates || coordinates.length < 2) return 'N/A'
+    if (!coordinates || coordinates.length < 2) return ''
     return `${coordinates[1].toFixed(4)}, ${coordinates[0].toFixed(4)}`
   }
 

@@ -27,16 +27,16 @@
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Date of Birth</label>
 //             <p className="text-var(--text-primary) font-medium">
-//               {user.dateOfBirth ? formatUTCDateOnly(user.dateOfBirth) : 'N/A'}
+//               {user.dateOfBirth ? formatUTCDateOnly(user.dateOfBirth) : ''}
 //             </p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Gender</label>
-//             <p className="text-var(--text-primary) font-medium">{user.gender || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.gender || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Pronoun</label>
-//             <p className="text-var(--text-primary) font-medium">{user.pronoun || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.pronoun || ''}</p>
 //           </div>
 //         </div>
 //         <div className="space-y-3">
@@ -45,17 +45,17 @@
 //             <p className="text-var(--text-primary) font-medium">
 //               {user.location?.city && user.location?.state ? 
 //                 `${user.location.city}, ${user.location.state}` : 
-//                 user.location?.city || user.location?.state || 'N/A'
+//                 user.location?.city || user.location?.state || ''
 //               }
 //             </p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Height</label>
-//             <p className="text-var(--text-primary) font-medium">{user.height || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.height || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity</label>
-//             <p className="text-var(--text-primary) font-medium">{user.ethnicity || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.ethnicity || ''}</p>
 //           </div>
 //         </div>
 //       </div>
@@ -93,16 +93,16 @@
 //           <div className='flex gap-1'>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Date of Birth: </label>
 //             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">
-//               {user.dateOfBirth ? formatUTCDateOnly(user.dateOfBirth) : 'N/A'}
+//               {user.dateOfBirth ? formatUTCDateOnly(user.dateOfBirth) : ''}
 //             </p>
 //           </div>
 //           <div className='flex gap-1'>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Gender: </label>
-//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.gender || 'N/A'}</p>
+//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.gender || ''}</p>
 //           </div>
 //           <div className='flex gap-1'>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Pronoun: </label>
-//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.pronoun || 'N/A'}</p>
+//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.pronoun || ''}</p>
 //           </div>
 //         </div>
 //         <div className="space-y-2">
@@ -111,17 +111,17 @@
 //             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">
 //               {user.location?.city && user.location?.state ? 
 //                 `${user.location.city}, ${user.location.state}` : 
-//                 user.location?.city || user.location?.state || 'N/A'
+//                 user.location?.city || user.location?.state || ''
 //               }
 //             </p>
 //           </div>
 //           <div className='flex gap-1'>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Height: </label>
-//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.height || 'N/A'}</p>
+//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.height || ''}</p>
 //           </div>
 //           <div className='flex gap-1'>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
-//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.ethnicity || 'N/A'}</p>
+//             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.ethnicity || ''}</p>
 //           </div>
 //         </div>
 //       </div>
@@ -162,13 +162,13 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Date of Birth:</label>
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">
-              {user.personalInfo.dateOfBirth ? formatUTCDateOnly(user.personalInfo.dateOfBirth) : 'N/A'}
+              {user.personalInfo.dateOfBirth ? formatUTCDateOnly(user.personalInfo.dateOfBirth) : ''}
             </p>
           </div>
 
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Gender:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{mapGenderForDisplay(user.personalInfo.gender) || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{mapGenderForDisplay(user.personalInfo.gender) || ''}</p>
           </div>
           {user.personalInfo.pronoun && (
             <div className="flex gap-1">
@@ -183,17 +183,17 @@ export default function PersonalInfoCard({ user }: PersonalInfoCardProps) {
             <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">
               {user.location.city && user.location.state ? 
                 `${user.location.city}, ${user.location.state}` : 
-                user.location.city || user.location.state || 'N/A'
+                user.location.city || user.location.state || ''
               }
             </p>
           </div>
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Height:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.height || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.height || ''}</p>
           </div>
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Ethnicity:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.ethnicity || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.ethnicity || ''}</p>
           </div>
         </div>
       </div>

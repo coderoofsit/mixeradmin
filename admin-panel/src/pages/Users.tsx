@@ -657,7 +657,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         })()}
 
         <div className="flex flex-col">
-          <span className="font-medium text-sm text-var(--text-primary)">{user.name || 'N/A'}</span>
+          <span className="font-medium text-sm text-var(--text-primary)">{user.name || ''}</span>
           <span className="text-xs text-var(--text-muted)">{user.email}</span>
         </div>
       </div>

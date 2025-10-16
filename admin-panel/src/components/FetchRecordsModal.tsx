@@ -418,7 +418,7 @@ const PersonCard: React.FC<{ person: Person }> = ({ person }) => {
   };
 
   const formatDate = (dateStr: string) => {
-    if (!dateStr) return 'N/A';
+    if (!dateStr) return ' ';
     try {
       return new Date(dateStr).toLocaleDateString();
     } catch {

@@ -4,7 +4,7 @@
  * Backward compatibility: "transgender" maps to "Other Gender"
  */
 export const mapGenderForDisplay = (gender: string | null | undefined): string => {
-  if (!gender) return 'N/A';
+  if (!gender) return '';
   
   // Backward compatibility: map old "transgender" to "Other Gender"
   if (gender.toLowerCase() === 'transgender') {

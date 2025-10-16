@@ -66,7 +66,7 @@ export default function BackgroundCheckModals({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-var(--text-muted)">Age:</span>
-                        <span className="text-var(--text-primary) ml-2">{person.age || 'N/A'}</span>
+                        <span className="text-var(--text-primary) ml-2">{person.age || ''}</span>
                       </div>
                       <div>
                         <span className="text-var(--text-muted)">Gender:</span>
@@ -74,7 +74,7 @@ export default function BackgroundCheckModals({
                       </div>
                       <div className="md:col-span-2">
                         <span className="text-var(--text-muted)">Address:</span>
-                        <span className="text-var(--text-primary) ml-2">{person.address || 'N/A'}</span>
+                        <span className="text-var(--text-primary) ml-2">{person.address || ''}</span>
                       </div>
                     </div>
                     <button
@@ -128,11 +128,11 @@ export default function BackgroundCheckModals({
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
                       <div>
                         <span className="text-var(--text-muted)">Name:</span>
-                        <span className="text-var(--text-primary) ml-2">{modal.data.name || 'N/A'}</span>
+                        <span className="text-var(--text-primary) ml-2">{modal.data.name || ''}</span>
                       </div>
                       <div>
                         <span className="text-var(--text-muted)">Date of Birth:</span>
-                        <span className="text-var(--text-primary) ml-2">{modal.data.dateOfBirth || 'N/A'}</span>
+                        <span className="text-var(--text-primary) ml-2">{modal.data.dateOfBirth || ''}</span>
                       </div>
                     </div>
                   </div>

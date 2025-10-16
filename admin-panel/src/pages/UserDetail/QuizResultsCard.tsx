@@ -19,7 +19,7 @@ export default function QuizResultsCard({ user }: QuizResultsCardProps) {
         Quiz Results
       </h3>
       <div className="bg-var(--bg-tertiary) p-1 rounded-lg">
-        <h4 className="font-semibold text-var(--text-primary) mb-2">{user.quizResult.title || 'N/A'}</h4>
+        <h4 className="font-semibold text-var(--text-primary) mb-2">{user.quizResult.title || ''}</h4>
         {user.quizResult.subTitle && (
           <p className="text-var(--text-muted)">{user.quizResult.subTitle}</p>
         )}

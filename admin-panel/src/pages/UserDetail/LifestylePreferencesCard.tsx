@@ -24,37 +24,37 @@
 //         <div className="space-y-4">
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Dating Type</label>
-//             <p className="text-var(--text-primary) font-medium">{user.datingType || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.datingType || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Relationship Type</label>
-//             <p className="text-var(--text-primary) font-medium">{user.relationshipType || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.relationshipType || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Sexuality</label>
-//             <p className="text-var(--text-primary) font-medium">{user.sexuality || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.sexuality || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Family Plans</label>
-//             <p className="text-var(--text-primary) font-medium">{user.familyPlans || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.familyPlans || ''}</p>
 //           </div>
 //         </div>
 //         <div className="space-y-4">
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Religion</label>
-//             <p className="text-var(--text-primary) font-medium">{user.religion || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.religion || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Politics</label>
-//             <p className="text-var(--text-primary) font-medium">{user.politics || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.politics || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Drinking</label>
-//             <p className="text-var(--text-primary) font-medium">{user.drinking || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.drinking || ''}</p>
 //           </div>
 //           <div>
 //             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Smoking</label>
-//             <p className="text-var(--text-primary) font-medium">{user.smoking || 'N/A'}</p>
+//             <p className="text-var(--text-primary) font-medium">{user.smoking || ''}</p>
 //           </div>
 //         </div>
 //       </div>
@@ -101,11 +101,11 @@ export default function LifestylePreferencesCard({ user }: LifestylePreferencesC
           )}
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Relationship Type:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.datingPreferences.relationshipType || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.datingPreferences.relationshipType || ''}</p>
           </div>
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Sexuality:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.sexuality || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.personalInfo.sexuality || ''}</p>
           </div>
           {user.personalInfo.familyPlans && (
             <div className="flex gap-1">
@@ -123,11 +123,11 @@ export default function LifestylePreferencesCard({ user }: LifestylePreferencesC
           )}
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Politics:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.politics || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.politics || ''}</p>
           </div>
           <div className="flex gap-1">
             <label className="text-xs font-medium text-var(--text-muted) uppercase tracking-wide">Drinking:</label>
-            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.drinking || 'N/A'}</p>
+            <p className="text-sm text-var(--text-primary) font-medium mt-[-2px]">{user.lifestyle.drinking || ''}</p>
           </div>
           {user.lifestyle.smoking && (
             <div className="flex gap-1">

@@ -50,7 +50,7 @@
 //         {/* User Info */}
 //         <div className="flex-1">
 //           <div className="flex items-center space-x-3 mb-2">
-//             <h2 className="text-2xl font-bold text-var(--text-primary)">{user.name || 'N/A'}</h2>
+//             <h2 className="text-2xl font-bold text-var(--text-primary)">{user.name || ''}</h2>
 //             <span className={`badge ${getStatusBadgeClass(user.accountStatus)}`}>
 //               {user.accountStatus}
 //             </span>
@@ -60,7 +60,7 @@
 //           {/* Quick Stats */}
 //           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 //             <div className="text-center">
-//               <p className="text-2xl font-bold text-var(--primary)">{user.age || 'N/A'}</p>
+//               <p className="text-2xl font-bold text-var(--primary)">{user.age || ''}</p>
 //               <p className="text-xs text-var(--text-muted)">Age</p>
 //             </div>
 //             <div className="text-center">
@@ -160,7 +160,7 @@ export default function UserProfileHeader({ user }: UserProfileHeaderProps) {
         <div className="grid grid-cols-5 gap-4 h-20">
           {/* Column 1 - Age */}
           <div className="flex flex-col items-center justify-center">
-            <p className="text-2xl font-bold text-blue-600">{user.personalInfo.age || 'N/A'}</p>
+            <p className="text-2xl font-bold text-blue-600">{user.personalInfo.age || ''}</p>
             <p className="text-xs text-gray-500">Age</p>
           </div>
 
@@ -173,7 +173,7 @@ export default function UserProfileHeader({ user }: UserProfileHeaderProps) {
           {/* Column 3 - Center Column - Name, Email */}
           <div className="flex flex-col items-center justify-center space-y-1">
             {/* Name */}
-            <h2 className="text-lg font-bold text-var(--text-primary) text-center">{user.personalInfo.name || 'N/A'}</h2>
+            <h2 className="text-lg font-bold text-var(--text-primary) text-center">{user.personalInfo.name || ''}</h2>
             
             {/* Email */}
             <p className="text-sm text-var(--text-muted) text-center">{user.email}</p>

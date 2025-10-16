@@ -83,7 +83,7 @@ export const getPlatformBadgeColor = (platform: string): string => {
  * Format date for display
  */
 export const formatDate = (date: string | null): string => {
-  if (!date) return 'N/A';
+  if (!date) return '';
   
   return new Date(date).toLocaleDateString('en-US', {
     year: 'numeric',

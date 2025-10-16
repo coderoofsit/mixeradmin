@@ -168,9 +168,9 @@ function Subscriptions() {
               </span>
             )}
           </h3>
-          <div className="text-sm text-var(--text-secondary)">
+          {/* <div className="text-sm text-var(--text-secondary)">
             User: {row.userName} ({row.userEmail})
-          </div>
+          </div> */}
         </div>
         
         {isLoadingHistory && (
@@ -273,7 +273,7 @@ function Subscriptions() {
         const currentActivePlan = getCurrentActivePlan(row)
         return (
           <div className="text-sm">
-            {currentActivePlan?.expiryDate ? formatDate(currentActivePlan.expiryDate) : 'N/A'}
+            {currentActivePlan?.expiryDate ? formatDate(currentActivePlan.expiryDate) : ''}
           </div>
         )
       }

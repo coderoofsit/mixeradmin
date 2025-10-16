@@ -18,7 +18,7 @@ export const formatUTCDate = (
     minute: '2-digit'
   }
 ): string => {
-  if (!dateString) return 'N/A'
+  if (!dateString) return ''
   
   try {
     const date = new Date(dateString)
