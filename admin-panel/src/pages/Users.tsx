@@ -533,7 +533,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
   { key: 'location', label: 'Location' },
   { key: 'accountStatus', label: 'Status' },
   { key: 'verification', label: 'Verification' },
-  { key: 'createdAt', label: 'Joined', render: (_value: any, row: any) => formatMMDDYYYY(row.createdAt) }
+  { key: 'createdAt', label: 'Joined', render: (_value: any, row: any) => formatMMDDYYYY((row as any).joined || row.createdAt) }
   ]
 
   const getStatusBadgeClass = (status: string) => {
@@ -550,6 +550,22 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
   }
 
   const getVerificationBadgeClass = (user: User) => {
+    // Handle new API response format with direct 'verification' field
+    if ((user as any).verification) {
+      const display = (user as any).verification.toLowerCase()
+      if (display.includes('approved') || display.includes('verified')) {
+        return 'badge-success'
+      } else if (display.includes('rejected') || display.includes('failed')) {
+        return 'badge-danger'
+      } else if (display.includes('pending') || display.includes('manual')) {
+        return 'badge-manually-required'
+      } else if (display.includes('unpaid')) {
+        return 'badge-secondary'
+      }
+      return 'badge-secondary'
+    }
+    
+    // Fallback to original logic for backward compatibility
     const status = user.backgroundVerificationStatus?.status
     const methodDisplay = user.backgroundVerificationStatus?.verificationMethodDisplay
     
@@ -579,6 +595,19 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
   }
 
   const getVerificationDisplayText = (user: User) => {
+    // Handle new API response format with direct 'verification' field
+    if ((user as any).verification) {
+      let displayText = (user as any).verification
+      
+      // Replace "Approved Manually" with just "Approved"
+      if (displayText === 'Approved Manually') {
+        displayText = 'Approved'
+      }
+      
+      return displayText
+    }
+    
+    // Fallback to original logic for backward compatibility
     const status = user.backgroundVerificationStatus?.status
     const methodDisplay = user.backgroundVerificationStatus?.verificationMethodDisplay
     
@@ -604,7 +633,11 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
     name: (
       <div className="flex items-center space-x-3">
         {(() => {
-          const primaryImage = (user.selfie && (user.selfie.url || null)) || (user.images && user.images.find((img: any) => img.isPrimary)?.url) || null
+          // Prioritize primaryImageUrl from new API response format
+          const primaryImage = (user as any).primaryImageUrl || 
+                              (user.selfie && (user.selfie.url || null)) || 
+                              (user.images && user.images.find((img: any) => img.isPrimary)?.url) || 
+                              null
           if (primaryImage) {
             return (
               <img
@@ -629,17 +662,26 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         </div>
       </div>
     ),
-    location: `${user.location?.city || ''}${user.location?.city && user.location?.state ? ', ' : ''}${user.location?.state || ''}` || '—',
+    location: (() => {
+      // Handle new API response format with location as string
+      if (typeof (user as any).location === 'string') {
+        return (user as any).location || '—'
+      }
+      // Fallback to original logic for backward compatibility
+      return `${user.location?.city || ''}${user.location?.city && user.location?.state ? ', ' : ''}${user.location?.state || ''}` || '—'
+    })(),
     ageGender: (
       <div>
-        <div className="text-sm text-var(--text-primary)">{getAgeFromDOB(user.dateOfBirth) || '—'}</div>
+        <div className="text-sm text-var(--text-primary)">
+          {(user as any).age || getAgeFromDOB(user.dateOfBirth) || '—'}
+        </div>
         <div className="text-xs text-var(--text-muted)">{mapGenderForDisplay(user.gender)}</div>
       </div>
     ),
 
     accountStatus: (
-      <span className={`badge ${getStatusBadgeClass(user.accountStatus)}`}>
-        {user.accountStatus || 'Unknown'}
+      <span className={`badge ${getStatusBadgeClass((user as any).status || user.accountStatus)}`}>
+        {(user as any).status || user.accountStatus || 'Unknown'}
       </span>
     ),
     verification: (
@@ -647,7 +689,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         {getVerificationDisplayText(user)}
       </span>
     )
-    ,createdAt: user.createdAt
+    ,createdAt: (user as any).joined || user.createdAt
   }))
 
   // Compute age from dateOfBirth (years)
@@ -660,11 +702,12 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
     return Math.abs(ageDt.getUTCFullYear() - 1970)
   }
 
-  // Format date as MM-DD-YYYY
+  // Format date as MM-DD-YYYY in local timezone
   function formatMMDDYYYY(dateStr?: string | null) {
     if (!dateStr) return ''
     const d = new Date(dateStr)
     if (Number.isNaN(d.getTime())) return ''
+    // Use local timezone methods to ensure MM-DD-YYYY format in local time
     const mm = String(d.getMonth() + 1).padStart(2, '0')
     const dd = String(d.getDate()).padStart(2, '0')
     const yyyy = d.getFullYear()
