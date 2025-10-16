@@ -294,8 +294,10 @@ function Subscriptions() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <LoadingSpinner />
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <div className="text-center">
+          <LoadingSpinner size="md" className="mb-4" />
+        </div>
       </div>
     )
   }

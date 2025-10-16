@@ -215,7 +215,7 @@ const Layout = ({ children }: LayoutProps) => {
                 <Clock className="h-4 w-4 text-var(--text-secondary)" />
                 <div className="text-sm font-medium text-var(--text-primary)">
                   <div>{currentTime.toLocaleTimeString('en-US', { 
-                    hour12: false, 
+                    hour12: true, 
                     hour: '2-digit', 
                     minute: '2-digit', 
                     second: '2-digit' 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { adminApi } from '../services/api'
-import { Search, Filter, RefreshCw, CheckCircle, XCircle, Trash2, Send, AlertCircle, Sparkles, Eye, Clock } from 'lucide-react'
+import { Search, Filter, RefreshCw, CheckCircle, XCircle, Trash2, Send, AlertCircle, Sparkles, Eye, Clock, ChevronDown, ChevronUp, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../components/LoadingSpinner'
 import DataTable from '../components/DataTable'
@@ -43,6 +43,7 @@ function Feedback() {
   const [activeItem, setActiveItem] = useState<FeedbackItem | null>(null)
   const [sweetMessage, setSweetMessage] = useState('')
   const [showViewModal, setShowViewModal] = useState(false)
+  const [showFilters, setShowFilters] = useState(false)
   
   // Loading states for individual actions
   const [processingItems, setProcessingItems] = useState<Set<string>>(new Set())
@@ -61,6 +62,7 @@ function Feedback() {
     setStatus('all')
     setSearch('')
     setPage(1)
+    setShowFilters(false) // Close filter panel after clearing
   }
   
   // Dynamic pagination limit
@@ -453,31 +455,59 @@ function Feedback() {
         </button>
       </div>
 
-      {/* Filters */}
-      <div className="glass-card">
-        <div className="flex flex-col lg:flex-row items-center justify-between space-y-4 lg:space-y-0">
-          <div className="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4 w-full">
-            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-              <label className="text-sm font-medium" style={{color: 'var(--text-primary)'}}>Search:</label>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-var(--text-muted)" />
-                <input 
-                  value={search} 
-                  onChange={e => setSearch(e.target.value)} 
-                  onKeyDown={e => e.key === 'Enter' && (setPage(1), fetchData())} 
-                  placeholder="Search by sender or receiver name/email..." 
-                  className="input pl-9 pr-3 py-2 w-95.25" 
-                  style={{width: '381px'}}
-                />
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
-              <label className="text-sm font-medium" style={{color: 'var(--text-primary)'}}>Status:</label>
+      {/* Search and Filters */}
+      <div className="glass-card p-6">
+        <div className="flex items-center space-x-4">
+          <div className="flex-1 relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-var(--text-secondary)" />
+            <input
+              type="text"
+              placeholder="Search by sender or receiver name/email..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={e => e.key === 'Enter' && (setPage(1), fetchData())}
+              className="w-full pl-10 pr-4 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) placeholder-var(--text-muted) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
+            />
+          </div>
+          
+          <button
+            onClick={() => {
+              const activeFiltersCount = getActiveFiltersCount()
+              if (activeFiltersCount > 0) {
+                handleClearAllFilters()
+              } else {
+                setShowFilters(!showFilters)
+              }
+            }}
+            className={`flex items-center px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
+              getActiveFiltersCount() > 0
+                ? 'text-var(--error) bg-var(--bg-primary) border-var(--error) hover:bg-var(--error)/10'
+                : 'text-var(--text-primary) bg-var(--bg-primary) border-var(--border) hover:bg-var(--bg-secondary)'
+            }`}
+          >
+            {getActiveFiltersCount() > 0 ? (
+              <>
+                <X className="h-4 w-4 mr-2" />
+                Clear Filter
+              </>
+            ) : (
+              <>
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+                {showFilters ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+              </>
+            )}
+          </button>
+        </div>
+
+        {showFilters && (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4">
+            <div>
+              <label className="block text-sm font-medium text-var(--text-primary) mb-2">Status</label>
               <select 
                 value={status} 
                 onChange={e => { setStatus(e.target.value as any); setPage(1) }} 
-                className="select px-3 py-2"
+                className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
               >
                 <option value="all">All Status</option>
                 <option value="pending">Pending</option>
@@ -488,29 +518,7 @@ function Feedback() {
               </select>
             </div>
           </div>
-          
-          <div className="flex items-center space-x-2">
-            {activeFiltersCount > 0 && (
-              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-var(--bg-tertiary) text-var(--text-primary)">
-                {activeFiltersCount} filter{activeFiltersCount !== 1 ? 's' : ''} active
-              </span>
-            )}
-            <button
-              onClick={handleClearAllFilters}
-              disabled={activeFiltersCount === 0}
-              className={`inline-flex items-center px-3 py-2 border text-sm leading-4 font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
-                activeFiltersCount > 0
-                  ? 'border-red-300 text-red-700 bg-white hover:bg-red-50'
-                  : 'border-gray-300 text-gray-400 bg-gray-50 cursor-not-allowed'
-              }`}
-            >
-              <svg className="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-              Clear All Filters
-            </button>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Data Table */}

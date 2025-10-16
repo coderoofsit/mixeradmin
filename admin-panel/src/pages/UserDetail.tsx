@@ -880,12 +880,12 @@ function UserDetail() {
       case 'markAsPaid':
         return {
           title: 'Mark as Paid',
-          message: 'Please enter notes for marking background verification as paid (optional):',
+          message: 'Please enter notes for marking background verification as paid.',
           confirmText: 'Mark as Paid',
           type: 'info' as const,
           requireInput: true,
           inputLabel: 'Payment Notes',
-          inputPlaceholder: 'Enter notes for marking as paid (optional)...'
+          inputPlaceholder: 'Enter notes for marking as paid.'
         }
       default:
         return {

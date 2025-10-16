@@ -96,7 +96,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-[80vh]">
         <div className="text-center">
           <LoadingSpinner size="md" className="mb-4" />
           {/* <p className="text-gray-600 font-medium">Loading dashboard...</p> */}

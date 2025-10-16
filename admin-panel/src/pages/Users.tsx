@@ -12,7 +12,8 @@ import {
   RefreshCw,
   Filter,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  X
 } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
 import DataTable from '../components/DataTable'
@@ -291,8 +292,10 @@ function Users() {
     setFilterStatus('all')
     setFilterAccountStatus('all')
     setFilterVerification('all')
+    setFilterGender('all')
     setSearchTerm('')
     setCurrentPage(1)
+    setShowFilters(false) // Close filter panel after clearing
   }
 
   const getActiveFiltersCount = () => {
@@ -300,6 +303,7 @@ function Users() {
     if (filterStatus !== 'all') count++
     if (filterAccountStatus !== 'all') count++
     if (filterVerification !== 'all') count++
+    if (filterGender !== 'all') count++
     if (searchTerm.trim()) count++
     return count
   }
@@ -545,10 +549,23 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
     }
   }
 
-  const getVerificationBadgeClass = (verificationMethodDisplay: string) => {
-    if (!verificationMethodDisplay) return 'badge-secondary'
+  const getVerificationBadgeClass = (user: User) => {
+    const status = user.backgroundVerificationStatus?.status
+    const methodDisplay = user.backgroundVerificationStatus?.verificationMethodDisplay
     
-    const display = verificationMethodDisplay.toLowerCase()
+    // Priority: Check status first, then fallback to verificationMethodDisplay
+    if (status === 'rejected') {
+      return 'badge-danger'
+    } else if (status === 'approved') {
+      return 'badge-success'
+    } else if (status === 'pending') {
+      return 'badge-manually-required'
+    }
+    
+    // Fallback to verificationMethodDisplay if status is not available
+    if (!methodDisplay) return 'badge-secondary'
+    
+    const display = methodDisplay.toLowerCase()
     if (display.includes('approved') || display.includes('verified')) {
       return 'badge-success'
     } else if (display.includes('rejected') || display.includes('failed')) {
@@ -559,6 +576,19 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
       return 'badge-secondary'
     }
     return 'badge-secondary'
+  }
+
+  const getVerificationDisplayText = (user: User) => {
+    const status = user.backgroundVerificationStatus?.status
+    const methodDisplay = user.backgroundVerificationStatus?.verificationMethodDisplay
+    
+    // If status is rejected, always show "Rejected" regardless of verificationMethodDisplay
+    if (status === 'rejected') {
+      return 'Rejected'
+    }
+    
+    // For other cases, use the verificationMethodDisplay
+    return methodDisplay || 'Unknown'
   }
 
   const tableData = users.map(user => ({
@@ -606,8 +636,8 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
       </span>
     ),
     verification: (
-      <span className={`badge ${getVerificationBadgeClass(user.backgroundVerificationStatus?.verificationMethodDisplay ?? '')}`}>
-        {user.backgroundVerificationStatus?.verificationMethodDisplay || 'Unknown'}
+      <span className={`badge ${getVerificationBadgeClass(user)}`}>
+        {getVerificationDisplayText(user)}
       </span>
     )
     ,createdAt: user.createdAt
@@ -664,12 +694,32 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
           </div>
           
           <button
-            onClick={() => setShowFilters(!showFilters)}
-            className="flex items-center px-4 py-2 text-sm font-medium text-var(--text-primary) bg-var(--bg-primary) border border-var(--border) rounded-lg hover:bg-var(--bg-secondary) transition-colors"
+            onClick={() => {
+              const activeFiltersCount = getActiveFiltersCount()
+              if (activeFiltersCount > 0) {
+                handleClearAllFilters()
+              } else {
+                setShowFilters(!showFilters)
+              }
+            }}
+            className={`flex items-center px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
+              getActiveFiltersCount() > 0
+                ? 'text-var(--error) bg-var(--bg-primary) border-var(--error) hover:bg-var(--error)/10'
+                : 'text-var(--text-primary) bg-var(--bg-primary) border-var(--border) hover:bg-var(--bg-secondary)'
+            }`}
           >
-            <Filter className="h-4 w-4 mr-2" />
-            Filters
-            {showFilters ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+            {getActiveFiltersCount() > 0 ? (
+              <>
+                <X className="h-4 w-4 mr-2" />
+                Clear Filter
+              </>
+            ) : (
+              <>
+                <Filter className="h-4 w-4 mr-2" />
+                Filters
+                {showFilters ? <ChevronUp className="h-4 w-4 ml-2" /> : <ChevronDown className="h-4 w-4 ml-2" />}
+              </>
+            )}
           </button>
         </div>
 
@@ -701,7 +751,7 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
                 className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
               >
                 <option value="all">All Verification</option>
-                <option value="pending">Manually Required</option>
+                <option value="pending">Required Manually</option>
                 <option value="approved">Approved</option>
                 <option value="rejected">Rejected</option>
               </select>

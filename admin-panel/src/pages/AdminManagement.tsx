@@ -4,6 +4,7 @@ import { adminApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Shield, Plus, Edit, Eye, EyeOff, Save, X, Lock } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
+import LoadingSpinner from '../components/LoadingSpinner';
 import ConfirmationModal from '../components/ConfirmationModal';
 
 interface Admin {
@@ -352,8 +353,10 @@ const AdminManagement: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-var(--primary)"></div>
+      <div className="flex items-center justify-center min-h-[80vh]">
+        <div className="text-center">
+          <LoadingSpinner size="md" className="mb-4" />
+        </div>
       </div>
     );
   }

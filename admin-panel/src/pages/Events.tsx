@@ -11,6 +11,8 @@ import {
 	Users,
 	Upload,
 	X,
+	ChevronDown,
+	ChevronUp,
 } from 'lucide-react';
 import { adminApi } from '../services/api';
 import { Event } from '../types/event';
@@ -31,6 +33,7 @@ const Events = () => {
 	const [totalPages, setTotalPages] = useState(1);
 	const [showCreateModal, setShowCreateModal] = useState(false);
 	const [showEditModal, setShowEditModal] = useState(false);
+	const [showFilters, setShowFilters] = useState(false);
 	const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 	const [formData, setFormData] = useState({
 		title: '',
@@ -114,6 +117,20 @@ const Events = () => {
 	useEffect(() => {
 		fetchEvents();
 	}, [currentPage, searchTerm, filterType]);
+
+	const handleClearAllFilters = () => {
+		setSearchTerm('');
+		setFilterType('all');
+		setCurrentPage(1);
+		setShowFilters(false); // Close filter panel after clearing
+	};
+
+	const getActiveFiltersCount = () => {
+		let count = 0;
+		if (searchTerm.trim()) count++;
+		if (filterType !== 'all') count++;
+		return count;
+	};
 
 	const handleImageUpload = async (file: File) => {
 		try {
@@ -717,40 +734,66 @@ const Events = () => {
 				</button>
 			</div>
 
-			{/* Filters */}
-			<div className='glass-card mb-4 p-4'>
-				<div className='flex flex-col sm:flex-row gap-4'>
-					<div className='flex-1'>
-						<div className='relative'>
-							<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 text-var(--text-muted) h-4 w-4' />
-							<input
-								type='text'
-								placeholder='Search events...'
-								value={searchTerm}
-								onChange={(e) => setSearchTerm(e.target.value)}
-								className='input pl-10 w-full'
-							/>
+			{/* Search and Filters */}
+			<div className='glass-card p-6'>
+				<div className='flex items-center space-x-4'>
+					<div className='flex-1 relative'>
+						<Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-var(--text-secondary)' />
+						<input
+							type='text'
+							placeholder='Search events...'
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+							className='w-full pl-10 pr-4 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) placeholder-var(--text-muted) focus:outline-none focus:ring-2 focus:ring-var(--primary)'
+						/>
+					</div>
+					
+					<button
+						onClick={() => {
+							const activeFiltersCount = getActiveFiltersCount();
+							if (activeFiltersCount > 0) {
+								handleClearAllFilters();
+							} else {
+								setShowFilters(!showFilters);
+							}
+						}}
+						className={`flex items-center px-4 py-2 text-sm font-medium border rounded-lg transition-colors ${
+							getActiveFiltersCount() > 0
+								? 'text-var(--error) bg-var(--bg-primary) border-var(--error) hover:bg-var(--error)/10'
+								: 'text-var(--text-primary) bg-var(--bg-primary) border-var(--border) hover:bg-var(--bg-secondary)'
+						}`}
+					>
+						{getActiveFiltersCount() > 0 ? (
+							<>
+								<X className='h-4 w-4 mr-2' />
+								Clear Filter
+							</>
+						) : (
+							<>
+								<Filter className='h-4 w-4 mr-2' />
+								Filters
+								{showFilters ? <ChevronUp className='h-4 w-4 ml-2' /> : <ChevronDown className='h-4 w-4 ml-2' />}
+							</>
+						)}
+					</button>
+				</div>
+
+				{showFilters && (
+					<div className='grid grid-cols-1 md:grid-cols-3 gap-4 pt-4'>
+						<div>
+							<label className='block text-sm font-medium text-var(--text-primary) mb-2'>Event Type</label>
+							<select
+								value={filterType}
+								onChange={(e) => setFilterType(e.target.value)}
+								className='w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)'
+							>
+								<option value='all'>All Events</option>
+								<option value='upcoming'>Upcoming</option>
+								<option value='past'>Past</option>
+							</select>
 						</div>
 					</div>
-					<div className='flex gap-2'>
-						<select
-							value={filterType}
-							onChange={(e) => setFilterType(e.target.value)}
-							className='select'
-						>
-							<option value='all'>All Events</option>
-							<option value='upcoming'>Upcoming</option>
-							<option value='past'>Past</option>
-						</select>
-						<button
-							onClick={fetchEvents}
-							className='btn btn-primary  flex items-center gap-2'
-						>
-							<Filter className='h-4 w-4' />
-							Filter
-						</button>
-					</div>
-				</div>
+				)}
 			</div>
 
 			{/* Events List */}

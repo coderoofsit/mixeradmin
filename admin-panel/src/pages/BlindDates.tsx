@@ -3,6 +3,7 @@ import { adminApi } from '../services/api'
 import toast from 'react-hot-toast'
 import CustomDatePicker from '../components/CustomDatePicker'
 import ConfirmationModal from '../components/ConfirmationModal'
+import { X, Filter } from 'lucide-react'
 
 type BlindDate = {
 	_id: string
@@ -50,6 +51,18 @@ const BlindDates = () => {
 		} finally {
 			setLoading(false)
 		}
+	}
+
+	const handleClearAllFilters = () => {
+		setFilters({ isActive: '', from: '', to: '' })
+	}
+
+	const getActiveFiltersCount = () => {
+		let count = 0
+		if (filters.isActive && filters.isActive !== '') count++
+		if (filters.from) count++
+		if (filters.to) count++
+		return count
 	}
 
 	useEffect(() => { load() // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -196,32 +209,55 @@ const BlindDates = () => {
 
 	return (
 		<div>
-			<div className="flex items-center justify-between mb-6">
-				<div className="flex gap-2">
-					<select
-						className="form-select"
-						value={filters.isActive}
-						onChange={(e) => setFilters((f) => ({ ...f, isActive: e.target.value }))}
-					>
-						<option value="">All</option>
-						<option value="true">Active</option>
-						<option value="false">Inactive</option>
-					</select>
-							{/* <CustomDatePicker
+			{/* Filters */}
+			{/* <div className="glass-card p-6 mb-6">
+				<div className="flex items-end justify-between gap-4">
+					<div className="flex items-end gap-4">
+						<div className="w-32">
+							<label className="block text-sm font-medium text-var(--text-primary) mb-2">Status</label>
+							<select
+								className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
+								value={filters.isActive}
+								onChange={(e) => setFilters((f) => ({ ...f, isActive: e.target.value }))}
+							>
+								<option value="">All</option>
+								<option value="true">Active</option>
+								<option value="false">Inactive</option>
+							</select>
+						</div>
+						
+						<div className="w-40">
+							<label className="block text-sm font-medium text-var(--text-primary) mb-2">From Date</label>
+							<CustomDatePicker
 								value={filters.from || ''}
 								onChange={(date) => setFilters((f) => ({ ...f, from: date }))}
-								placeholder="From Date"
-								className="form-input rounded-lg"
+								placeholder="Start date"
+								className="w-full  border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
 							/>
+						</div>
+						
+						<div className="w-40">
+							<label className="block text-sm font-medium text-var(--text-primary) mb-2">To Date</label>
 							<CustomDatePicker
 								value={filters.to || ''}
 								onChange={(date) => setFilters((f) => ({ ...f, to: date }))}
-								placeholder="To Date"
-								className="form-input"
-							/> */}
-					<button className="btn btn-primary btn-sm" onClick={load}>Filter</button>
+								placeholder="End date"
+								className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
+							/>
+						</div>
+					</div>
+					
+					{getActiveFiltersCount() > 0 && (
+						<button
+							onClick={handleClearAllFilters}
+							className="flex items-center px-3 py-2 text-sm font-medium text-var(--error) bg-var(--bg-primary) border border-var(--error) rounded-lg hover:bg-var(--error)/10 transition-colors"
+						>
+							<X className="h-4 w-4 mr-2" />
+							Clear
+						</button>
+					)}
 				</div>
-			</div>
+			</div> */}
 
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 				<div className="lg:col-span-2 card flex flex-col" style={{ height: 'calc(100vh - 200px)', minHeight: '400px', maxHeight: 'calc(100vh - 150px)' }}>
