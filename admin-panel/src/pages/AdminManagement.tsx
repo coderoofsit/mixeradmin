@@ -4,6 +4,7 @@ import { adminApi } from '../services/api';
 import { useAuth } from '../hooks/useAuth';
 import { Shield, Plus, Edit, Eye, EyeOff, Save, X, Lock } from 'lucide-react';
 import LoadingOverlay from '../components/LoadingOverlay';
+import ConfirmationModal from '../components/ConfirmationModal';
 
 interface Admin {
   _id: string;
@@ -86,10 +87,21 @@ const AdminManagement: React.FC = () => {
   
   // Loading states for admin actions
   const [actionLoading, setActionLoading] = useState<{
-    delete?: boolean
     toggle?: boolean
     resetPassword?: boolean
   }>({})
+
+  // Confirmation modal state
+  const [confirmationModal, setConfirmationModal] = useState<{
+    isOpen: boolean
+    type: 'toggle' | 'resetPassword' | null
+    loading: boolean
+    admin?: Admin
+  }>({
+    isOpen: false,
+    type: null,
+    loading: false
+  })
 
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -150,56 +162,31 @@ const AdminManagement: React.FC = () => {
     }
   };
 
-  const handleDeleteAdmin = async (admin: Admin) => {
-    if (admin.role === 'super_admin') {
-      toast.error('Cannot delete super admin');
-      return;
-    }
 
-    const confirmed = window.confirm(
-      `Are you sure you want to deactivate admin account!`
-    );
-
-    if (!confirmed) return;
-
-    try {
-      setActionLoading(prev => ({ ...prev, delete: true }))
-      // For now, we'll deactivate the admin instead of deleting
-      // You can implement actual deletion in the backend if needed
-      const response = await adminApi.updateAdminStatus(admin._id, {
-        isActive: false
-      });
-      
-      if (response.data.success) {
-        toast.success('Admin deactivated successfully');
-        fetchData();
-        setEditingAdmin(null); // Close the modal
-      }
-    } catch (error: any) {
-      console.error('Error deleting admin:', error);
-      toast.error(error.response?.data?.message || 'Failed to delete admin');
-    } finally {
-      setActionLoading(prev => ({ ...prev, delete: false }))
-    }
-  };
-
-  const handleToggleAdminStatus = async (admin: Admin) => {
+  const handleToggleAdminStatus = (admin: Admin) => {
     if (admin.role === 'super_admin') {
       toast.error('Cannot modify super admin status');
       return;
     }
 
-    const action = admin.isActive ? 'deactivate' : 'activate';
-    const confirmed = window.confirm(
-      `Are you sure you want to ${action} admin "${admin.name}" (${admin.email})?`
-    );
+    setConfirmationModal({
+      isOpen: true,
+      type: 'toggle',
+      loading: false,
+      admin
+    })
+  }
 
-    if (!confirmed) return;
+  const handleConfirmToggle = async () => {
+    if (!confirmationModal.admin) return
+
+    const action = confirmationModal.admin.isActive ? 'deactivate' : 'activate';
 
     try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
       setActionLoading(prev => ({ ...prev, toggle: true }))
-      const response = await adminApi.updateAdminStatus(admin._id, {
-        isActive: !admin.isActive
+      const response = await adminApi.updateAdminStatus(confirmationModal.admin._id, {
+        isActive: !confirmationModal.admin.isActive
       });
       
       if (response.data.success) {
@@ -213,21 +200,26 @@ const AdminManagement: React.FC = () => {
       toast.error(error.response?.data?.message || `Failed to ${action} admin`);
     } finally {
       setActionLoading(prev => ({ ...prev, toggle: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
-  };
+  }
 
-  const handleResetPassword = async (admin: Admin) => {
+  const handleResetPassword = (admin: Admin) => {
     if (admin.role === 'super_admin') {
       toast.error('Cannot reset super admin password');
       return;
     }
 
-    const newPassword = prompt(
-      `Enter new password for admin "${admin.name}" (${admin.email}):\n\nPassword must be at least 6 characters long.`,
-      'NewPassword123!'
-    );
+    setConfirmationModal({
+      isOpen: true,
+      type: 'resetPassword',
+      loading: false,
+      admin
+    })
+  }
 
-    if (!newPassword) return;
+  const handleConfirmResetPassword = async (newPassword: string) => {
+    if (!confirmationModal.admin) return
 
     if (newPassword.length < 6) {
       toast.error('Password must be at least 6 characters long');
@@ -235,9 +227,10 @@ const AdminManagement: React.FC = () => {
     }
 
     try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
       setActionLoading(prev => ({ ...prev, resetPassword: true }))
       // You'll need to implement this endpoint in the backend
-      const response = await adminApi.updateAdminStatus(admin._id, {
+      const response = await adminApi.updateAdminStatus(confirmationModal.admin._id, {
         password: newPassword
       });
       
@@ -251,8 +244,59 @@ const AdminManagement: React.FC = () => {
       toast.error(error.response?.data?.message || 'Failed to reset password');
     } finally {
       setActionLoading(prev => ({ ...prev, resetPassword: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
-  };
+  }
+
+  // Handle confirmation modal actions
+  const handleConfirmationConfirm = (inputValue?: string) => {
+    if (!confirmationModal.type) return
+
+    switch (confirmationModal.type) {
+      case 'toggle':
+        handleConfirmToggle()
+        break
+      case 'resetPassword':
+        if (inputValue) handleConfirmResetPassword(inputValue)
+        break
+    }
+  }
+
+  const handleConfirmationCancel = () => {
+    setConfirmationModal({ isOpen: false, type: null, loading: false })
+  }
+
+  // Get modal configuration based on type
+  const getModalConfig = () => {
+    switch (confirmationModal.type) {
+      case 'toggle':
+        return {
+          title: confirmationModal.admin?.isActive ? 'Deactivate Admin' : 'Activate Admin',
+          message: `Are you sure you want to ${confirmationModal.admin?.isActive ? 'deactivate' : 'activate'} admin "${confirmationModal.admin?.name}" (${confirmationModal.admin?.email})?`,
+          confirmText: confirmationModal.admin?.isActive ? 'Deactivate' : 'Activate',
+          type: 'warning' as const,
+          requireInput: false
+        }
+      case 'resetPassword':
+        return {
+          title: 'Reset Password',
+          message: `Enter new password for admin "${confirmationModal.admin?.name}" (${confirmationModal.admin?.email}):`,
+          confirmText: 'Reset Password',
+          type: 'info' as const,
+          requireInput: true,
+          inputLabel: 'New Password',
+          inputPlaceholder: 'Enter new password (minimum 6 characters)...'
+        }
+      default:
+        return {
+          title: 'Confirm Action',
+          message: 'Are you sure you want to proceed?',
+          confirmText: 'Confirm',
+          type: 'info' as const,
+          requireInput: false
+        }
+    }
+  }
 
   // Permissions are now static, no need to update them
 
@@ -474,13 +518,13 @@ const AdminManagement: React.FC = () => {
                       )}
                       {user?.role === 'super_admin' && admin.role !== 'super_admin' && (
                         <button
-                          onClick={() => handleDeleteAdmin(admin)}
-                          className="inline-flex items-center px-3 py-1.5 border border-red-300 shadow-sm text-xs font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                          disabled={actionLoading.delete}
-                          title="Deactivate Admin"
+                          onClick={() => handleToggleAdminStatus(admin)}
+                          className="inline-flex items-center px-3 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled={actionLoading.toggle}
+                          title={admin.isActive ? "Deactivate Admin" : "Activate Admin"}
                         >
-                          <X className="h-3 w-3 mr-1" />
-                          {actionLoading.delete ? 'Deactivating...' : 'Deactivate'}
+                          {admin.isActive ? <EyeOff className="h-3 w-3 mr-1" /> : <Eye className="h-3 w-3 mr-1" />}
+                          {actionLoading.toggle ? 'Processing...' : (admin.isActive ? 'Deactivate' : 'Activate')}
                         </button>
                       )}
                       {admin.role === 'super_admin' && (
@@ -1228,6 +1272,15 @@ const AdminManagement: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        loading={confirmationModal.loading}
+        onConfirm={handleConfirmationConfirm}
+        onCancel={handleConfirmationCancel}
+        {...getModalConfig()}
+      />
     </div>
   );
 };

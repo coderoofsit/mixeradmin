@@ -117,7 +117,7 @@ export default function NotificationHistoryCard({ userId }: NotificationHistoryC
   }
 
   return (
-    <div className="flex flex-col h-96">
+    <div className="flex flex-col min-h-96">
       <div className="flex items-center justify-between mb-4 flex-shrink-0">
         <h3 className="text-lg font-semibold text-var(--text-primary) flex items-center">
           <Bell className="h-5 w-5 mr-2 text-var(--primary)" />

@@ -19,6 +19,7 @@ import TagChips from '../components/TagChips';
 import LoadingOverlay from '../components/LoadingOverlay';
 import LoadingSpinner from '../components/LoadingSpinner';
 import CustomDatePicker from '../components/CustomDatePicker';
+import ConfirmationModal from '../components/ConfirmationModal';
 import { formatUTCDateOnly } from '../utils/dateUtils';
 
 const Events = () => {
@@ -53,6 +54,18 @@ const Events = () => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [editingTagIndex, setEditingTagIndex] = useState<number | null>(null);
 	const [editingTagValue, setEditingTagValue] = useState('');
+
+	// Confirmation modal state
+	const [confirmationModal, setConfirmationModal] = useState<{
+		isOpen: boolean
+		type: 'delete' | null
+		loading: boolean
+		eventId?: string
+	}>({
+		isOpen: false,
+		type: null,
+		loading: false
+	})
 
 	const startEditingTag = (index: number, tag: string) => {
 		setEditingTagIndex(index);
@@ -291,19 +304,67 @@ const Events = () => {
 		}
 	};
 
-	const handleDeleteEvent = async (eventId: string) => {
-		if (!confirm('Are you sure you want to delete this event?')) return;
+	const handleDeleteEvent = (eventId: string) => {
+		setConfirmationModal({
+			isOpen: true,
+			type: 'delete',
+			loading: false,
+			eventId
+		})
+	}
+
+	const handleConfirmDelete = async () => {
+		if (!confirmationModal.eventId) return
 
 		try {
-			await adminApi.deleteEvent(eventId);
-			toast.success('Event deleted successfully');
-			setShowEditModal(false);
-			resetForm();
-			fetchEvents();
+			setConfirmationModal(prev => ({ ...prev, loading: true }))
+			await adminApi.deleteEvent(confirmationModal.eventId)
+			toast.success('Event deleted successfully')
+			setShowEditModal(false)
+			resetForm()
+			fetchEvents()
 		} catch (error) {
-			toast.error('Failed to delete event');
+			console.error('Error deleting event:', error)
+			toast.error('Failed to delete event')
+		} finally {
+			setConfirmationModal({ isOpen: false, type: null, loading: false })
 		}
-	};
+	}
+
+	const handleConfirmationConfirm = () => {
+		switch (confirmationModal.type) {
+			case 'delete':
+				handleConfirmDelete()
+				break
+		}
+	}
+
+	const handleConfirmationCancel = () => {
+		setConfirmationModal({ isOpen: false, type: null, loading: false })
+	}
+
+	// Get modal configuration based on type
+	const getModalConfig = () => {
+		switch (confirmationModal.type) {
+			case 'delete':
+				return {
+					title: 'Delete Event',
+					message: 'Are you sure you want to delete this event? This action cannot be undone.',
+					confirmText: 'Delete Event',
+					type: 'danger' as const,
+					requireInput: false,
+					showTimer: false
+				}
+			default:
+				return {
+					title: 'Confirm Action',
+					message: 'Are you sure you want to proceed?',
+					confirmText: 'Confirm',
+					type: 'info' as const,
+					requireInput: false
+				}
+		}
+	}
 
 	const resetForm = () => {
 		setFormData({
@@ -802,7 +863,7 @@ const Events = () => {
 							onClick={(e) => e.stopPropagation()}
 						>
 						{/* Header - Fixed */}
-						<div className='bg-gradient-primary px-5 py-3 rounded-t-2xl flex justify-between items-center flex-shrink-0'>
+						<div className='bg-gradient-primary px-5 py-3 rounded-t-xl flex justify-between items-center flex-shrink-0'>
 							<h2 className='text-lg sm:text-xl font-semibold text-white'>
 								Create New Event
 							</h2>
@@ -1183,7 +1244,7 @@ const Events = () => {
 							onClick={(e) => e.stopPropagation()}
 						>
 						{/* Header - Fixed */}
-						<div className='bg-gradient-primary px-5 py-3 rounded-t-2xl flex justify-between items-center flex-shrink-0'>
+						<div className='bg-gradient-primary px-5 py-3 rounded-t-xl flex justify-between items-center flex-shrink-0'>
 							<h2 className='text-lg sm:text-xl font-semibold text-white'>
 								Edit Event
 							</h2>
@@ -1558,6 +1619,15 @@ const Events = () => {
 					</div>
 				</div>
 			)}
+
+			{/* Confirmation Modal */}
+			<ConfirmationModal
+				isOpen={confirmationModal.isOpen}
+				loading={confirmationModal.loading}
+				onConfirm={handleConfirmationConfirm}
+				onCancel={handleConfirmationCancel}
+				{...getModalConfig()}
+			/>
 		</div>
 	);
 };

@@ -51,15 +51,15 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 p-6">
-        <h3 className="font-bold text-lg mb-4">Select Subscription Plan</h3>
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[9999]">
+      <div className="glass-card max-w-md w-full mx-4 border border-var(--border)" style={{ boxShadow: 'var(--shadow-lg)' }}>
+        <h3 className="text-lg font-semibold text-var(--text-primary) mb-4">Select Subscription Plan</h3>
         
         <form onSubmit={handleSubmit}>
           <div className="space-y-4">
             {/* Plan Selection */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
                 Choose Plan
               </label>
               <div className="space-y-2">
@@ -71,12 +71,11 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
                       value={plan.id}
                       checked={selectedPlan === plan.id}
                       onChange={(e) => setSelectedPlan(e.target.value)}
-                      className="mt-1 h-4 w-4 text-blue-600 border-gray-300 focus:ring-blue-500"
+                      className="mt-1 h-4 w-4 text-var(--primary) border-var(--border) focus:ring-var(--primary)"
                     />
                     <div className="flex-1">
-                      <div className="font-medium">{plan.name}</div>
-                      <div className="text-sm text-gray-600">{plan.duration}</div>
-                      {/* <div className="text-xs text-gray-500">{plan.description}</div> */}
+                      <div className="font-medium text-var(--text-primary)">{plan.name}</div>
+                      <div className="text-sm text-var(--text-secondary)">{plan.duration}</div>
                     </div>
                   </label>
                 ))}
@@ -85,11 +84,12 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
 
             {/* Notes */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
                 Notes (Optional)
               </label>
               <textarea
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-var(--border) rounded-lg focus:outline-none focus:ring-2 focus:ring-var(--primary) focus:border-var(--primary) bg-var(--bg-primary) text-var(--text-primary) resize-none"
+                style={{ borderRadius: 'var(--border-radius)' }}
                 placeholder="Enter any notes about this subscription..."
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -99,10 +99,10 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
           </div>
 
           {/* Actions */}
-          <div className="flex justify-end space-x-3 mt-6">
+          <div className="flex justify-end space-x-2 mt-4">
             <button
               type="button"
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="btn btn-secondary"
               onClick={handleClose}
               disabled={loading}
             >
@@ -110,7 +110,7 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
             </button>
             <button
               type="submit"
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="btn btn-primary"
               disabled={loading}
             >
               {loading ? 'Processing...' : `Mark ${selectedPlan} as Paid`}

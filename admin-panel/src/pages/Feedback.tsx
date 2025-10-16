@@ -4,6 +4,7 @@ import { Search, Filter, RefreshCw, CheckCircle, XCircle, Trash2, Send, AlertCir
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../components/LoadingSpinner'
 import DataTable from '../components/DataTable'
+import ConfirmationModal from '../components/ConfirmationModal'
 
 interface FeedbackUserRef {
   _id?: string
@@ -64,6 +65,19 @@ function Feedback() {
   
   // Dynamic pagination limit
   const [limit, setLimit] = useState(20) // Default limit
+
+  // Confirmation modal state
+  const [confirmationModal, setConfirmationModal] = useState<{
+    isOpen: boolean
+    type: 'approve' | 'delete' | 'bulkApprove' | null
+    loading: boolean
+    itemId?: string
+    bulkCount?: number
+  }>({
+    isOpen: false,
+    type: null,
+    loading: false
+  })
 
   // Define columns for DataTable
   const columns = [
@@ -206,12 +220,22 @@ function Feedback() {
     setSelected(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id])
   }
 
-  const approve = async (id: string) => {
+  const approve = (id: string) => {
+    setConfirmationModal({
+      isOpen: true,
+      type: 'approve',
+      loading: false,
+      itemId: id
+    })
+  }
+
+  const handleConfirmApprove = async (processedFeedback: string) => {
+    if (!confirmationModal.itemId) return
+
     try {
-      setProcessingItems(prev => new Set([...prev, id]))
-      const defaultMsg = 'Your feedback has been reviewed and approved.'
-      const msg = window.prompt('Enter processed feedback to save/share:', defaultMsg) || defaultMsg
-      await adminApi.processFeedback(id, { action: 'approve', processedFeedback: msg })
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      setProcessingItems(prev => new Set([...prev, confirmationModal.itemId!]))
+      await adminApi.processFeedback(confirmationModal.itemId, { action: 'approve', processedFeedback })
       toast.success('Feedback approved')
       fetchData()
     } catch (e) { 
@@ -219,9 +243,10 @@ function Feedback() {
     } finally {
       setProcessingItems(prev => {
         const newSet = new Set(prev)
-        newSet.delete(id)
+        newSet.delete(confirmationModal.itemId!)
         return newSet
       })
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
@@ -242,11 +267,22 @@ function Feedback() {
     }
   }
 
-  const remove = async (id: string) => {
-    if (!confirm('Delete this feedback?')) return
+  const remove = (id: string) => {
+    setConfirmationModal({
+      isOpen: true,
+      type: 'delete',
+      loading: false,
+      itemId: id
+    })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!confirmationModal.itemId) return
+
     try {
-      setProcessingItems(prev => new Set([...prev, id]))
-      await adminApi.deleteFeedback(id)
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      setProcessingItems(prev => new Set([...prev, confirmationModal.itemId!]))
+      await adminApi.deleteFeedback(confirmationModal.itemId)
       toast.success('Deleted')
       fetchData()
     } catch (e) { 
@@ -254,9 +290,10 @@ function Feedback() {
     } finally {
       setProcessingItems(prev => {
         const newSet = new Set(prev)
-        newSet.delete(id)
+        newSet.delete(confirmationModal.itemId!)
         return newSet
       })
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
@@ -308,20 +345,100 @@ function Feedback() {
     }
   }
 
-  const bulk = async (action: 'approve' | 'reject') => {
+  const bulk = (action: 'approve' | 'reject') => {
     if (selected.length === 0) return toast.error('Select at least one')
+    
+    if (action === 'approve') {
+      setConfirmationModal({
+        isOpen: true,
+        type: 'bulkApprove',
+        loading: false,
+        bulkCount: selected.length
+      })
+    } else {
+      handleConfirmBulkAction(action)
+    }
+  }
+
+  const handleConfirmBulkAction = async (action: 'approve' | 'reject', processedFeedback?: string) => {
     try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
       let payload: any = { feedbackIds: selected, action }
-      if (action === 'approve') {
-        const defaultMsg = 'Your feedback has been reviewed and approved.'
-        const msg = window.prompt('Enter processed feedback to send with approvals:', defaultMsg) || defaultMsg
-        payload.processedFeedback = msg
+      if (action === 'approve' && processedFeedback) {
+        payload.processedFeedback = processedFeedback
       }
       await adminApi.bulkProcessFeedback(payload)
       toast.success(`Bulk ${action} complete`)
       setSelected([])
       fetchData()
-    } catch (e) { toast.error('Bulk action failed') }
+    } catch (e) { 
+      toast.error('Bulk action failed') 
+    } finally {
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
+    }
+  }
+
+  // Handle confirmation modal actions
+  const handleConfirmationConfirm = (inputValue?: string) => {
+    if (!confirmationModal.type) return
+
+    switch (confirmationModal.type) {
+      case 'approve':
+        if (inputValue) handleConfirmApprove(inputValue)
+        break
+      case 'delete':
+        handleConfirmDelete()
+        break
+      case 'bulkApprove':
+        if (inputValue) handleConfirmBulkAction('approve', inputValue)
+        break
+    }
+  }
+
+  const handleConfirmationCancel = () => {
+    setConfirmationModal({ isOpen: false, type: null, loading: false })
+  }
+
+  // Get modal configuration based on type
+  const getModalConfig = () => {
+    switch (confirmationModal.type) {
+      case 'approve':
+        return {
+          title: 'Approve Feedback',
+          message: 'Enter processed feedback to save/share:',
+          confirmText: 'Approve Feedback',
+          type: 'info' as const,
+          requireInput: true,
+          inputLabel: 'Processed Feedback',
+          inputPlaceholder: 'Your feedback has been reviewed and approved.'
+        }
+      case 'delete':
+        return {
+          title: 'Delete Feedback',
+          message: 'Are you sure you want to delete this feedback?',
+          confirmText: 'Delete Feedback',
+          type: 'danger' as const,
+          requireInput: false
+        }
+      case 'bulkApprove':
+        return {
+          title: 'Bulk Approve Feedback',
+          message: `Enter processed feedback to send with approvals for ${confirmationModal.bulkCount} items:`,
+          confirmText: 'Approve All',
+          type: 'info' as const,
+          requireInput: true,
+          inputLabel: 'Processed Feedback',
+          inputPlaceholder: 'Your feedback has been reviewed and approved.'
+        }
+      default:
+        return {
+          title: 'Confirm Action',
+          message: 'Are you sure you want to proceed?',
+          confirmText: 'Confirm',
+          type: 'info' as const,
+          requireInput: false
+        }
+    }
   }
 
   return (
@@ -506,6 +623,15 @@ function Feedback() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        loading={confirmationModal.loading}
+        onConfirm={handleConfirmationConfirm}
+        onCancel={handleConfirmationCancel}
+        {...getModalConfig()}
+      />
     </div>
   )
 }

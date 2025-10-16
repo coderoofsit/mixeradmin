@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
 import DataTable from '../components/DataTable'
+import ConfirmationModal from '../components/ConfirmationModal'
 import { mapGenderForDisplay, getGenderFilterOptions, mapFilterToDatabaseGender } from '../utils/genderUtils'
 import toast from 'react-hot-toast'
 
@@ -25,6 +26,15 @@ interface User {
   email: string;
   accountStatus: 'active' | 'suspended' | 'banned';
   backgroundVerification: 'pending' | 'approved' | 'rejected';
+  backgroundVerificationStatus?: {
+    status: string;
+    verificationMethod: string;
+    verificationMethodDisplay: string;
+    requiresManualVerification: boolean;
+    lastChecked?: string | null;
+    notes?: string;
+    details: any;
+  };
   createdAt: string;
   lastActive: string;
   currentPlan?: string | null;
@@ -67,6 +77,19 @@ function Users() {
   
   // Dynamic pagination limit
   const [limit, setLimit] = useState(20) // Default limit
+
+  // Confirmation modal state
+  const [confirmationModal, setConfirmationModal] = useState<{
+    isOpen: boolean
+    type: 'delete' | 'suspend' | 'ban' | 'bulkDelete' | null
+    loading: boolean
+    userId?: string
+    bulkCount?: number
+  }>({
+    isOpen: false,
+    type: null,
+    loading: false
+  })
 
   // Debounce search term
   useEffect(() => {
@@ -121,30 +144,53 @@ function Users() {
     }
   }
 
-  const handleDeleteUser = async (userId: string) => {
-    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      try {
-        await adminApi.deleteUser(userId)
-        toast.success('User deleted successfully')
-        fetchUsers()
-      } catch (error) {
-        console.error('Error deleting user:', error)
-        toast.error('Failed to delete user')
-      }
+  const handleDeleteUser = (userId: string) => {
+    setConfirmationModal({
+      isOpen: true,
+      type: 'delete',
+      loading: false,
+      userId
+    })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!confirmationModal.userId) return
+
+    try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      await adminApi.deleteUser(confirmationModal.userId)
+      toast.success('User deleted successfully')
+      fetchUsers()
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      toast.error('Failed to delete user')
+    } finally {
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
-  const handleSuspendUser = async (userId: string) => {
-    const reason = prompt('Please enter a reason for suspension:')
-    if (!reason) return
+  const handleSuspendUser = (userId: string) => {
+    setConfirmationModal({
+      isOpen: true,
+      type: 'suspend',
+      loading: false,
+      userId
+    })
+  }
+
+  const handleConfirmSuspend = async (reason: string) => {
+    if (!confirmationModal.userId) return
 
     try {
-      await adminApi.suspendUser(userId, { reason })
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      await adminApi.suspendUser(confirmationModal.userId, { reason })
       toast.success('User suspended successfully')
       fetchUsers()
     } catch (error) {
       console.error('Error suspending user:', error)
       toast.error('Failed to suspend user')
+    } finally {
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
@@ -159,17 +205,71 @@ function Users() {
     }
   }
 
-  const handleBanUser = async (userId: string) => {
-    const reason = prompt('Please enter a reason for banning:')
-    if (!reason) return
+  const handleBanUser = (userId: string) => {
+    setConfirmationModal({
+      isOpen: true,
+      type: 'ban',
+      loading: false,
+      userId
+    })
+  }
+
+  const handleConfirmBan = async (reason: string) => {
+    if (!confirmationModal.userId) return
 
     try {
-      await adminApi.banUser(userId, { reason })
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      await adminApi.banUser(confirmationModal.userId, { reason })
       toast.success('User banned successfully')
       fetchUsers()
     } catch (error) {
       console.error('Error banning user:', error)
       toast.error('Failed to ban user')
+    } finally {
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
+    }
+  }
+
+  const handleConfirmBulkDelete = async () => {
+    if (selectedUsers.length === 0) {
+      toast.error('Please select users first')
+      return
+    }
+
+    try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      setBulkInProgress(true)
+      setBulkTotal(selectedUsers.length)
+      setBulkCompleted(0)
+      setBulkFailed(0)
+
+      let completedCount = 0
+      let failedCount = 0
+
+      for (const userId of selectedUsers) {
+        try {
+          await adminApi.deleteUser(userId)
+          completedCount++
+          setBulkCompleted(prev => prev + 1)
+        } catch (err) {
+          console.error(`Error deleting user ${userId}:`, err)
+          failedCount++
+          setBulkFailed(prev => prev + 1)
+        }
+        await new Promise(res => setTimeout(res, 150))
+      }
+
+      const totalDone = completedCount + failedCount
+
+      toast.success(`${totalDone} users processed (${completedCount} success, ${failedCount} failed)`)
+      setSelectedUsers([])
+      fetchUsers()
+    } catch (error) {
+      console.error('Error performing bulk delete:', error)
+      toast.error('Failed to delete users')
+    } finally {
+      setBulkInProgress(false)
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
@@ -205,6 +305,83 @@ function Users() {
   }
 
   const activeFiltersCount = getActiveFiltersCount()
+
+  // Handle confirmation modal actions
+  const handleConfirmationConfirm = (inputValue?: string) => {
+    if (!confirmationModal.type) return
+
+    switch (confirmationModal.type) {
+      case 'delete':
+        handleConfirmDelete()
+        break
+      case 'suspend':
+        if (inputValue) handleConfirmSuspend(inputValue)
+        break
+      case 'ban':
+        if (inputValue) handleConfirmBan(inputValue)
+        break
+      case 'bulkDelete':
+        handleConfirmBulkDelete()
+        break
+    }
+  }
+
+  const handleConfirmationCancel = () => {
+    setConfirmationModal({ isOpen: false, type: null, loading: false })
+  }
+
+  // Get modal configuration based on type
+  const getModalConfig = () => {
+    switch (confirmationModal.type) {
+      case 'delete':
+        return {
+          title: 'Delete User',
+          message: 'Are you sure you want to delete this user? This action cannot be undone.',
+          confirmText: 'Delete User',
+          type: 'danger' as const,
+          requireInput: false,
+          showTimer: true
+        }
+      case 'suspend':
+        return {
+          title: 'Suspend User',
+          message: 'Are you sure you want to suspend this user? Please provide a reason for the suspension.',
+          confirmText: 'Suspend User',
+          type: 'warning' as const,
+          requireInput: true,
+          inputLabel: 'Reason for suspension',
+          inputPlaceholder: 'Enter the reason for suspending this user...'
+        }
+      case 'ban':
+        return {
+          title: 'Ban User',
+          message: 'Banned account can not be recovered. Are you sure you want to ban this account?',
+          confirmText: 'Ban User',
+          type: 'danger' as const,
+          requireInput: true,
+          inputLabel: 'Reason for ban',
+          inputPlaceholder: 'Enter the reason for banning this user...',
+          showTimer: true
+        }
+      case 'bulkDelete':
+        return {
+          title: 'Delete Users',
+          message: `Are you sure you want to delete ${confirmationModal.bulkCount} users? This action cannot be undone.`,
+          confirmText: 'Delete Users',
+          type: 'danger' as const,
+          requireInput: false,
+          showTimer: true
+        }
+      default:
+        return {
+          title: 'Confirm Action',
+          message: 'Are you sure you want to proceed?',
+          confirmText: 'Confirm',
+          type: 'info' as const,
+          requireInput: false
+        }
+    }
+  }
 
 
 
@@ -268,7 +445,13 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
     return
   }
 
-  if (action === 'delete' && !window.confirm(`Are you sure you want to delete ${selectedUsers.length} users?`)) {
+  if (action === 'delete') {
+    setConfirmationModal({
+      isOpen: true,
+      type: 'bulkDelete',
+      loading: false,
+      bulkCount: selectedUsers.length
+    })
     return
   }
 
@@ -362,19 +545,20 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
     }
   }
 
-  const getVerificationBadgeClass = (status: string) => {
-    switch (status) {
-      case 'approved':
-        return 'badge-success'
-      case 'rejected':
-        return 'badge-danger'
-      case 'pending':
-        return 'badge-manually-required'
-      case 'unpaid':
-        return 'badge-secondary'
-      default:
-        return 'badge-secondary'
+  const getVerificationBadgeClass = (verificationMethodDisplay: string) => {
+    if (!verificationMethodDisplay) return 'badge-secondary'
+    
+    const display = verificationMethodDisplay.toLowerCase()
+    if (display.includes('approved') || display.includes('verified')) {
+      return 'badge-success'
+    } else if (display.includes('rejected') || display.includes('failed')) {
+      return 'badge-danger'
+    } else if (display.includes('pending') || display.includes('manual')) {
+      return 'badge-manually-required'
+    } else if (display.includes('unpaid')) {
+      return 'badge-secondary'
     }
+    return 'badge-secondary'
   }
 
   const tableData = users.map(user => ({
@@ -422,8 +606,8 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
       </span>
     ),
     verification: (
-      <span className={`badge ${getVerificationBadgeClass(user.backgroundVerification)}`}>
-        {user.backgroundVerification === 'pending' ? 'Manually Required' : (user.backgroundVerification || 'Unknown')}
+      <span className={`badge ${getVerificationBadgeClass(user.backgroundVerificationStatus?.verificationMethodDisplay ?? '')}`}>
+        {user.backgroundVerificationStatus?.verificationMethodDisplay || 'Unknown'}
       </span>
     )
     ,createdAt: user.createdAt
@@ -606,6 +790,15 @@ const handleBulkAction = async (action: 'verify' | 'delete') => {
         }}
         emptyMessage="No users found. Try adjusting your search or filters."
         fullHeight={true}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        loading={confirmationModal.loading}
+        onConfirm={handleConfirmationConfirm}
+        onCancel={handleConfirmationCancel}
+        {...getModalConfig()}
       />
     </div>
   )

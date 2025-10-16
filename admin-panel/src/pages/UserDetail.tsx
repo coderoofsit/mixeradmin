@@ -4,6 +4,8 @@ import { adminApi } from '../services/api'
 import { formatUTCDateOnly, formatUTCDateTime, isDateExpired } from '../utils/dateUtils'
 import { ArrowLeft, RefreshCw, X, AlertCircle } from 'lucide-react'
 import LoadingSpinner from '../components/LoadingSpinner'
+import LoadingOverlay from '../components/LoadingOverlay'
+import ConfirmationModal from '../components/ConfirmationModal'
 import toast from 'react-hot-toast'
 
 // Import sub-components
@@ -248,6 +250,26 @@ function UserDetail() {
     manualVerify?: boolean
   }>({})
 
+  // Full-page loading state for critical actions
+  const [fullPageLoading, setFullPageLoading] = useState<{
+    suspend?: boolean
+    ban?: boolean
+    delete?: boolean
+    manualVerify?: boolean
+  }>({})
+
+  // Confirmation modal states
+  const [confirmationModal, setConfirmationModal] = useState<{
+    isOpen: boolean
+    type: 'suspend' | 'ban' | 'delete' | 'backgroundVerification' | 'markAsPaid' | null
+    loading: boolean
+    data?: any
+  }>({
+    isOpen: false,
+    type: null,
+    loading: false
+  })
+
   // Plan selection modal state
   const [planSelectionModal, setPlanSelectionModal] = useState<{
     isOpen: boolean
@@ -469,36 +491,58 @@ function UserDetail() {
     }
   }
 
-  const handleDeleteUser = async () => {
-    if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
-      try {
-        setActionLoading(prev => ({ ...prev, delete: true }))
-        await adminApi.deleteUser(userId!)
-        toast.success('User deleted successfully')
-        navigate('/users')
-      } catch (error) {
-        console.error('Error deleting user:', error)
-        toast.error('Failed to delete user')
-      } finally {
-        setActionLoading(prev => ({ ...prev, delete: false }))
-      }
+  const handleDeleteUser = () => {
+    setConfirmationModal({
+      isOpen: true,
+      type: 'delete',
+      loading: false
+    })
+  }
+
+  const handleConfirmDelete = async () => {
+    try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      setFullPageLoading(prev => ({ ...prev, delete: true }))
+      await adminApi.deleteUser(userId!)
+      toast.success('User deleted successfully')
+      navigate('/users')
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      toast.error('Failed to delete user')
+    } finally {
+      setFullPageLoading(prev => ({ ...prev, delete: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
-  const handleSuspendUser = async () => {
-    const reason = prompt('Please enter a reason for suspension:')
-    if (!reason) return
+  const handleSuspendUser = () => {
+    console.log('🚨 Suspend button clicked!')
+    setConfirmationModal({
+      isOpen: true,
+      type: 'suspend',
+      loading: false
+    })
+  }
+
+  const handleConfirmSuspend = async (reason: string) => {
+    console.log('✅ Reason provided:', reason)
+    console.log('🔄 Calling suspend API for userId:', userId)
 
     try {
-      setActionLoading(prev => ({ ...prev, suspend: true }))
-      await adminApi.suspendUser(userId!, { reason })
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      setFullPageLoading(prev => ({ ...prev, suspend: true }))
+      console.log('📡 Making API call to suspend user...')
+      const response = await adminApi.suspendUser(userId!, { reason })
+      console.log('✅ Suspend API response:', response)
       toast.success('User suspended successfully')
       fetchUser()
-    } catch (error) {
-      console.error('Error suspending user:', error)
+    } catch (error: any) {
+      console.error('❌ Error suspending user:', error)
+      console.error('❌ Error details:', error.response?.data)
       toast.error('Failed to suspend user')
     } finally {
-      setActionLoading(prev => ({ ...prev, suspend: false }))
+      setFullPageLoading(prev => ({ ...prev, suspend: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
@@ -516,37 +560,60 @@ function UserDetail() {
     }
   }
 
-  const handleBanUser = async () => {
-    const reason = prompt('Please enter a reason for banning:')
-    if (!reason) return
+  const handleBanUser = () => {
+    console.log('🚨 Ban button clicked!')
+    setConfirmationModal({
+      isOpen: true,
+      type: 'ban',
+      loading: false
+    })
+  }
+
+  const handleConfirmBan = async (reason: string) => {
+    console.log('✅ Reason provided:', reason)
+    console.log('🔄 Calling ban API for userId:', userId)
 
     try {
-      setActionLoading(prev => ({ ...prev, ban: true }))
-      await adminApi.banUser(userId!, { reason })
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
+      setFullPageLoading(prev => ({ ...prev, ban: true }))
+      console.log('📡 Making API call to ban user...')
+      const response = await adminApi.banUser(userId!, { reason })
+      console.log('✅ Ban API response:', response)
       toast.success('User banned successfully')
       fetchUser()
-    } catch (error) {
-      console.error('Error banning user:', error)
+    } catch (error: any) {
+      console.error('❌ Error banning user:', error)
+      console.error('❌ Error details:', error.response?.data)
       toast.error('Failed to ban user')
     } finally {
-      setActionLoading(prev => ({ ...prev, ban: false }))
+      setFullPageLoading(prev => ({ ...prev, ban: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
-  const handleBackgroundVerification = async (status: 'unpaid' | 'pending' | 'approved' | 'rejected') => {
+  const handleBackgroundVerification = (status: 'unpaid' | 'pending' | 'approved' | 'rejected') => {
     // Only check purchase requirement for approve/reject actions, not for pending status
     if (!['unpaid', 'pending'].includes(status) && userData?.accountStatus?.backgroundVerification === 'unpaid') {
       toast.error('User has not purchased background check. Cannot proceed with verification.')
       return
     }
 
-    const notes = prompt(`Please enter notes for background verification (${status}):`)
-    if (notes === null) return
+    setConfirmationModal({
+      isOpen: true,
+      type: 'backgroundVerification',
+      loading: false,
+      data: { status }
+    })
+  }
+
+  const handleConfirmBackgroundVerification = async (notes: string) => {
+    if (!confirmationModal.data?.status) return
 
     try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
       setActionLoading(prev => ({ ...prev, backgroundVerification: true }))
-      await adminApi.updateUserBackgroundVerification(userId!, { status, notes })
-      toast.success(`User background verification ${status} successfully`)
+      await adminApi.updateUserBackgroundVerification(userId!, { status: confirmationModal.data.status, notes })
+      toast.success(`User background verification ${confirmationModal.data.status} successfully`)
       fetchUser()
     } catch (error: any) {
       console.error('Error updating user background verification:', error)
@@ -557,20 +624,27 @@ function UserDetail() {
       }
     } finally {
       setActionLoading(prev => ({ ...prev, backgroundVerification: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
-  const handleMarkAsPaid = async () => {
+  const handleMarkAsPaid = () => {
     if (!userData) return
     if (userData.accountStatus.backgroundVerification !== 'unpaid') {
       toast.error('User has already paid for background verification')
       return
     }
 
-    const notes = prompt('Please enter notes for marking background verification as paid (optional):')
-    if (notes === null) return
+    setConfirmationModal({
+      isOpen: true,
+      type: 'markAsPaid',
+      loading: false
+    })
+  }
 
+  const handleConfirmMarkAsPaid = async (notes: string) => {
     try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
       setActionLoading(prev => ({ ...prev, markAsPaid: true }))
       await adminApi.markBackgroundVerificationAsPaid(userId!, { notes })
       toast.success('Background verification marked as paid successfully')
@@ -582,6 +656,7 @@ function UserDetail() {
         : 'Failed to mark background verification as paid')
     } finally {
       setActionLoading(prev => ({ ...prev, markAsPaid: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
     }
   }
 
@@ -683,7 +758,7 @@ function UserDetail() {
     if (!userData?.id) return
 
     try {
-      setActionLoading(prev => ({ ...prev, manualVerify: true }))
+      setFullPageLoading(prev => ({ ...prev, manualVerify: true }))
       const response = await adminApi.fetchPersonRecords({ userId: userData.id })
       
       if (response.data.success) {
@@ -700,7 +775,7 @@ function UserDetail() {
       const errorMessage = error.response?.data?.message || 'Failed to fetch person records'
       toast.error(errorMessage)
     } finally {
-      setActionLoading(prev => ({ ...prev, manualVerify: false }))
+      setFullPageLoading(prev => ({ ...prev, manualVerify: false }))
     }
   }
 
@@ -730,6 +805,97 @@ function UserDetail() {
   const closeBackgroundCheckModal = () => {
     setBackgroundCheckModal({ isOpen: false, type: 'search', data: null })
     setBackgroundCheckResults(null)
+  }
+
+  // Handle confirmation modal actions
+  const handleConfirmationConfirm = (inputValue?: string) => {
+    if (!confirmationModal.type) return
+
+    switch (confirmationModal.type) {
+      case 'suspend':
+        if (inputValue) handleConfirmSuspend(inputValue)
+        break
+      case 'ban':
+        if (inputValue) handleConfirmBan(inputValue)
+        break
+      case 'delete':
+        handleConfirmDelete()
+        break
+      case 'backgroundVerification':
+        if (inputValue) handleConfirmBackgroundVerification(inputValue)
+        break
+      case 'markAsPaid':
+        if (inputValue) handleConfirmMarkAsPaid(inputValue)
+        break
+    }
+  }
+
+  const handleConfirmationCancel = () => {
+    setConfirmationModal({ isOpen: false, type: null, loading: false })
+  }
+
+  // Get modal configuration based on type
+  const getModalConfig = () => {
+    switch (confirmationModal.type) {
+      case 'suspend':
+        return {
+          title: 'Suspend User',
+          message: 'Are you sure you want to suspend this user?',
+          confirmText: 'Suspend User',
+          type: 'warning' as const,
+          requireInput: true,
+          inputLabel: '',
+          inputPlaceholder: 'Enter the reason for suspending this user...'
+        }
+        case 'ban':
+          return {
+            title: 'Ban User',
+            message: 'Banned account can not be recovered. Are you sure you want to ban this account?',
+            confirmText: 'Ban User',
+            type: 'danger' as const,
+            requireInput: true,
+            inputLabel: '',
+            inputPlaceholder: 'Enter the reason for banning this user...',
+            showTimer: true
+          }
+      case 'delete':
+        return {
+          title: 'Delete User',
+          message: 'Are you sure you want to delete this user? This action cannot be undone.',
+          confirmText: 'Delete User',
+          type: 'danger' as const,
+          requireInput: false,
+          showTimer: true
+        }
+      case 'backgroundVerification':
+        return {
+          title: 'Background Verification',
+          message: `Please enter notes for background verification (${confirmationModal.data?.status}):`,
+          confirmText: 'Update Verification',
+          type: 'info' as const,
+          requireInput: true,
+          inputLabel: 'Verification Notes',
+          inputPlaceholder: 'Enter notes for this verification action...'
+        }
+      case 'markAsPaid':
+        return {
+          title: 'Mark as Paid',
+          message: 'Please enter notes for marking background verification as paid (optional):',
+          confirmText: 'Mark as Paid',
+          type: 'info' as const,
+          requireInput: true,
+          inputLabel: 'Payment Notes',
+          inputPlaceholder: 'Enter notes for marking as paid (optional)...'
+        }
+      default:
+        return {
+          title: 'Confirm Action',
+          message: 'Are you sure you want to proceed?',
+          confirmText: 'Confirm',
+          type: 'info' as const,
+          requireInput: false
+        }
+    }
   }
 
   if (loading) {
@@ -958,6 +1124,24 @@ function UserDetail() {
         data={fetchRecordsModal.data}
         onSelectPerson={handleSelectPersonFromRecords}
         isSelecting={actionLoading.manualVerify}
+      />
+
+      {/* Full-page loading overlays for critical actions */}
+      <LoadingOverlay isVisible={fullPageLoading.suspend || false} />
+      <LoadingOverlay isVisible={fullPageLoading.ban || false} />
+      <LoadingOverlay isVisible={fullPageLoading.delete || false} />
+      <LoadingOverlay 
+        isVisible={fullPageLoading.manualVerify || false} 
+        message="This Might Take Few Seconds"
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        loading={confirmationModal.loading}
+        onConfirm={handleConfirmationConfirm}
+        onCancel={handleConfirmationCancel}
+        {...getModalConfig()}
       />
      </div>
    )

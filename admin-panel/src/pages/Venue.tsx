@@ -3,6 +3,7 @@ import { adminApi } from '../services/api'
 import { Plus, RefreshCw, Edit, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import LoadingSpinner from '../components/LoadingSpinner'
+import ConfirmationModal from '../components/ConfirmationModal'
 
 interface VenueItem {
   _id?: string
@@ -27,6 +28,18 @@ function Venue() {
   }>({})
 
   const [form, setForm] = useState<VenueItem>({ name: '', address: '', city: '', state: '', zipCode: '', capacity: 0 })
+
+  // Confirmation modal state
+  const [confirmationModal, setConfirmationModal] = useState<{
+    isOpen: boolean
+    type: 'delete' | null
+    loading: boolean
+    venueId?: string
+  }>({
+    isOpen: false,
+    type: null,
+    loading: false
+  })
 
   const fetchVenues = async () => {
     try {
@@ -85,18 +98,67 @@ function Venue() {
     }
   }
 
-  const remove = async (id?: string) => {
+  const remove = (id?: string) => {
     if (!id) return
-    if (!confirm('Delete this venue?')) return
+    setConfirmationModal({
+      isOpen: true,
+      type: 'delete',
+      loading: false,
+      venueId: id
+    })
+  }
+
+  const handleConfirmDelete = async () => {
+    if (!confirmationModal.venueId) return
+
     try {
+      setConfirmationModal(prev => ({ ...prev, loading: true }))
       setActionLoading(prev => ({ ...prev, delete: true }))
-      await adminApi.deleteVenue(id)
+      await adminApi.deleteVenue(confirmationModal.venueId)
       toast.success('Venue deleted')
       fetchVenues()
-    } catch (e) { 
-      toast.error('Delete failed') 
+    } catch (e) {
+      console.error('Error deleting venue:', e)
+      toast.error('Delete failed')
     } finally {
       setActionLoading(prev => ({ ...prev, delete: false }))
+      setConfirmationModal({ isOpen: false, type: null, loading: false })
+    }
+  }
+
+  const handleConfirmationConfirm = () => {
+    switch (confirmationModal.type) {
+      case 'delete':
+        handleConfirmDelete()
+        break
+    }
+  }
+
+  const handleConfirmationCancel = () => {
+    setConfirmationModal({ isOpen: false, type: null, loading: false })
+  }
+
+  // Get modal configuration based on type
+  const getModalConfig = () => {
+    switch (confirmationModal.type) {
+      case 'delete':
+        return {
+          title: 'Delete Venue',
+          message: 'Are you sure you want to delete this venue? This action cannot be undone.',
+          confirmText: 'Delete Venue',
+          type: 'danger' as const,
+          requireInput: false,
+          showTimer: false
+        }
+      default:
+        return {
+          title: 'Confirm Action',
+          message: 'Are you sure you want to proceed?',
+          confirmText: 'Confirm',
+          type: 'info' as const,
+          requireInput: false,
+          showTimer: false
+        }
     }
   }
 
@@ -200,6 +262,15 @@ function Venue() {
           </div>
         </div>
       )}
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={confirmationModal.isOpen}
+        loading={confirmationModal.loading}
+        onConfirm={handleConfirmationConfirm}
+        onCancel={handleConfirmationCancel}
+        {...getModalConfig()}
+      />
     </div>
   )
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { adminApi } from '../services/api'
 import toast from 'react-hot-toast'
 import CustomDatePicker from '../components/CustomDatePicker'
+import ConfirmationModal from '../components/ConfirmationModal'
 
 type BlindDate = {
 	_id: string
@@ -22,6 +23,18 @@ const BlindDates = () => {
 	const [form, setForm] = useState<typeof initialForm>(initialForm)
 	const [filters, setFilters] = useState<{ isActive?: string; from?: string; to?: string }>({ isActive: 'true' })
 	const [scheduledAt, setScheduledAt] = useState("");
+
+	// Confirmation modal state
+	const [confirmationModal, setConfirmationModal] = useState<{
+		isOpen: boolean
+		type: 'delete' | null
+		loading: boolean
+		blindDateId?: string
+	}>({
+		isOpen: false,
+		type: null,
+		loading: false
+	})
 
 	const load = async () => {
 		setLoading(true)
@@ -85,14 +98,64 @@ const BlindDates = () => {
 		}
 	}
 
-	const onDelete = async (id: string) => {
-		if (!confirm('Delete this blind date?')) return
+	const onDelete = (id: string) => {
+		setConfirmationModal({
+			isOpen: true,
+			type: 'delete',
+			loading: false,
+			blindDateId: id
+		})
+	}
+
+	const handleConfirmDelete = async () => {
+		if (!confirmationModal.blindDateId) return
+
 		try {
-			await adminApi.deleteBlindDate(id)
+			setConfirmationModal(prev => ({ ...prev, loading: true }))
+			await adminApi.deleteBlindDate(confirmationModal.blindDateId)
 			toast.success('Deleted')
 			load()
 		} catch (e: any) {
+			console.error('Error deleting blind date:', e)
 			toast.error(e?.response?.data?.message || 'Failed to delete')
+		} finally {
+			setConfirmationModal({ isOpen: false, type: null, loading: false })
+		}
+	}
+
+	const handleConfirmationConfirm = () => {
+		switch (confirmationModal.type) {
+			case 'delete':
+				handleConfirmDelete()
+				break
+		}
+	}
+
+	const handleConfirmationCancel = () => {
+		setConfirmationModal({ isOpen: false, type: null, loading: false })
+	}
+
+	// Get modal configuration based on type
+	const getModalConfig = () => {
+		switch (confirmationModal.type) {
+			case 'delete':
+				return {
+					title: 'Delete Blind Date',
+					message: 'Are you sure you want to delete this blind date? This action cannot be undone.',
+					confirmText: 'Delete Blind Date',
+					type: 'danger' as const,
+					requireInput: false,
+					showTimer: false
+				}
+			default:
+				return {
+					title: 'Confirm Action',
+					message: 'Are you sure you want to proceed?',
+					confirmText: 'Confirm',
+					type: 'info' as const,
+					requireInput: false,
+					showTimer: false
+				}
 		}
 	}
 
@@ -234,6 +297,15 @@ const BlindDates = () => {
 					</div>
 				</div>
 			</div>
+
+		{/* Confirmation Modal */}
+		<ConfirmationModal
+			isOpen={confirmationModal.isOpen}
+			loading={confirmationModal.loading}
+			onConfirm={handleConfirmationConfirm}
+			onCancel={handleConfirmationCancel}
+			{...getModalConfig()}
+		/>
 		</div>
 	)
 }

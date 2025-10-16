@@ -49,32 +49,44 @@ export default function AccountActionsCard({
           <div className="flex items-center space-x-2">
             {user.accountStatus.accountStatus === 'active' ? (
               <button
-                onClick={onSuspend}
+                onClick={() => {
+                  console.log('🔘 Suspend button clicked in AccountActionsCard')
+                  onSuspend()
+                }}
                 disabled={actionLoading.suspend}
                 className="btn btn-warning btn-sm w-24"
               >
                 <Ban className="h-4 w-4 mr-2" />
                 {actionLoading.suspend ? 'Suspending...' : 'Suspend'}
               </button>
-            ) : (
+            ) : user.accountStatus.accountStatus === 'suspended' ? (
               <button
-                onClick={onReactivate}
+                onClick={() => {
+                  console.log('🔘 Reactivate button clicked in AccountActionsCard')
+                  onReactivate()
+                }}
                 disabled={actionLoading.reactivate}
                 className="btn btn-success btn-sm w-24"
               >
                 <CheckCircle className="h-4 w-4 mr-2" />
                 {actionLoading.reactivate ? 'Reactivating...' : 'Reactivate'}
               </button>
-            )}
+            ) : null}
             
-            <button
-              onClick={onBan}
-              disabled={actionLoading.ban}
-              className="btn btn-danger btn-sm w-20"
-            >
-              <Ban className="h-4 w-4 mr-2" />
-              {actionLoading.ban ? 'Banning...' : 'Ban'}
-            </button>
+            {/* Only show Ban button if user is not already banned */}
+            {user.accountStatus.accountStatus !== 'banned' && (
+              <button
+                onClick={() => {
+                  console.log('🔘 Ban button clicked in AccountActionsCard')
+                  onBan()
+                }}
+                disabled={actionLoading.ban}
+                className="btn btn-danger btn-sm w-20"
+              >
+                <Ban className="h-4 w-4 mr-2" />
+                {actionLoading.ban ? 'Banning...' : 'Ban'}
+              </button>
+            )}
             
             <button
               onClick={onDelete}
