@@ -123,8 +123,8 @@ const DataTable: React.FC<DataTableProps> = ({
     : "table-container"
 
   const tableWrapperClass = fullHeight 
-    ? "flex-1 flex flex-col relative" 
-    : "flex flex-col relative"
+    ? "flex-1 overflow-auto relative" 
+    : "overflow-auto custom-scrollbar relative"
 
   const tableStyle = fullHeight 
     ? { height: 'calc(100vh - 200px)', minHeight: '400px', maxHeight: 'calc(100vh - 150px)' }
@@ -149,11 +149,9 @@ const DataTable: React.FC<DataTableProps> = ({
       {/* Table */} 
       <div className={tableContainerClass}>
         <div className={tableWrapperClass} style={tableStyle}>
-          {/* Fixed Header */}
-          <div className="bg-var(--bg-primary) border-var(--border)">
-            <table className="table w-full">
-              <thead className="table-header">
-                <tr>
+          <table className="table w-full">
+            <thead className="table-header sticky top-0 z-10">
+              <tr className="bg-var(--bg-primary) border-b border-var(--border)">
                 {columns.map((column) => (
                   <th
                     key={column.key}
@@ -173,13 +171,7 @@ const DataTable: React.FC<DataTableProps> = ({
                 ))}
               </tr>
             </thead>
-            </table>
-          </div>
-          
-          {/* Scrollable Body */}
-          <div className="flex-1 overflow-auto">
-            <table className="table w-full">
-              <tbody className="table-body">
+            <tbody className="table-body">
               {data.length === 0 ? (
                 <tr>
                   <td colSpan={columns.length} className="table-cell text-center py-12">
@@ -256,9 +248,8 @@ const DataTable: React.FC<DataTableProps> = ({
                   )
                 })
               )}
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
         </div>
 
         {/* Pagination */}
