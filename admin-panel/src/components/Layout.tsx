@@ -136,7 +136,7 @@ const Layout = ({ children }: LayoutProps) => {
             </div>
           </div>
           
-          <nav className="flex-1 space-y-2 px-4 py-6">
+          <nav className="flex-1 space-y-2 px-4 py-6 overflow-y-auto">
             {navigation.map((item) => {
               // Check if current path matches the nav item or is a sub-page
               const isActive = location.pathname === item.href || 
@@ -271,7 +271,7 @@ const Layout = ({ children }: LayoutProps) => {
               </button>
             </div>
             
-            <nav className="flex-1 space-y-2 px-4 py-4">
+            <nav className="flex-1 space-y-2 px-4 py-4 overflow-y-auto">
               {navigation.map((item) => {
                 // Check if current path matches the nav item or is a sub-page
                 const isActive = location.pathname === item.href || 
