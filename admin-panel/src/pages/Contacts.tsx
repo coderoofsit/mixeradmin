@@ -155,7 +155,7 @@ const ContactDetailModal = ({ contact, isOpen, onClose, onUpdate, updating }: Co
                   </label>
                   <select
                     value={status}
-                    onChange={(e) => setStatus(e.target.value)}
+                    onChange={(e) => setStatus(e.target.value as 'pending' | 'contacted' | 'resolved' | 'archived')}
                     className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
                   >
                     <option value="pending">Pending</option>
@@ -506,7 +506,6 @@ function Contacts() {
           value={stats?.byStatus.pending || 0}
           icon={Clock}
           loading={statsLoading}
-          trend={{ value: 0, isPositive: true }}
         />
         <StatsCard
           title="Contacted"
