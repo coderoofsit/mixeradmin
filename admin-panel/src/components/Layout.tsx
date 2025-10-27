@@ -21,7 +21,8 @@ import {
   Volume2,
   HeartHandshake,
   Clock,
-  CreditCard
+  CreditCard,
+  Mail
 } from 'lucide-react'
 
 interface LayoutProps {
@@ -52,6 +53,7 @@ const Layout = ({ children }: LayoutProps) => {
     if (pathname.startsWith('/admin/')) return 'Admin Management'
     if (pathname.startsWith('/blind-dates/')) return 'Blind Dates'
     if (pathname.startsWith('/subscriptions/')) return 'Subscription Management'
+    if (pathname.startsWith('/contacts/')) return 'Contact Submissions'
     if (pathname.startsWith('/venues/')) return 'Venues'
     
     const titleMap: { [key: string]: string } = {
@@ -63,6 +65,7 @@ const Layout = ({ children }: LayoutProps) => {
       '/admin': 'Admin Management',
       '/blind-dates': 'Blind Dates',
       '/subscriptions': 'Subscription Management',
+      '/contacts': 'Contact Submissions',
       '/venues': 'Venues'
     }
     return titleMap[pathname] || 'Admin Panel'
@@ -83,6 +86,7 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Events', href: '/events', icon: Calendar },
     // { name: 'Organizers', href: '/organizers', icon: Building2 },
     { name: 'Feedback', href: '/feedback', icon: MessageSquare },
+    { name: 'Contacts', href: '/contacts', icon: Mail },
     { name: 'Blind Dates', href: '/blind-dates', icon: HeartHandshake },
     { name: 'Subscriptions', href: '/subscriptions', icon: CreditCard },
     { 

@@ -222,6 +222,19 @@ export const adminApi = {
   // Notifications API
   getUserNotifications: (userId: string, params?: any) => 
     api.get(`/notificationhistory/admin/user/${userId}`, { params }),
+
+  // Contact Us API
+  getContacts: (params?: any) => api.get('/admin/contacts', { params }),
+  
+  getContactStats: () => api.get('/admin/contacts/stats'),
+  
+  getContact: (contactId: string) => api.get(`/admin/contacts/${contactId}`),
+  
+  updateContact: (contactId: string, data: any) => 
+    api.patch(`/admin/contacts/${contactId}`, data),
+  
+  deleteContact: (contactId: string) => 
+    api.delete(`/admin/contacts/${contactId}`),
 }
 
 export default api 

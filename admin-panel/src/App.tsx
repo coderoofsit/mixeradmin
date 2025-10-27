@@ -10,6 +10,7 @@ import UserDetail from './pages/UserDetail'
 import Events from './pages/Events'
 import Layout from './components/Layout'
 import Feedback from './pages/Feedback'
+import Contacts from './pages/Contacts'
 // import Venue from './pages/Venue'
 import BlindDates from './pages/BlindDates'
 import AdminManagement from './pages/AdminManagement'
@@ -78,6 +79,7 @@ function App() {
           {/*           // <Route path="/events" element={<Events />} />
           <Route path="/events/:eventId" element={<EventDetail />} /> */}
           <Route path="/feedback" element={<Feedback />} />
+          <Route path="/contacts" element={<Contacts />} />
           <Route path="/blind-dates" element={<BlindDates />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/admin-management" element={
