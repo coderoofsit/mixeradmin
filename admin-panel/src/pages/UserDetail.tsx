@@ -28,6 +28,7 @@ import PurchaseHistoryCard from './UserDetail/PurchaseHistoryCard'
 import SocialActivityCard from './UserDetail/SocialActivityCard'
 import AccountStatusCard from './UserDetail/AccountStatusCard'
 import BackgroundCheckHistoryCard from './UserDetail/BackgroundCheckHistoryCard'
+import ContactUsCard from './UserDetail/ContactUsCard'
 
 // New clean API response structure - Updated for new API format
 interface UserData {
@@ -199,6 +200,23 @@ interface UserData {
       likesGiven: number
       likesReceived: number
       totalMatches: number
+    }
+    contact?: {
+      _id: string
+      firstName: string
+      lastName: string
+      email: string
+      phone: string
+      countryCode: string
+      location: string
+      dateOfBirth: string
+      gender: string
+      message: string
+      status: string
+      notes: string
+      submittedAt: string
+      updatedAt: string
+      createdAt: string
     }
   }
 }
@@ -1092,6 +1110,16 @@ function UserDetail() {
             </div>
           </div>
         </div>
+
+        {/* Contact Us Section - Full Width */}
+        {userData.adminData.contact && (
+          <div className="mt-6">
+            <ContactUsCard 
+              contact={userData.adminData.contact} 
+              onUpdate={fetchUserData}
+            />
+          </div>
+        )}
       </div>
 
       {/* Modals */}
