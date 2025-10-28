@@ -60,18 +60,18 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
     return age;
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status.toLowerCase()) {
       case 'pending':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+        return 'badge-warning';
       case 'contacted':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200';
+        return 'badge-info';
       case 'resolved':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200';
+        return 'badge-success';
       case 'archived':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+        return 'badge-secondary';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200';
+        return 'badge-secondary';
     }
   };
 
@@ -112,13 +112,13 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
   const hasChanges = status !== contact.status || notes !== (contact.notes || '');
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 animate-fade-in">
+    <div className="glass-card p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        <h2 className="text-xl font-bold text-var(--text-primary) flex items-center gap-2">
+          <MessageSquare className="w-5 h-5 text-var(--primary)" />
           Contact Us Submission
         </h2>
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(contact.status)}`}>
+        <span className={`badge ${getStatusBadge(contact.status)}`}>
           {contact.status.charAt(0).toUpperCase() + contact.status.slice(1)}
         </span>
       </div>
@@ -126,41 +126,41 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {/* Personal Information */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-var(--text-muted) uppercase tracking-wider">
             Personal Information
           </h3>
           
           <div className="flex items-start gap-3">
-            <User className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <User className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Full Name</p>
-              <p className="text-base font-medium text-gray-900 dark:text-white">
+              <p className="text-xs text-var(--text-muted)">Full Name</p>
+              <p className="text-sm font-medium text-var(--text-primary)">
                 {contact.firstName} {contact.lastName}
               </p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <User className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <User className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Gender</p>
-              <p className="text-base font-medium text-gray-900 dark:text-white">
+              <p className="text-xs text-var(--text-muted)">Gender</p>
+              <p className="text-sm font-medium text-var(--text-primary)">
                 {contact.gender}
               </p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <Calendar className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Date of Birth</p>
-              <p className="text-base font-medium text-gray-900 dark:text-white">
+              <p className="text-xs text-var(--text-muted)">Date of Birth</p>
+              <p className="text-sm font-medium text-var(--text-primary)">
                 {new Date(contact.dateOfBirth).toLocaleDateString('en-US', {
                   year: 'numeric',
                   month: 'long',
                   day: 'numeric'
                 })}
-                <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">
+                <span className="text-xs text-var(--text-muted) ml-2">
                   ({formatAge(contact.dateOfBirth)} years old)
                 </span>
               </p>
@@ -170,17 +170,17 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
 
         {/* Contact Information */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-var(--text-muted) uppercase tracking-wider">
             Contact Information
           </h3>
           
           <div className="flex items-start gap-3">
-            <Mail className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <Mail className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
+              <p className="text-xs text-var(--text-muted)">Email</p>
               <a 
                 href={`mailto:${contact.email}`}
-                className="text-base font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-sm font-medium text-var(--primary) hover:underline"
               >
                 {contact.email}
               </a>
@@ -188,12 +188,12 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
           </div>
 
           <div className="flex items-start gap-3">
-            <Phone className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <Phone className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
+              <p className="text-xs text-var(--text-muted)">Phone</p>
               <a 
                 href={`tel:${contact.countryCode}${contact.phone}`}
-                className="text-base font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-sm font-medium text-var(--primary) hover:underline"
               >
                 {contact.countryCode} {contact.phone}
               </a>
@@ -201,10 +201,10 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
           </div>
 
           <div className="flex items-start gap-3">
-            <MapPin className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <MapPin className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Location</p>
-              <p className="text-base font-medium text-gray-900 dark:text-white">
+              <p className="text-xs text-var(--text-muted)">Location</p>
+              <p className="text-sm font-medium text-var(--text-primary)">
                 {contact.location}
               </p>
             </div>
@@ -213,25 +213,25 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
 
         {/* Timestamps */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-var(--text-muted) uppercase tracking-wider">
             Submission Details
           </h3>
           
           <div className="flex items-start gap-3">
-            <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <Calendar className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Submitted At</p>
-              <p className="text-base font-medium text-gray-900 dark:text-white">
+              <p className="text-xs text-var(--text-muted)">Submitted At</p>
+              <p className="text-sm font-medium text-var(--text-primary)">
                 {formatDate(contact.submittedAt)}
               </p>
             </div>
           </div>
 
           <div className="flex items-start gap-3">
-            <Calendar className="w-5 h-5 text-gray-400 dark:text-gray-500 mt-0.5" />
+            <Calendar className="w-4 h-4 text-var(--text-muted) mt-0.5" />
             <div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">Last Updated</p>
-              <p className="text-base font-medium text-gray-900 dark:text-white">
+              <p className="text-xs text-var(--text-muted)">Last Updated</p>
+              <p className="text-sm font-medium text-var(--text-primary)">
                 {formatDate(contact.updatedAt)}
               </p>
             </div>
@@ -241,13 +241,13 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
 
       {/* Message Section */}
       {contact.message && (
-        <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3 flex items-center gap-2">
+        <div className="mt-6 pt-6 border-t border-var(--border)">
+          <h3 className="text-xs font-semibold text-var(--text-muted) uppercase tracking-wider mb-3 flex items-center gap-2">
             <MessageSquare className="w-4 h-4" />
             Message
           </h3>
-          <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-            <p className="text-gray-900 dark:text-white whitespace-pre-wrap">
+          <div className="bg-var(--bg-tertiary) rounded-lg p-4">
+            <p className="text-var(--text-primary) whitespace-pre-wrap">
               {contact.message}
             </p>
           </div>
@@ -255,14 +255,14 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
       )}
 
       {/* Admin Actions Section */}
-      <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <div className="mt-6 pt-6 border-t border-var(--border)">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+          <h3 className="text-xs font-semibold text-var(--text-muted) uppercase tracking-wider">
             Admin Actions
           </h3>
           <button
             onClick={() => setConfirmationModal({ isOpen: true, loading: false })}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-var(--error) hover:bg-var(--error)/10 rounded-lg transition-colors"
           >
             <Trash2 className="w-4 h-4" />
             Delete Contact
@@ -272,13 +272,13 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Status Update */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
               Status
             </label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+              className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
               disabled={updating}
             >
               <option value="pending">Pending</option>
@@ -293,9 +293,9 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
             <button
               onClick={handleUpdate}
               disabled={!hasChanges || updating}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="btn btn-primary flex-1"
             >
-              <Save className="w-4 h-4" />
+              <Save className="w-4 h-4 mr-2" />
               {updating ? 'Saving...' : 'Save Changes'}
             </button>
           </div>
@@ -303,7 +303,7 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
 
         {/* Admin Notes */}
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-var(--text-secondary) mb-2">
             Admin Notes
           </label>
           <textarea
@@ -312,10 +312,10 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
             rows={4}
             maxLength={1000}
             placeholder="Add notes about this contact..."
-            className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
+            className="w-full px-3 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) placeholder-var(--text-muted) focus:outline-none focus:ring-2 focus:ring-var(--primary)"
             disabled={updating}
           />
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          <p className="text-xs text-var(--text-muted) mt-1">
             {notes.length}/1000 characters
           </p>
         </div>
