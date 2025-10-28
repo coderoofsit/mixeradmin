@@ -201,7 +201,7 @@ interface UserData {
       likesReceived: number
       totalMatches: number
     }
-    contact?: {
+    contacts?: Array<{
       _id: string
       firstName: string
       lastName: string
@@ -217,7 +217,7 @@ interface UserData {
       submittedAt: string
       updatedAt: string
       createdAt: string
-    }
+    }>
   }
 }
 
@@ -361,7 +361,8 @@ function UserDetail() {
                 createdAt: purchase.createdAt,
                 updatedAt: purchase.updatedAt,
               }))
-            }
+            },
+            contacts: userData.adminData.contacts || [],
           }
         }
         setUserData(transformedData)
@@ -464,6 +465,7 @@ function UserDetail() {
             blocks: { given: { total: 0, recent: [] }, received: { total: 0, recent: [] } }
           },
           socialActivity: apiData.socialActivity || { likesGiven: 0, likesReceived: 0, totalMatches: 0 },
+          contacts: apiData.contacts || [],
         },
       }
       
@@ -1112,10 +1114,10 @@ function UserDetail() {
         </div>
 
         {/* Contact Us Section - Full Width */}
-        {userData.adminData.contact && (
+        {userData.adminData.contacts && userData.adminData.contacts.length > 0 && (
           <div className="mt-6">
             <ContactUsCard 
-              contact={userData.adminData.contact} 
+              contacts={userData.adminData.contacts} 
               onUpdate={fetchUser}
             />
           </div>
