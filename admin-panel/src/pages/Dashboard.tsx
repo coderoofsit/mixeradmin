@@ -15,7 +15,10 @@ import {
   TrendingDown,
   RefreshCw,
   Calendar as CalendarIcon,
-  FileText
+  FileText,
+  DollarSign,
+  TrendingDown as CostIcon,
+  Info
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { mapGenderForDisplay } from '../utils/genderUtils'
@@ -26,6 +29,7 @@ import GrowthChartModal from '../components/GrowthChartModal'
 import PurchasePieChart from '../components/PurchasePieChart'
 import RevenueChart from '../components/RevenueChart'
 import { calculateRevenue, formatCurrency } from '../config/pricing'
+import { PLATFORM_FEES, calculateSearchBugCosts } from '../config/fees'
 
 interface TrendPoint { date: string; value: number }
 
@@ -461,54 +465,108 @@ const Dashboard = () => {
           />
         </div>
 
-        {/* Revenue Summary */}
-        <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="glass-card">
-            <h3 className="text-lg font-semibold text-var(--text-primary) mb-4">
-              Subscription Revenue
-            </h3>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-var(--success)">
-                {formatCurrency(calculateRevenue(stats?.subscriptionDistribution || []))}
-              </p>
-              <p className="text-sm text-var(--text-muted) mt-2">
-                From {stats?.totalSubscriptionPurchases || 0} subscriptions
-              </p>
-            </div>
-          </div>
-          
-          <div className="glass-card">
-            <h3 className="text-lg font-semibold text-var(--text-primary) mb-4">
-              Background Check Revenue
-            </h3>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-var(--primary)">
-                {formatCurrency(calculateRevenue(stats?.backgroundCheckDistribution || []))}
-              </p>
-              <p className="text-sm text-var(--text-muted) mt-2">
-                From {stats?.totalBackgroundCheckPurchases || 0} purchases
-              </p>
-              </div>
-            </div>
-          
-          <div className="glass-card">
-            <h3 className="text-lg font-semibold text-var(--text-primary) mb-4">
-              Total Revenue
-            </h3>
-            <div className="text-center">
-              <p className="text-3xl font-bold text-var(--secondary)">
-                {formatCurrency(
-                  calculateRevenue(stats?.subscriptionDistribution || []) +
-                  calculateRevenue(stats?.backgroundCheckDistribution || [])
-                )}
-              </p>
-              <p className="text-sm text-var(--text-muted) mt-2">
-                From all purchases
-              </p>
-              </div>
-            </div>
-          </div>
+        {/* Revenue Summary - Gross & Net */}
+        <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+          {(() => {
+            // Calculate Gross Revenue
+            const subscriptionRevenue = calculateRevenue(stats?.subscriptionDistribution || []);
+            const backgroundCheckRevenue = calculateRevenue(stats?.backgroundCheckDistribution || []);
+            const grossRevenue = subscriptionRevenue + backgroundCheckRevenue;
+            
+            // Calculate Platform Fees (assuming 50/50 Apple/Google split for now)
+            const appleFees = grossRevenue * 0.5 * PLATFORM_FEES.apple;
+            const googleFees = grossRevenue * 0.5 * PLATFORM_FEES.google;
+            
+            // Calculate SearchBug API Costs
+            const searchBugCosts = calculateSearchBugCosts(stats?.totalBackgroundCheckPurchases || 0);
+            
+            // Calculate Total Costs
+            const totalCosts = appleFees + googleFees + searchBugCosts;
+            
+            // Calculate Net Revenue
+            const netRevenue = grossRevenue - totalCosts;
+            
+            return (
+              <>
+                {/* Gross Revenue Card */}
+                <div className="glass-card">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-var(--text-primary)">
+                      Gross Revenue
+                    </h3>
+                    <div className="w-10 h-10 bg-gradient-to-r from-green-500 to-emerald-600 rounded-lg flex items-center justify-center">
+                      <DollarSign className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-center mb-4">
+                    <p className="text-4xl font-bold text-var(--success)">
+                      {formatCurrency(grossRevenue)}
+                    </p>
+                    <p className="text-sm text-var(--text-muted) mt-2">
+                      Total revenue from all purchases
+                    </p>
+                  </div>
+                  
+                  {/* Breakdown */}
+                  <div className="pt-4 border-t border-var(--border) space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-var(--text-secondary)">Subscriptions:</span>
+                      <span className="font-medium text-var(--text-primary)">{formatCurrency(subscriptionRevenue)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-var(--text-secondary)">Background Checks:</span>
+                      <span className="font-medium text-var(--text-primary)">{formatCurrency(backgroundCheckRevenue)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Net Revenue Card */}
+                <div className="glass-card">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-var(--text-primary)">
+                      Net Revenue
+                    </h3>
+                    <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
+                      <TrendingUp className="h-5 w-5 text-white" />
+                    </div>
+                  </div>
+                  <div className="text-center mb-4">
+                    <p className="text-4xl font-bold text-var(--primary)">
+                      {formatCurrency(netRevenue)}
+                    </p>
+                    <p className="text-sm text-var(--text-muted) mt-2">
+                      Revenue after platform fees & costs
+                    </p>
+                  </div>
+                  
+                  {/* Cost Breakdown */}
+                  <div className="pt-4 border-t border-var(--border) space-y-2">
+                    <div className="flex justify-between items-center text-sm">
+                      <span className="text-var(--text-secondary) flex items-center gap-1">
+                        <Info className="h-3 w-3" />
+                        Total Costs:
+                      </span>
+                      <span className="font-medium text-var(--error)">{formatCurrency(totalCosts)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs pl-4">
+                      <span className="text-var(--text-muted)">Apple Fee (30%):</span>
+                      <span className="text-var(--text-secondary)">{formatCurrency(appleFees)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs pl-4">
+                      <span className="text-var(--text-muted)">Google Fee (30%):</span>
+                      <span className="text-var(--text-secondary)">{formatCurrency(googleFees)}</span>
+                    </div>
+                    <div className="flex justify-between text-xs pl-4">
+                      <span className="text-var(--text-muted)">SearchBug API:</span>
+                      <span className="text-var(--text-secondary)">{formatCurrency(searchBugCosts)}</span>
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
         </div>
+      </div>
 
       {/* Revenue Analytics Section */}
       <div className="mt-8">
