@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Calendar, User, MessageSquare, FileText, Trash2, Save } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { adminApi } from '../../services/api';
@@ -113,11 +112,7 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
   const hasChanges = status !== contact.status || notes !== (contact.notes || '');
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"
-    >
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 animate-fade-in">
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <MessageSquare className="w-6 h-6 text-blue-600 dark:text-blue-400" />
@@ -335,9 +330,9 @@ const ContactUsCard: React.FC<ContactUsCardProps> = ({ contact, onUpdate }) => {
         title="Delete Contact"
         message="Are you sure you want to delete this contact? This action cannot be undone."
         confirmText="Delete"
-        confirmButtonClass="btn-danger"
+        type="danger"
       />
-    </motion.div>
+    </div>
   );
 };
 

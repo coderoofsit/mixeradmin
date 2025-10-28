@@ -1116,7 +1116,7 @@ function UserDetail() {
           <div className="mt-6">
             <ContactUsCard 
               contact={userData.adminData.contact} 
-              onUpdate={fetchUserData}
+              onUpdate={fetchUser}
             />
           </div>
         )}
