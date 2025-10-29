@@ -8,26 +8,43 @@ import toast from 'react-hot-toast'
 
 interface Notification {
   _id: string
+  userId: string
   type: string
   title: string
   body: string
-  read: boolean
-  readAt?: string
-  createdAt: string
+  data?: {
+    type?: string
+    status?: string
+    action?: string
+    notes?: string
+    notificationID?: string
+    timestamp?: string
+    [key: string]: any
+  }
+  image?: string | null
+  senderId?: string | null
+  appName?: string
   status: string
-  priority: string
   deliveryStatus?: {
     success: boolean
-    messageId?: string
-    error?: string
+    messageId?: string | null
+    error?: string | null
     sentAt?: string
   }
+  read: boolean
+  readAt?: string | null
+  priority: string
+  expiresAt?: string | null
   fcmDeliveryDetails?: {
     successCount: number
     failureCount: number
     totalTokens: number
     errors?: any
   }
+  notificationID?: string
+  createdAt: string
+  updatedAt: string
+  __v?: number
 }
 
 const notificationTypeColors = {
@@ -323,34 +340,60 @@ export default function UserNotificationHistory() {
                     : 'bg-var(--primary)/5 border-var(--primary)/20'
                 }`}
               >
-                <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getNotificationTypeColor(notification.type)}`}>
-                      {notification.type.replace(/_/g, ' ')}
-                    </span>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${getNotificationStatusColor(notification.status)}`}>
-                      {notification.status}
-                    </span>
-                    {!notification.read && (
-                      <div className="flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">
-                        <Circle className="h-2 w-2 fill-orange-800" />
-                        Unread
+                <div className="flex items-start gap-3 mb-3">
+                  {/* Notification Image */}
+                  {notification.image && (
+                    <img 
+                      src={notification.image} 
+                      alt="Notification" 
+                      className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
+                    />
+                  )}
+                  
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between mb-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getNotificationTypeColor(notification.type)}`}>
+                          {notification.type.replace(/_/g, ' ')}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getNotificationStatusColor(notification.status)}`}>
+                          {notification.status}
+                        </span>
+                        {!notification.read && (
+                          <div className="flex items-center gap-1 px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">
+                            <Circle className="h-2 w-2 fill-orange-800" />
+                            Unread
+                          </div>
+                        )}
+                        {notification.appName && (
+                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            {notification.appName}
+                          </span>
+                        )}
                       </div>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-1 text-xs text-var(--text-muted)">
-                    <Clock className="h-3 w-3" />
-                    {formatRelativeTime(notification.createdAt)}
+                      <div className="flex items-center gap-1 text-xs text-var(--text-muted) flex-shrink-0 ml-2">
+                        <Clock className="h-3 w-3" />
+                        {formatRelativeTime(notification.createdAt)}
+                      </div>
+                    </div>
+                    
+                    <h4 className="font-semibold text-var(--text-primary) text-base mb-2">
+                      {notification.title}
+                    </h4>
+                    
+                    <p className="text-sm text-var(--text-secondary) mb-3">
+                      {notification.body}
+                    </p>
                   </div>
                 </div>
                 
-                <h4 className="font-semibold text-var(--text-primary) text-base mb-2">
-                  {notification.title}
-                </h4>
-                
-                <p className="text-sm text-var(--text-secondary) mb-3">
-                  {notification.body}
-                </p>
+                {/* Additional Data */}
+                {notification.data?.notes && (
+                  <div className="mb-3 p-3 bg-var(--bg-secondary) rounded-lg">
+                    <div className="text-xs text-var(--text-muted) mb-1">Notes</div>
+                    <div className="text-sm text-var(--text-primary)">{notification.data.notes}</div>
+                  </div>
+                )}
                 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-3 border-t border-var(--border)">
                   <div>
@@ -396,15 +439,76 @@ export default function UserNotificationHistory() {
                       )}
                     </>
                   )}
+
+                  {notification.notificationID && (
+                    <div>
+                      <div className="text-xs text-var(--text-muted)">Notification ID</div>
+                      <div className="text-xs text-var(--text-primary) mt-1 truncate" title={notification.notificationID}>
+                        {notification.notificationID.substring(0, 8)}...
+                      </div>
+                    </div>
+                  )}
+
+                  {notification.senderId && (
+                    <div>
+                      <div className="text-xs text-var(--text-muted)">Sender ID</div>
+                      <div className="text-xs text-var(--text-primary) mt-1 truncate" title={notification.senderId}>
+                        {notification.senderId.substring(0, 8)}...
+                      </div>
+                    </div>
+                  )}
+
+                  {notification.deliveryStatus?.messageId && (
+                    <div>
+                      <div className="text-xs text-var(--text-muted)">Message ID</div>
+                      <div className="text-xs text-var(--text-primary) mt-1 truncate" title={notification.deliveryStatus.messageId}>
+                        {notification.deliveryStatus.messageId.substring(0, 8)}...
+                      </div>
+                    </div>
+                  )}
+
+                  {notification.deliveryStatus?.error && (
+                    <div className="col-span-2">
+                      <div className="text-xs text-var(--text-muted)">Delivery Error</div>
+                      <div className="text-xs text-red-600 mt-1">
+                        {notification.deliveryStatus.error}
+                      </div>
+                    </div>
+                  )}
                   
                   {notification.readAt && (
-                    <div className="col-span-2 md:col-span-4">
+                    <div>
                       <div className="text-xs text-var(--text-muted)">Read At</div>
                       <div className="text-xs text-var(--text-primary) mt-1">
                         {formatUTCDateTime(notification.readAt)}
                       </div>
                     </div>
                   )}
+
+                  {notification.expiresAt && (
+                    <div>
+                      <div className="text-xs text-var(--text-muted)">Expires At</div>
+                      <div className="text-xs text-var(--text-primary) mt-1">
+                        {formatUTCDateTime(notification.expiresAt)}
+                      </div>
+                    </div>
+                  )}
+
+                  {notification.deliveryStatus?.sentAt && (
+                    <div>
+                      <div className="text-xs text-var(--text-muted)">Sent At</div>
+                      <div className="text-xs text-var(--text-primary) mt-1">
+                        {formatUTCDateTime(notification.deliveryStatus.sentAt)}
+                      </div>
+                    </div>
+                  )}
+
+                  <div>
+                    <div className="text-xs text-var(--text-muted)">Updated At</div>
+                    <div className="text-xs text-var(--text-primary) mt-1">
+                      {formatUTCDateTime(notification.updatedAt)}
+                    </div>
+                  </div>
                 </div>
               </div>
             ))}
