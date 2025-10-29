@@ -54,6 +54,7 @@ const Layout = ({ children }: LayoutProps) => {
     if (pathname.startsWith('/blind-dates/')) return 'Blind Dates'
     if (pathname.startsWith('/subscriptions/')) return 'Subscription Management'
     if (pathname.startsWith('/contacts/')) return 'Contact Submissions'
+    if (pathname.startsWith('/notifications/user/')) return 'User Notification History'
     if (pathname.startsWith('/notifications/')) return 'Notifications Overview'
     if (pathname.startsWith('/venues/')) return 'Venues'
     

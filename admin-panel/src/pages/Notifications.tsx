@@ -142,7 +142,7 @@ function Notifications() {
   }
 
   const handleRowClick = (user: UserWithNotifications) => {
-    navigate(`/users/${user.userId}`)
+    navigate(`/notifications/user/${user.userId}`)
   }
 
   const getStatusBadgeColor = (status: string) => {
@@ -184,13 +184,13 @@ function Notifications() {
         </div>
       )
     },
-    {
-      key: 'age',
-      label: 'Age',
-      render: (_value: any, user: UserWithNotifications) => (
-        <span className="text-sm text-var(--text-secondary)">{user.age || 'N/A'}</span>
-      )
-    },
+    // {
+    //   key: 'age',
+    //   label: 'Age',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <span className="text-sm text-var(--text-secondary)">{user.age || 'N/A'}</span>
+    //   )
+    // },
     {
       key: 'accountStatus',
       label: 'Status',

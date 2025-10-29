@@ -16,6 +16,7 @@ import BlindDates from './pages/BlindDates'
 import AdminManagement from './pages/AdminManagement'
 import Subscriptions from './pages/Subscriptions'
 import Notifications from './pages/Notifications'
+import UserNotificationHistory from './pages/UserNotificationHistory'
 
 function App() {
   const { user, loading } = useAuth()
@@ -84,6 +85,7 @@ function App() {
           <Route path="/blind-dates" element={<BlindDates />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/notifications/user/:userId" element={<UserNotificationHistory />} />
           <Route path="/admin-management" element={
             user?.role === 'super_admin' ? 
             <AdminManagement /> : 
