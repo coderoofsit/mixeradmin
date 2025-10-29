@@ -9,7 +9,6 @@ interface RevenueData {
   period: string;
   basicCount: number;
   upgradeCount: number;
-  quarterlyCount: number;
   backgroundCheckCount: number;
   totalSubscriptions: number;
   totalPurchases: number;
@@ -61,7 +60,6 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
   const generateFallbackData = () => {
     const totalBasic = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.basic')?.count || 0;
     const totalUpgrade = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.upgrade')?.count || 0;
-    const totalQuarterly = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.quarterly')?.count || 0;
     const totalBackgroundCheck = backgroundCheckDistribution.reduce((sum, item) => sum + item.count, 0);
 
     const now = new Date();
@@ -80,10 +78,9 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             period: periodStr,
             basicCount: Math.floor(totalBasic * hourMultiplier),
             upgradeCount: Math.floor(totalUpgrade * hourMultiplier),
-            quarterlyCount: Math.floor(totalQuarterly * hourMultiplier),
             backgroundCheckCount: Math.floor(totalBackgroundCheck * hourMultiplier),
-            totalSubscriptions: Math.floor((totalBasic + totalUpgrade + totalQuarterly) * hourMultiplier),
-            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalQuarterly + totalBackgroundCheck) * hourMultiplier)
+            totalSubscriptions: Math.floor((totalBasic + totalUpgrade) * hourMultiplier),
+            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalBackgroundCheck) * hourMultiplier)
           });
         }
         break;
@@ -104,10 +101,9 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             period: periodStr,
             basicCount: Math.floor(totalBasic * dayMultiplier),
             upgradeCount: Math.floor(totalUpgrade * dayMultiplier),
-            quarterlyCount: Math.floor(totalQuarterly * dayMultiplier),
             backgroundCheckCount: Math.floor(totalBackgroundCheck * dayMultiplier),
-            totalSubscriptions: Math.floor((totalBasic + totalUpgrade + totalQuarterly) * dayMultiplier),
-            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalQuarterly + totalBackgroundCheck) * dayMultiplier)
+            totalSubscriptions: Math.floor((totalBasic + totalUpgrade) * dayMultiplier),
+            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalBackgroundCheck) * dayMultiplier)
           });
         }
         break;
@@ -126,10 +122,9 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             period: periodStr,
             basicCount: Math.floor(totalBasic * dayMultiplier),
             upgradeCount: Math.floor(totalUpgrade * dayMultiplier),
-            quarterlyCount: Math.floor(totalQuarterly * dayMultiplier),
             backgroundCheckCount: Math.floor(totalBackgroundCheck * dayMultiplier),
-            totalSubscriptions: Math.floor((totalBasic + totalUpgrade + totalQuarterly) * dayMultiplier),
-            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalQuarterly + totalBackgroundCheck) * dayMultiplier)
+            totalSubscriptions: Math.floor((totalBasic + totalUpgrade) * dayMultiplier),
+            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalBackgroundCheck) * dayMultiplier)
           });
         }
         break;
@@ -146,10 +141,9 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             period: periodStr,
             basicCount: Math.floor(totalBasic * monthMultiplier),
             upgradeCount: Math.floor(totalUpgrade * monthMultiplier),
-            quarterlyCount: Math.floor(totalQuarterly * monthMultiplier),
             backgroundCheckCount: Math.floor(totalBackgroundCheck * monthMultiplier),
-            totalSubscriptions: Math.floor((totalBasic + totalUpgrade + totalQuarterly) * monthMultiplier),
-            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalQuarterly + totalBackgroundCheck) * monthMultiplier)
+            totalSubscriptions: Math.floor((totalBasic + totalUpgrade) * monthMultiplier),
+            totalPurchases: Math.floor((totalBasic + totalUpgrade + totalBackgroundCheck) * monthMultiplier)
           });
         }
         break;
@@ -225,21 +219,18 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
   const chartData = data.map(item => {
     const basicPlan = getPricingPlan('com.mixerltd.mixerltd.basic');
     const upgradePlan = getPricingPlan('com.mixerltd.mixerltd.upgrade');
-    const quarterlyPlan = getPricingPlan('com.mixerltd.mixerltd.quarterly');
     const backgroundCheckPlan = getPricingPlan('com.mixerltd.mixerltd.background_check');
 
     const basicRevenue = (basicPlan?.price || 0) * item.basicCount;
     const upgradeRevenue = (upgradePlan?.price || 0) * item.upgradeCount;
-    const quarterlyRevenue = (quarterlyPlan?.price || 0) * item.quarterlyCount;
     const backgroundCheckRevenue = (backgroundCheckPlan?.price || 0) * item.backgroundCheckCount;
 
-    const totalRevenue = basicRevenue + upgradeRevenue + quarterlyRevenue + backgroundCheckRevenue;
+    const totalRevenue = basicRevenue + upgradeRevenue + backgroundCheckRevenue;
 
     return {
       ...item,
       basicRevenue,
       upgradeRevenue,
-      quarterlyRevenue,
       backgroundCheckRevenue,
       totalRevenue,
       // Format period for display
@@ -259,9 +250,6 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             </p>
             <p className="text-sm">
               <span className="text-green-600">Upgrade:</span> {data.upgradeCount} ({formatCurrency(data.upgradeRevenue)})
-            </p>
-            <p className="text-sm">
-              <span className="text-purple-600">Quarterly:</span> {data.quarterlyCount} ({formatCurrency(data.quarterlyRevenue)})
             </p>
             <p className="text-sm">
               <span className="text-orange-600">Background Check:</span> {data.backgroundCheckCount} ({formatCurrency(data.backgroundCheckRevenue)})
@@ -394,14 +382,6 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
               />
               <Line
                 type="monotone"
-                dataKey="quarterlyRevenue"
-                stroke="#8B5CF6"
-                strokeWidth={2}
-                name="Quarterly Revenue"
-                dot={{ r: 4 }}
-              />
-              <Line
-                type="monotone"
                 dataKey="backgroundCheckRevenue"
                 stroke="#F59E0B"
                 strokeWidth={2}
@@ -435,7 +415,6 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
               <Legend />
               <Bar dataKey="basicRevenue" fill="#3B82F6" name="Basic Revenue" />
               <Bar dataKey="upgradeRevenue" fill="#10B981" name="Upgrade Revenue" />
-              <Bar dataKey="quarterlyRevenue" fill="#8B5CF6" name="Quarterly Revenue" />
               <Bar dataKey="backgroundCheckRevenue" fill="#F59E0B" name="Background Check Revenue" />
             </BarChart>
           )}
@@ -443,7 +422,7 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
       </div>
 
       {/* Summary Stats */}
-      <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="mt-6 grid grid-cols-2 md:grid-cols-3 gap-4">
         <div className="text-center">
           <p className="text-2xl font-bold text-var(--primary)">
             {formatCurrency(chartData.reduce((sum, item) => sum + item.basicRevenue, 0))}
@@ -455,12 +434,6 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
             {formatCurrency(chartData.reduce((sum, item) => sum + item.upgradeRevenue, 0))}
           </p>
           <p className="text-sm text-var(--text-muted)">Upgrade Revenue</p>
-        </div>
-        <div className="text-center">
-          <p className="text-2xl font-bold text-purple-600">
-            {formatCurrency(chartData.reduce((sum, item) => sum + item.quarterlyRevenue, 0))}
-          </p>
-          <p className="text-sm text-var(--text-muted)">Quarterly Revenue</p>
         </div>
         <div className="text-center">
           <p className="text-2xl font-bold text-orange-600">

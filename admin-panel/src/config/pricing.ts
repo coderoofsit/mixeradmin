@@ -31,7 +31,7 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   'Upgrade': {
     id: 'Upgrade',
     name: 'Upgrade',
-    price: 49.99,
+    price: 34.99,
     currency: 'USD',
     type: 'subscription',
     duration: '1 month',
@@ -40,22 +40,6 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
       'See who liked you',
       'Advanced filters',
       'Priority support'
-    ]
-  },
-  'Quarterly': {
-    id: 'Quarterly',
-    name: 'Quarterly',
-    price: 299.99,
-    currency: 'USD',
-    type: 'subscription',
-    duration: '3 months',
-    features: [
-      'Unlimited likes',
-      'See who liked you',
-      'Advanced filters',
-      'Priority support',
-      'Rewind last swipe',
-      'Super likes'
     ]
   },
   'background_check_25': {
@@ -123,7 +107,7 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
   'com.mixerltd.mixerltd.upgrade': {
     id: 'com.mixerltd.mixerltd.upgrade',
     name: 'Upgrade',
-    price: 49.99,
+    price: 34.99,
     currency: 'USD',
     type: 'subscription',
     duration: '1 month',
@@ -132,22 +116,6 @@ export const PRICING_PLANS: Record<string, PricingPlan> = {
       'See who liked you',
       'Advanced filters',
       'Priority support'
-    ]
-  },
-  'com.mixerltd.mixerltd.quarterly': {
-    id: 'com.mixerltd.mixerltd.quarterly',
-    name: 'Quarterly',
-    price: 299.99,
-    currency: 'USD',
-    type: 'subscription',
-    duration: '3 months',
-    features: [
-      'Unlimited likes',
-      'See who liked you',
-      'Advanced filters',
-      'Priority support',
-      'Rewind last swipe',
-      'Super likes'
     ]
   },
   'com.mixerltd.mixerltd.background_check': {

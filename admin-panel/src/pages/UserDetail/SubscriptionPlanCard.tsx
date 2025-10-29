@@ -35,9 +35,6 @@ export default function SubscriptionPlanCard({ user, actionLoading, onMarkPlanAs
       case 'Upgrade':
         durationInDays = 30 // 1 month
         break
-      case 'Quarterly':
-        durationInDays = 90 // 3 months
-        break
       default:
         durationInDays = 30 // Default to 1 month
     }

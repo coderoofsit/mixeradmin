@@ -27,9 +27,7 @@ export const formatPurchaseType = (productId: string): string => {
   const typeMap: { [key: string]: string } = {
     'Basic': 'Basic Plan',
     'Upgrade': 'Premium Plan',
-    'Quarterly': 'Quarterly Plan',
     'background_check_25': 'Background Check',
-    'com.mixerltd.mixerltd.quarterly': 'Quarterly Plan',
     'com.mixerltd.mixerltd.upgrade':"Upgrade Plan",
     'com.mixerltd.mixerltd.basic'	:"Basic Plan"
   };
@@ -47,7 +45,6 @@ export const getPlanBadgeColor = (plan: string | null): string => {
     'Basic': 'bg-blue-100 text-blue-800',
     'Upgrade': 'bg-purple-100 text-purple-800',
     'Premium': 'bg-purple-100 text-purple-800',
-    'Quarterly': 'bg-green-100 text-green-800',
     'background_check_25': 'bg-orange-100 text-orange-800'
   };
   

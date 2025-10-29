@@ -13,16 +13,10 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   onConfirm,
   loading = false
 }) => {
-  const [selectedPlan, setSelectedPlan] = useState<string>('Quarterly');
+  const [selectedPlan, setSelectedPlan] = useState<string>('Basic');
   const [notes, setNotes] = useState<string>('');
 
   const plans = [
-    {
-      id: 'Quarterly',
-      name: 'Subscription Quarterly',
-      duration: '3 months',
-      description: 'Subscription Quarterly (3 months)'
-    },
     {
       id: 'Basic',
       name: 'Subscription Basic',
@@ -43,7 +37,7 @@ const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   };
 
   const handleClose = () => {
-    setSelectedPlan('Quarterly');
+    setSelectedPlan('Basic');
     setNotes('');
     onClose();
   };
