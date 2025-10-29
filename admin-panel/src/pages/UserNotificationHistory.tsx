@@ -230,7 +230,7 @@ export default function UserNotificationHistory() {
       </div>
 
       {/* Filters */}
-      <div className="bg-var(--card-bg) border border-var(--border) rounded-xl p-4">
+      {/* <div className="bg-var(--card-bg) border border-var(--border) rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <Filter className="h-4 w-4 text-var(--text-muted)" />
           <h3 className="text-sm font-medium text-var(--text-primary)">Filters</h3>
@@ -284,7 +284,7 @@ export default function UserNotificationHistory() {
             </select>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Notifications List */}
       <div className="bg-var(--card-bg) border border-var(--border) rounded-xl p-6">

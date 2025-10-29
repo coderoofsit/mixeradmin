@@ -391,7 +391,7 @@ function Notifications() {
           </div>
 
           {/* Filter Toggle */}
-          <button
+          {/* <button
             onClick={() => setShowFilters(!showFilters)}
             className="px-4 py-2 border border-var(--border) rounded-lg bg-var(--bg-primary) text-var(--text-primary) hover:bg-var(--bg-secondary) transition-all flex items-center gap-2"
           >
@@ -413,13 +413,13 @@ function Notifications() {
               <X className="h-4 w-4" />
               Clear
             </button>
-          )}
+          )} */}
         </div>
 
         {/* Filter Options */}
-        {showFilters && (
-          <div className="mt-4 pt-4 border-t border-var(--border) grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
+        {/* {showFilters && (
+          <div className="mt-4 pt-4 border-t border-var(--border) grid grid-cols-1 md:grid-cols-3 gap-4"> */}
+            {/* <div>
               <label className="block text-sm font-medium text-var(--text-primary) mb-2">
                 Unread Status
               </label>
@@ -432,9 +432,9 @@ function Notifications() {
                 <option value="true">With Unread</option>
                 <option value="false">No Unread</option>
               </select>
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-var(--text-primary) mb-2">
                 Account Status
               </label>
@@ -448,9 +448,9 @@ function Notifications() {
                 <option value="suspended">Suspended</option>
                 <option value="banned">Banned</option>
               </select>
-            </div>
+            </div> */}
 
-            <div>
+            {/* <div>
               <label className="block text-sm font-medium text-var(--text-primary) mb-2">
                 Notification Status
               </label>
@@ -466,8 +466,8 @@ function Notifications() {
                 <option value="pending">Pending</option>
               </select>
             </div>
-          </div>
-        )}
+          </div> */}
+        {/* )} */}
       </div>
 
       {/* Users Table */}
