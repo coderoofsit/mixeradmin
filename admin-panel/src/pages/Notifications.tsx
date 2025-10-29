@@ -164,7 +164,7 @@ function Notifications() {
     {
       key: 'user',
       label: 'User',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="flex items-center gap-3">
           {user.primaryImageUrl ? (
             <img 
@@ -187,14 +187,14 @@ function Notifications() {
     {
       key: 'age',
       label: 'Age',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <span className="text-sm text-var(--text-secondary)">{user.age || 'N/A'}</span>
       )
     },
     {
       key: 'accountStatus',
       label: 'Status',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(user.accountStatus)}`}>
           {user.accountStatus}
         </span>
@@ -203,7 +203,7 @@ function Notifications() {
     {
       key: 'total',
       label: 'Total',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="text-center">
           <div className="text-sm font-semibold text-var(--text-primary)">
             {user.notificationStats.total}
@@ -215,7 +215,7 @@ function Notifications() {
     {
       key: 'unread',
       label: 'Unread',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="text-center">
           <div className={`text-sm font-semibold ${user.notificationStats.unread > 0 ? 'text-orange-600' : 'text-var(--text-primary)'}`}>
             {user.notificationStats.unread}
@@ -227,7 +227,7 @@ function Notifications() {
     {
       key: 'sent',
       label: 'Sent',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="flex items-center justify-center gap-1">
           <Send className="h-3 w-3 text-blue-600" />
           <span className="text-sm text-var(--text-secondary)">
@@ -239,7 +239,7 @@ function Notifications() {
     {
       key: 'delivered',
       label: 'Delivered',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="flex items-center justify-center gap-1">
           <CheckCircle className="h-3 w-3 text-green-600" />
           <span className="text-sm text-var(--text-secondary)">
@@ -251,7 +251,7 @@ function Notifications() {
     {
       key: 'failed',
       label: 'Failed',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="flex items-center justify-center gap-1">
           <AlertCircle className="h-3 w-3 text-red-600" />
           <span className="text-sm text-var(--text-secondary)">
@@ -263,7 +263,7 @@ function Notifications() {
     {
       key: 'pending',
       label: 'Pending',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="flex items-center justify-center gap-1">
           <Clock className="h-3 w-3 text-yellow-600" />
           <span className="text-sm text-var(--text-secondary)">
@@ -275,7 +275,7 @@ function Notifications() {
     {
       key: 'lastNotification',
       label: 'Last Notification',
-      render: (user: UserWithNotifications) => (
+      render: (_value: any, user: UserWithNotifications) => (
         <div className="text-xs text-var(--text-muted)">
           {user.notificationStats.lastNotificationDate 
             ? formatUTCDateTime(user.notificationStats.lastNotificationDate)
