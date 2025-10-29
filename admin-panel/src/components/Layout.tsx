@@ -54,6 +54,7 @@ const Layout = ({ children }: LayoutProps) => {
     if (pathname.startsWith('/blind-dates/')) return 'Blind Dates'
     if (pathname.startsWith('/subscriptions/')) return 'Subscription Management'
     if (pathname.startsWith('/contacts/')) return 'Contact Submissions'
+    if (pathname.startsWith('/notifications/')) return 'Notifications Overview'
     if (pathname.startsWith('/venues/')) return 'Venues'
     
     const titleMap: { [key: string]: string } = {
@@ -66,6 +67,7 @@ const Layout = ({ children }: LayoutProps) => {
       '/blind-dates': 'Blind Dates',
       '/subscriptions': 'Subscription Management',
       '/contacts': 'Contact Submissions',
+      '/notifications': 'Notifications Overview',
       '/venues': 'Venues'
     }
     return titleMap[pathname] || 'Admin Panel'
@@ -89,6 +91,7 @@ const Layout = ({ children }: LayoutProps) => {
     { name: 'Contacts', href: '/contacts', icon: Mail },
     { name: 'Blind Dates', href: '/blind-dates', icon: HeartHandshake },
     { name: 'Subscriptions', href: '/subscriptions', icon: CreditCard },
+    { name: 'Notifications', href: '/notifications', icon: Bell },
     { 
       name: 'Admin Management', 
       href: '/admin-management', 

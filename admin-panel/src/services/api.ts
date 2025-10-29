@@ -222,6 +222,9 @@ export const adminApi = {
   // Notifications API
   getUserNotifications: (userId: string, params?: any) => 
     api.get(`/notificationhistory/admin/user/${userId}`, { params }),
+  
+  getUsersNotificationStats: (params?: any) => 
+    api.get('/admin/users-notification-stats', { params }),
 
   // Contact Us API
   getContacts: (params?: any) => api.get('/admin/contacts', { params }),

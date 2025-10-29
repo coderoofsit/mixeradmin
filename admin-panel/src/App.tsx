@@ -15,6 +15,7 @@ import Contacts from './pages/Contacts'
 import BlindDates from './pages/BlindDates'
 import AdminManagement from './pages/AdminManagement'
 import Subscriptions from './pages/Subscriptions'
+import Notifications from './pages/Notifications'
 
 function App() {
   const { user, loading } = useAuth()
@@ -82,6 +83,7 @@ function App() {
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/blind-dates" element={<BlindDates />} />
           <Route path="/subscriptions" element={<Subscriptions />} />
+          <Route path="/notifications" element={<Notifications />} />
           <Route path="/admin-management" element={
             user?.role === 'super_admin' ? 
             <AdminManagement /> : 
