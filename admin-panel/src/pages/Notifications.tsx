@@ -490,10 +490,12 @@ function Notifications() {
             columns={columns}
             data={users}
             onRowClick={handleRowClick}
-            currentPage={pagination.currentPage}
-            totalPages={pagination.totalPages}
-            onPageChange={(page) => setPagination(prev => ({ ...prev, currentPage: page }))}
-            totalCount={pagination.totalCount}
+            pagination={{
+              currentPage: pagination.currentPage,
+              totalPages: pagination.totalPages,
+              onPageChange: (page: number) => setPagination(prev => ({ ...prev, currentPage: page })),
+              limit: pagination.limit
+            }}
           />
         )}
       </div>
