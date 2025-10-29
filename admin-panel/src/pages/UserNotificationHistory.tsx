@@ -1,10 +1,22 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { Bell, Filter, ChevronLeft, ChevronRight, Clock, CheckCircle, Circle, ArrowLeft, User as UserIcon } from 'lucide-react'
+import { Bell, Filter, ChevronLeft, ChevronRight, Clock, CheckCircle, Circle, ArrowLeft, User as UserIcon, AlertCircle } from 'lucide-react'
 import { adminApi } from '../services/api'
 import LoadingSpinner from '../components/LoadingSpinner'
 import { formatUTCDateTime } from '../utils/dateUtils'
 import toast from 'react-hot-toast'
+
+interface SenderInfo {
+  _id: string
+  email: string
+  images: Array<{
+    url: string
+    isPrimary: boolean
+    uploadedAt: string
+    _id: string
+  }>
+  name: string
+}
 
 interface Notification {
   _id: string
@@ -19,10 +31,13 @@ interface Notification {
     notes?: string
     notificationID?: string
     timestamp?: string
+    senderId?: string
+    matchedUserName?: string
+    likerName?: string
     [key: string]: any
   }
   image?: string | null
-  senderId?: string | null
+  senderId?: SenderInfo | null
   appName?: string
   status: string
   deliveryStatus?: {
@@ -39,7 +54,8 @@ interface Notification {
     successCount: number
     failureCount: number
     totalTokens: number
-    errors?: any
+    errors?: string[] | null
+    errorType?: string
   }
   notificationID?: string
   createdAt: string
@@ -102,6 +118,8 @@ export default function UserNotificationHistory() {
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
   const [userName, setUserName] = useState<string>('')
+  const [userEmail, setUserEmail] = useState<string>('')
+  const [userImage, setUserImage] = useState<string>('')
   const [filters, setFilters] = useState({
     type: '',
     read: '',
@@ -112,10 +130,8 @@ export default function UserNotificationHistory() {
     if (!userId) return
     
     try {
-      const response = await adminApi.getUser(userId)
-      if (response.data.data) {
-        setUserName(response.data.data.name || 'Unknown User')
-      }
+      // User data will be fetched from the notifications response
+      // No separate call needed
     } catch (error) {
       console.error('Error fetching user data:', error)
     }
@@ -140,6 +156,17 @@ export default function UserNotificationHistory() {
         setTotalPages(response.data.data.pagination.totalPages)
         setTotalCount(response.data.data.pagination.totalCount)
         setCurrentPage(page)
+        
+        // Set user details from the response if available
+        if (response.data.data.userName) {
+          setUserName(response.data.data.userName)
+        }
+        if (response.data.data.userEmail) {
+          setUserEmail(response.data.data.userEmail)
+        }
+        if (response.data.data.userImage) {
+          setUserImage(response.data.data.userImage)
+        }
       }
     } catch (error) {
       console.error('Error fetching notifications:', error)
@@ -202,11 +229,23 @@ export default function UserNotificationHistory() {
           >
             <ArrowLeft className="h-5 w-5 text-var(--text-primary)" />
           </button>
-          <div>
-            <h1 className="text-2xl font-bold text-var(--text-primary) flex items-center gap-2">
-              <Bell className="h-7 w-7 text-var(--primary)" />
-              {userName ? `${userName}'s Notification History` : 'Notification History'}
-            </h1>
+          <div className="flex items-center gap-3">
+            {userImage && (
+              <img 
+                src={userImage} 
+                alt={userName} 
+                className="w-12 h-12 rounded-full object-cover border-2 border-var(--border)"
+              />
+            )}
+            <div>
+              <h1 className="text-2xl font-bold text-var(--text-primary) flex items-center gap-2">
+                <Bell className="h-7 w-7 text-var(--primary)" />
+                {userName ? `${userName}'s Notification History` : 'Notification History'}
+              </h1>
+              {userEmail && (
+                <p className="text-sm text-var(--text-muted) mt-0.5">{userEmail}</p>
+              )}
+            </div>
           </div>
         </div>
         <button
@@ -341,14 +380,20 @@ export default function UserNotificationHistory() {
                 }`}
               >
                 <div className="flex items-start gap-3 mb-3">
-                  {/* Notification Image */}
-                  {notification.image && (
+                  {/* Notification or Sender Image */}
+                  {notification.image ? (
                     <img 
                       src={notification.image} 
                       alt="Notification" 
                       className="w-16 h-16 rounded-lg object-cover flex-shrink-0"
                     />
-                  )}
+                  ) : notification.senderId && typeof notification.senderId === 'object' && notification.senderId.images?.length > 0 ? (
+                    <img 
+                      src={notification.senderId.images.find(img => img.isPrimary)?.url || notification.senderId.images[0].url} 
+                      alt={notification.senderId.name} 
+                      className="w-16 h-16 rounded-full object-cover flex-shrink-0"
+                    />
+                  ) : null}
                   
                   <div className="flex-1 min-w-0">
                     <div className="flex items-start justify-between mb-2">
@@ -387,11 +432,52 @@ export default function UserNotificationHistory() {
                   </div>
                 </div>
                 
-                {/* Additional Data */}
-                {notification.data?.notes && (
-                  <div className="mb-3 p-3 bg-var(--bg-secondary) rounded-lg">
-                    <div className="text-xs text-var(--text-muted) mb-1">Notes</div>
-                    <div className="text-sm text-var(--text-primary)">{notification.data.notes}</div>
+                {/* Additional Data Section */}
+                {(notification.data?.notes || notification.data?.matchedUserName || notification.data?.likerName || notification.data?.action) && (
+                  <div className="mb-3 p-3 bg-var(--bg-secondary) rounded-lg space-y-2">
+                    {notification.data.matchedUserName && (
+                      <div>
+                        <span className="text-xs text-var(--text-muted)">Matched With: </span>
+                        <span className="text-sm text-var(--text-primary) font-medium">{notification.data.matchedUserName}</span>
+                      </div>
+                    )}
+                    {notification.data.likerName && (
+                      <div>
+                        <span className="text-xs text-var(--text-muted)">Liked By: </span>
+                        <span className="text-sm text-var(--text-primary) font-medium">{notification.data.likerName}</span>
+                      </div>
+                    )}
+                    {notification.data.action && (
+                      <div>
+                        <span className="text-xs text-var(--text-muted)">Action: </span>
+                        <span className="text-sm text-var(--text-primary)">{notification.data.action.replace(/_/g, ' ')}</span>
+                      </div>
+                    )}
+                    {notification.data.notes && (
+                      <div>
+                        <div className="text-xs text-var(--text-muted) mb-1">Admin Notes:</div>
+                        <div className="text-sm text-var(--text-primary)">{notification.data.notes}</div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* FCM Delivery Errors */}
+                {notification.fcmDeliveryDetails?.errors && notification.fcmDeliveryDetails.errors.length > 0 && (
+                  <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div className="flex items-start gap-2">
+                      <AlertCircle className="h-4 w-4 text-red-600 mt-0.5 flex-shrink-0" />
+                      <div className="flex-1">
+                        <div className="text-xs font-medium text-red-800 mb-1">
+                          FCM Delivery Errors {notification.fcmDeliveryDetails.errorType && `(${notification.fcmDeliveryDetails.errorType})`}
+                        </div>
+                        <ul className="text-xs text-red-700 space-y-1">
+                          {notification.fcmDeliveryDetails.errors.map((error, idx) => (
+                            <li key={idx}>• {error}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
                   </div>
                 )}
                 
@@ -449,11 +535,11 @@ export default function UserNotificationHistory() {
                     </div>
                   )}
 
-                  {notification.senderId && (
+                  {notification.senderId && typeof notification.senderId === 'object' && (
                     <div>
-                      <div className="text-xs text-var(--text-muted)">Sender ID</div>
-                      <div className="text-xs text-var(--text-primary) mt-1 truncate" title={notification.senderId}>
-                        {notification.senderId.substring(0, 8)}...
+                      <div className="text-xs text-var(--text-muted)">Sender</div>
+                      <div className="text-xs text-var(--text-primary) mt-1 font-medium">
+                        {notification.senderId.name}
                       </div>
                     </div>
                   )}
