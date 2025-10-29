@@ -84,11 +84,25 @@ export default function UserNotificationHistory() {
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
+  const [userName, setUserName] = useState<string>('')
   const [filters, setFilters] = useState({
     type: '',
     read: '',
     status: ''
   })
+
+  const fetchUserData = useCallback(async () => {
+    if (!userId) return
+    
+    try {
+      const response = await adminApi.getUser(userId)
+      if (response.data.data) {
+        setUserName(response.data.data.name || 'Unknown User')
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error)
+    }
+  }, [userId])
 
   const fetchNotifications = useCallback(async (page = 1) => {
     if (!userId) return
@@ -120,9 +134,10 @@ export default function UserNotificationHistory() {
 
   useEffect(() => {
     if (userId) {
+      fetchUserData()
       fetchNotifications(1)
     }
-  }, [userId, fetchNotifications])
+  }, [userId, fetchNotifications, fetchUserData])
 
   const handleFilterChange = (key: string, value: string) => {
     setFilters(prev => ({ ...prev, [key]: value }))
@@ -173,11 +188,8 @@ export default function UserNotificationHistory() {
           <div>
             <h1 className="text-2xl font-bold text-var(--text-primary) flex items-center gap-2">
               <Bell className="h-7 w-7 text-var(--primary)" />
-              User Notification History
+              {userName ? `${userName}'s Notification History` : 'Notification History'}
             </h1>
-            <p className="text-sm text-var(--text-muted) mt-1">
-              Viewing notifications for user ID: {userId}
-            </p>
           </div>
         </div>
         <button
