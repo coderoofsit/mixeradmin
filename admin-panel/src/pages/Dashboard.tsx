@@ -85,7 +85,22 @@ const Dashboard = () => {
       console.log('📊 Dashboard API Response:', response.data.data)
       
       if (response.data.success && response.data.data) {
-      setStats(response.data.data)
+        // Filter out Quarterly plans from subscription distribution
+        const rawData = response.data.data
+        console.log('📊 Raw subscriptionDistribution:', rawData.subscriptionDistribution)
+        
+        if (rawData.subscriptionDistribution) {
+          rawData.subscriptionDistribution = rawData.subscriptionDistribution.filter((item: any) => {
+            const isQuarterly = item.plan?.toLowerCase().includes('quarterly')
+            if (isQuarterly) {
+              console.warn('⚠️ Filtering out Quarterly plan:', item)
+            }
+            return !isQuarterly
+          })
+          console.log('✅ Filtered subscriptionDistribution:', rawData.subscriptionDistribution)
+        }
+        
+        setStats(rawData)
       } else {
         throw new Error('Invalid API response format')
       }

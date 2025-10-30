@@ -58,8 +58,13 @@ const RevenueChart: React.FC<RevenueChartProps> = ({
   };
 
   const generateFallbackData = () => {
-    const totalBasic = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.basic')?.count || 0;
-    const totalUpgrade = subscriptionDistribution.find(s => s.plan === 'com.mixerltd.mixerltd.upgrade')?.count || 0;
+    // Filter out Quarterly plans
+    const filteredSubscriptions = subscriptionDistribution.filter(s => 
+      !s.plan?.toLowerCase().includes('quarterly')
+    );
+    
+    const totalBasic = filteredSubscriptions.find(s => s.plan === 'com.mixerltd.mixerltd.basic')?.count || 0;
+    const totalUpgrade = filteredSubscriptions.find(s => s.plan === 'com.mixerltd.mixerltd.upgrade')?.count || 0;
     const totalBackgroundCheck = backgroundCheckDistribution.reduce((sum, item) => sum + item.count, 0);
 
     const now = new Date();
