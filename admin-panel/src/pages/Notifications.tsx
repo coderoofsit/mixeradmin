@@ -32,6 +32,7 @@ interface NotificationStats {
   }
   lastNotificationDate: string
   lastReadDate: string
+  lastNotificationType?: string // Type of the last notification sent
 }
 
 interface UserWithNotifications {
@@ -142,7 +143,8 @@ function Notifications() {
   }
 
   const handleRowClick = (user: UserWithNotifications) => {
-    navigate(`/notifications/user/${user.userId}`)
+    // Navigate to user profile page
+    navigate(`/users/${user.userId}`)
   }
 
   const getStatusBadgeColor = (status: string) => {
@@ -160,12 +162,36 @@ function Notifications() {
     }
   }
 
+  const getNotificationTypeBadgeColor = (type: string) => {
+    switch (type.toLowerCase()) {
+      case 'like': return 'bg-pink-100 text-pink-800'
+      case 'match': return 'bg-green-100 text-green-800'
+      case 'chat_message': return 'bg-blue-100 text-blue-800'
+      case 'event_approved': return 'bg-emerald-100 text-emerald-800'
+      case 'event_suspended': return 'bg-red-100 text-red-800'
+      case 'event_capacity_full': return 'bg-orange-100 text-orange-800'
+      case 'background_verification': return 'bg-purple-100 text-purple-800'
+      case 'broadcast': return 'bg-indigo-100 text-indigo-800'
+      case 'test': return 'bg-gray-100 text-gray-800'
+      case 'system': return 'bg-slate-100 text-slate-800'
+      case 'feedback': return 'bg-yellow-100 text-yellow-800'
+      default: return 'bg-gray-100 text-gray-800'
+    }
+  }
+
+  const formatNotificationType = (type: string) => {
+    return type
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ')
+  }
+
   const columns = [
     {
       key: 'user',
       label: 'User',
       render: (_value: any, user: UserWithNotifications) => (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 cursor-pointer hover:opacity-80">
           {user.primaryImageUrl ? (
             <img 
               src={user.primaryImageUrl} 
@@ -184,15 +210,27 @@ function Notifications() {
         </div>
       )
     },
-    // {
-    //   key: 'age',
-    //   label: 'Age',
-    //   render: (_value: any, user: UserWithNotifications) => (
-    //     <span className="text-sm text-var(--text-secondary)">{user.age || 'N/A'}</span>
-    //   )
-    // },
     {
-      key: 'accountStatus',
+      key: 'notificationType',
+      label: 'Notification Type',
+      render: (_value: any, user: UserWithNotifications) => {
+        const lastType = user.notificationStats.lastNotificationType
+        
+        if (!lastType) {
+          return (
+            <span className="text-sm text-var(--text-muted)">N/A</span>
+          )
+        }
+        
+        return (
+          <span className={`px-2 py-1 rounded-full text-xs font-medium ${getNotificationTypeBadgeColor(lastType)}`}>
+            {formatNotificationType(lastType)}
+          </span>
+        )
+      }
+    },
+    {
+      key: 'status',
       label: 'Status',
       render: (_value: any, user: UserWithNotifications) => (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(user.accountStatus)}`}>
@@ -201,88 +239,96 @@ function Notifications() {
       )
     },
     {
-      key: 'total',
-      label: 'Total',
+      key: 'date',
+      label: 'Date',
       render: (_value: any, user: UserWithNotifications) => (
-        <div className="text-center">
-          <div className="text-sm font-semibold text-var(--text-primary)">
-            {user.notificationStats.total}
-          </div>
-          <div className="text-xs text-var(--text-muted)">notifications</div>
-        </div>
-      )
-    },
-    {
-      key: 'unread',
-      label: 'Unread',
-      render: (_value: any, user: UserWithNotifications) => (
-        <div className="text-center">
-          <div className={`text-sm font-semibold ${user.notificationStats.unread > 0 ? 'text-orange-600' : 'text-var(--text-primary)'}`}>
-            {user.notificationStats.unread}
-          </div>
-          <div className="text-xs text-var(--text-muted)">unread</div>
-        </div>
-      )
-    },
-    {
-      key: 'sent',
-      label: 'Sent',
-      render: (_value: any, user: UserWithNotifications) => (
-        <div className="flex items-center justify-center gap-1">
-          <Send className="h-3 w-3 text-blue-600" />
-          <span className="text-sm text-var(--text-secondary)">
-            {user.notificationStats.byStatus.sent}
-          </span>
-        </div>
-      )
-    },
-    {
-      key: 'delivered',
-      label: 'Delivered',
-      render: (_value: any, user: UserWithNotifications) => (
-        <div className="flex items-center justify-center gap-1">
-          <CheckCircle className="h-3 w-3 text-green-600" />
-          <span className="text-sm text-var(--text-secondary)">
-            {user.notificationStats.byStatus.delivered}
-          </span>
-        </div>
-      )
-    },
-    {
-      key: 'failed',
-      label: 'Failed',
-      render: (_value: any, user: UserWithNotifications) => (
-        <div className="flex items-center justify-center gap-1">
-          <AlertCircle className="h-3 w-3 text-red-600" />
-          <span className="text-sm text-var(--text-secondary)">
-            {user.notificationStats.byStatus.failed}
-          </span>
-        </div>
-      )
-    },
-    {
-      key: 'pending',
-      label: 'Pending',
-      render: (_value: any, user: UserWithNotifications) => (
-        <div className="flex items-center justify-center gap-1">
-          <Clock className="h-3 w-3 text-yellow-600" />
-          <span className="text-sm text-var(--text-secondary)">
-            {user.notificationStats.byStatus.pending}
-          </span>
-        </div>
-      )
-    },
-    {
-      key: 'lastNotification',
-      label: 'Last Notification',
-      render: (_value: any, user: UserWithNotifications) => (
-        <div className="text-xs text-var(--text-muted)">
+        <div className="text-sm text-var(--text-muted)">
           {user.notificationStats.lastNotificationDate 
             ? formatUTCDateTime(user.notificationStats.lastNotificationDate)
             : 'Never'}
         </div>
       )
     }
+    // Commented out columns as requested
+    // {
+    //   key: 'age',
+    //   label: 'Age',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <span className="text-sm text-var(--text-secondary)">{user.age || 'N/A'}</span>
+    //   )
+    // },
+    // {
+    //   key: 'total',
+    //   label: 'Total',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <div className="text-center">
+    //       <div className="text-sm font-semibold text-var(--text-primary)">
+    //         {user.notificationStats.total}
+    //       </div>
+    //       <div className="text-xs text-var(--text-muted)">notifications</div>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   key: 'unread',
+    //   label: 'Unread',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <div className="text-center">
+    //       <div className={`text-sm font-semibold ${user.notificationStats.unread > 0 ? 'text-orange-600' : 'text-var(--text-primary)'}`}>
+    //         {user.notificationStats.unread}
+    //       </div>
+    //       <div className="text-xs text-var(--text-muted)">unread</div>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   key: 'sent',
+    //   label: 'Sent',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <div className="flex items-center justify-center gap-1">
+    //       <Send className="h-3 w-3 text-blue-600" />
+    //       <span className="text-sm text-var(--text-secondary)">
+    //         {user.notificationStats.byStatus.sent}
+    //       </span>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   key: 'delivered',
+    //   label: 'Delivered',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <div className="flex items-center justify-center gap-1">
+    //       <CheckCircle className="h-3 w-3 text-green-600" />
+    //       <span className="text-sm text-var(--text-secondary)">
+    //         {user.notificationStats.byStatus.delivered}
+    //       </span>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   key: 'failed',
+    //   label: 'Failed',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <div className="flex items-center justify-center gap-1">
+    //       <AlertCircle className="h-3 w-3 text-red-600" />
+    //       <span className="text-sm text-var(--text-secondary)">
+    //         {user.notificationStats.byStatus.failed}
+    //       </span>
+    //     </div>
+    //   )
+    // },
+    // {
+    //   key: 'pending',
+    //   label: 'Pending',
+    //   render: (_value: any, user: UserWithNotifications) => (
+    //     <div className="flex items-center justify-center gap-1">
+    //       <Clock className="h-3 w-3 text-yellow-600" />
+    //       <span className="text-sm text-var(--text-secondary)">
+    //         {user.notificationStats.byStatus.pending}
+    //       </span>
+    //     </div>
+    //   )
+    // }
   ]
 
   const activeFiltersCount = Object.values(filters).filter(v => v !== 'all').length
@@ -311,7 +357,7 @@ function Notifications() {
       </div>
 
       {/* Summary Stats */}
-      {summary && (
+      {/* {summary && (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           <div className="bg-var(--card-bg) border border-var(--border) rounded-xl p-4">
             <div className="flex items-center justify-between">
@@ -373,7 +419,7 @@ function Notifications() {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Search and Filters */}
       <div className="bg-var(--card-bg) border border-var(--border) rounded-xl p-4">
